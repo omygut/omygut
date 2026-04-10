@@ -1,0 +1,17 @@
+{
+  "miniprogramRoot": "./dist",
+  "projectname": "mygut",
+  "description": "Gut Health",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "enhance": false,
+    "compileHotReLoad": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "cloudbaseRoot": "cloudbaserc.json"
+}
