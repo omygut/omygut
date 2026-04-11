@@ -6,7 +6,6 @@ import {
   SYMPTOM_TYPES,
   SEVERITY_OPTIONS,
   FEELING_OPTIONS,
-  SYMPTOM_LOCATIONS,
 } from "../../../constants/health";
 import { formatDate, formatTime } from "../../../utils/date";
 import type { Symptom } from "../../../types";
@@ -21,40 +20,23 @@ export default function HealthAdd() {
   const [submitting, setSubmitting] = useState(false);
 
   // 添加症状
-  const handleAddSymptom = () => {
-    Taro.showActionSheet({
-      itemList: SYMPTOM_TYPES.map((s) => s.label),
-    }).then((res) => {
-      const selected = SYMPTOM_TYPES[res.tapIndex];
-      // 检查是否已添加
-      if (symptoms.some((s) => s.type === selected.value)) {
-        Taro.showToast({ title: "已添加该症状", icon: "none" });
-        return;
-      }
-      setSymptoms([...symptoms, { type: selected.value, severity: 1 }]);
-    });
+  const handleAddSymptom = (e) => {
+    const index = e.detail.value;
+    const selected = SYMPTOM_TYPES[index];
+    // 检查是否已添加
+    if (symptoms.some((s) => s.type === selected.value)) {
+      Taro.showToast({ title: "已添加该症状", icon: "none" });
+      return;
+    }
+    setSymptoms([...symptoms, { type: selected.value, severity: 1 }]);
   };
 
   // 修改症状严重程度
-  const handleSeverityChange = (index: number) => {
-    Taro.showActionSheet({
-      itemList: SEVERITY_OPTIONS.map((s) => s.label),
-    }).then((res) => {
-      const newSymptoms = [...symptoms];
-      newSymptoms[index].severity = SEVERITY_OPTIONS[res.tapIndex].value as Symptom["severity"];
-      setSymptoms(newSymptoms);
-    });
-  };
-
-  // 修改症状部位
-  const handleLocationChange = (index: number) => {
-    Taro.showActionSheet({
-      itemList: SYMPTOM_LOCATIONS.map((l) => l.label),
-    }).then((res) => {
-      const newSymptoms = [...symptoms];
-      newSymptoms[index].location = SYMPTOM_LOCATIONS[res.tapIndex].value;
-      setSymptoms(newSymptoms);
-    });
+  const handleSeverityChange = (symptomIndex: number, e) => {
+    const severityIndex = e.detail.value;
+    const newSymptoms = [...symptoms];
+    newSymptoms[symptomIndex].severity = SEVERITY_OPTIONS[severityIndex].value as Symptom["severity"];
+    setSymptoms(newSymptoms);
   };
 
   // 删除症状
@@ -71,11 +53,6 @@ export default function HealthAdd() {
 
   const getSeverityInfo = (severity: 1 | 2 | 3) => {
     return SEVERITY_OPTIONS.find((s) => s.value === severity);
-  };
-
-  const getLocationLabel = (location?: string) => {
-    if (!location) return "选择部位";
-    return SYMPTOM_LOCATIONS.find((l) => l.value === location)?.label || location;
   };
 
   // 提交
@@ -140,9 +117,13 @@ export default function HealthAdd() {
       <View className="section">
         <View className="section-header">
           <Text className="section-title">症状</Text>
-          <Text className="add-symptom-btn" onClick={handleAddSymptom}>
-            + 添加症状
-          </Text>
+          <Picker
+            mode="selector"
+            range={SYMPTOM_TYPES.map((s) => s.label)}
+            onChange={handleAddSymptom}
+          >
+            <Text className="add-symptom-btn">+ 添加症状</Text>
+          </Picker>
         </View>
 
         {symptoms.length === 0 ? (
@@ -158,16 +139,18 @@ export default function HealthAdd() {
                   <View className="symptom-main">
                     <Text className="symptom-name">{getSymptomLabel(symptom.type)}</Text>
                     <View className="symptom-actions">
-                      <View
-                        className="severity-btn"
-                        style={{ backgroundColor: severity?.color }}
-                        onClick={() => handleSeverityChange(index)}
+                      <Picker
+                        mode="selector"
+                        range={SEVERITY_OPTIONS.map((s) => s.label)}
+                        onChange={(e) => handleSeverityChange(index, e)}
                       >
-                        {severity?.label}
-                      </View>
-                      <View className="location-btn" onClick={() => handleLocationChange(index)}>
-                        {getLocationLabel(symptom.location)}
-                      </View>
+                        <View
+                          className="severity-btn"
+                          style={{ backgroundColor: severity?.color }}
+                        >
+                          {severity?.label}
+                        </View>
+                      </Picker>
                       <Text className="remove-btn" onClick={() => handleRemoveSymptom(index)}>
                         删除
                       </Text>
