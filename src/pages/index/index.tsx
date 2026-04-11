@@ -42,7 +42,7 @@ export default function Index() {
           <Text className="menu-arrow">›</Text>
         </View>
 
-        <View className="menu-item disabled">
+        <View className="menu-item" onClick={() => handleNavigate("/pages/medication/add/index")}>
           <Text className="menu-icon">💊</Text>
           <View className="menu-content">
             <Text className="menu-title">用药记录</Text>
