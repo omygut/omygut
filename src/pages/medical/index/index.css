@@ -1,0 +1,94 @@
+.medical-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px;
+  background-color: #fff;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 600;
+  color: #333;
+}
+
+.add-btn {
+  padding: 12px 24px;
+  background-color: #07c160;
+  color: #fff;
+  font-size: 28px;
+  border-radius: 8px;
+}
+
+.loading,
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 32px;
+}
+
+.empty-text {
+  font-size: 32px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.empty-hint {
+  font-size: 26px;
+  color: #ccc;
+}
+
+.record-list {
+  padding: 24px;
+}
+
+.record-item {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.record-date {
+  font-size: 28px;
+  color: #666;
+}
+
+.image-count {
+  font-size: 24px;
+  color: #999;
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.thumbnail {
+  width: 160px;
+  height: 160px;
+  border-radius: 8px;
+}
+
+.record-note {
+  font-size: 26px;
+  color: #999;
+  line-height: 1.5;
+}
