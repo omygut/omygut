@@ -30,8 +30,8 @@ export interface MealRecord {
   userId: string;
   date: string;
   time: string;
-  mealType: "breakfast" | "lunch" | "dinner" | "snack";
   foods: string[];
+  amount: 1 | 2 | 3; // 1-少量 2-适中 3-大量
   note?: string;
   createdAt: Date;
 }
