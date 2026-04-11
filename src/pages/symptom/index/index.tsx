@@ -1,14 +1,14 @@
 import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
-import { getRecentHealthRecords } from "../../../services/health";
-import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/health";
+import { getRecentSymptomRecords } from "../../../services/symptom";
+import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
 import { formatDisplayDate } from "../../../utils/date";
-import type { HealthRecord } from "../../../types";
+import type { SymptomRecord } from "../../../types";
 import "./index.css";
 
-export default function HealthIndex() {
-  const [records, setRecords] = useState<HealthRecord[]>([]);
+export default function SymptomIndex() {
+  const [records, setRecords] = useState<SymptomRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useDidShow(() => {
@@ -18,7 +18,7 @@ export default function HealthIndex() {
   const loadRecords = async () => {
     setLoading(true);
     try {
-      const data = await getRecentHealthRecords(50);
+      const data = await getRecentSymptomRecords(50);
       setRecords(data);
     } catch (error) {
       console.error("加载记录失败:", error);
@@ -29,7 +29,7 @@ export default function HealthIndex() {
   };
 
   const handleAdd = () => {
-    Taro.navigateTo({ url: "/pages/health/add/index" });
+    Taro.navigateTo({ url: "/pages/symptom/add/index" });
   };
 
   const handleDelete = async (id: string) => {
@@ -40,8 +40,8 @@ export default function HealthIndex() {
 
     if (res.confirm) {
       try {
-        const { deleteHealthRecord } = await import("../../../services/health");
-        await deleteHealthRecord(id);
+        const { deleteSymptomRecord } = await import("../../../services/symptom");
+        await deleteSymptomRecord(id);
         Taro.showToast({ title: "已删除", icon: "success" });
         loadRecords();
       } catch {

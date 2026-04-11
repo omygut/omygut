@@ -1,5 +1,5 @@
-import automator from 'miniprogram-automator';
-import { afterAll } from 'vitest';
+import automator from "miniprogram-automator";
+import { afterAll } from "vitest";
 
 // Global teardown - close miniprogram if tests fail unexpectedly
 let miniProgram: Awaited<ReturnType<typeof automator.launch>> | null = null;

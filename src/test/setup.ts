@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // Define IS_TEST_ENV for test environment
 (globalThis as unknown as { IS_TEST_ENV: boolean }).IS_TEST_ENV = true;
@@ -13,7 +13,7 @@ globalThis.ENABLE_CONTAINS = true;
 globalThis.ENABLE_MUTATION_OBSERVER = true;
 
 // Mock Taro module
-vi.mock('@tarojs/taro', () => ({
+vi.mock("@tarojs/taro", () => ({
   default: {
     cloud: {
       database: vi.fn(),

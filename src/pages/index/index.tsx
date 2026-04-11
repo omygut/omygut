@@ -15,7 +15,7 @@ export default function Index() {
       </View>
 
       <View className="menu-list">
-        <View className="menu-item" onClick={() => handleNavigate("/pages/health/index/index")}>
+        <View className="menu-item" onClick={() => handleNavigate("/pages/symptom/index/index")}>
           <Text className="menu-icon">🩺</Text>
           <View className="menu-content">
             <Text className="menu-title">身体状态</Text>

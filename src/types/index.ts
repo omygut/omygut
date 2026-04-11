@@ -12,8 +12,8 @@ export interface Symptom {
   severity: 1 | 2 | 3; // 轻度、中度、重度
 }
 
-// 身体状态记录
-export interface HealthRecord {
+// 症状记录
+export interface SymptomRecord {
   _id?: string;
   userId: string;
   date: string; // 2026-04-10

@@ -1,11 +1,11 @@
 import { getDatabase, getOpenId } from "../utils/cloud";
-import type { HealthRecord } from "../types";
+import type { SymptomRecord } from "../types";
 
-const COLLECTION = "health_records";
+const COLLECTION = "symptom_records";
 
-// 添加身体状态记录
-export async function addHealthRecord(
-  data: Omit<HealthRecord, "_id" | "userId" | "createdAt">,
+// 添加症状记录
+export async function addSymptomRecord(
+  data: Omit<SymptomRecord, "_id" | "userId" | "createdAt">,
 ): Promise<string> {
   const db = getDatabase();
   const userId = await getOpenId();
@@ -21,8 +21,8 @@ export async function addHealthRecord(
   return res._id as string;
 }
 
-// 获取最近的身体状态记录
-export async function getRecentHealthRecords(limit: number = 20): Promise<HealthRecord[]> {
+// 获取最近的症状记录
+export async function getRecentSymptomRecords(limit: number = 20): Promise<SymptomRecord[]> {
   const db = getDatabase();
   const userId = await getOpenId();
 
@@ -33,11 +33,11 @@ export async function getRecentHealthRecords(limit: number = 20): Promise<Health
     .limit(limit)
     .get();
 
-  return res.data as HealthRecord[];
+  return res.data as SymptomRecord[];
 }
 
-// 删除身体状态记录
-export async function deleteHealthRecord(id: string): Promise<void> {
+// 删除症状记录
+export async function deleteSymptomRecord(id: string): Promise<void> {
   const db = getDatabase();
 
   await db.collection(COLLECTION).doc(id).remove();

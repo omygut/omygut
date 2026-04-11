@@ -1,8 +1,8 @@
 export default defineAppConfig({
   pages: [
     "pages/index/index",
-    "pages/health/index/index",
-    "pages/health/add/index",
+    "pages/symptom/index/index",
+    "pages/symptom/add/index",
     "pages/meal/index/index",
     "pages/meal/add/index",
   ],

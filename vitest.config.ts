@@ -1,12 +1,12 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    include: ['src/**/*.test.ts'],
-    environment: 'node',
-    setupFiles: ['./src/test/setup.ts'],
+    include: ["src/**/*.test.ts"],
+    environment: "node",
+    setupFiles: ["./src/test/setup.ts"],
     env: {
-      TARO_APP_ENV: 'test',
+      TARO_APP_ENV: "test",
     },
   },
 });

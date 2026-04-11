@@ -1,4 +1,4 @@
-declare module 'miniprogram-automator' {
+declare module "miniprogram-automator" {
   interface LaunchOptions {
     /** Path to the miniprogram project (dist folder) */
     projectPath: string;
@@ -9,7 +9,7 @@ declare module 'miniprogram-automator' {
   }
 
   interface ConsoleMessage {
-    type: 'log' | 'info' | 'warn' | 'error';
+    type: "log" | "info" | "warn" | "error";
     args: unknown[];
   }
 
@@ -17,8 +17,8 @@ declare module 'miniprogram-automator' {
     /** Close the miniprogram */
     close(): Promise<void>;
     /** Listen for events */
-    on(event: 'console', callback: (msg: ConsoleMessage) => void): void;
-    on(event: 'error', callback: (error: Error) => void): void;
+    on(event: "console", callback: (msg: ConsoleMessage) => void): void;
+    on(event: "error", callback: (error: Error) => void): void;
     /** Navigate to a page */
     reLaunch(url: string): Promise<Page>;
     /** Navigate to a page */

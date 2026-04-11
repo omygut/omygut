@@ -1,17 +1,13 @@
 import { View, Text, Textarea, Picker } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
-import { addHealthRecord } from "../../../services/health";
-import {
-  SYMPTOM_TYPES,
-  SEVERITY_OPTIONS,
-  FEELING_OPTIONS,
-} from "../../../constants/health";
+import { addSymptomRecord } from "../../../services/symptom";
+import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
 import { formatDate, formatTime } from "../../../utils/date";
 import type { Symptom } from "../../../types";
 import "./index.css";
 
-export default function HealthAdd() {
+export default function SymptomAdd() {
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState(formatTime());
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
@@ -35,7 +31,8 @@ export default function HealthAdd() {
   const handleSeverityChange = (symptomIndex: number, e) => {
     const severityIndex = e.detail.value;
     const newSymptoms = [...symptoms];
-    newSymptoms[symptomIndex].severity = SEVERITY_OPTIONS[severityIndex].value as Symptom["severity"];
+    newSymptoms[symptomIndex].severity = SEVERITY_OPTIONS[severityIndex]
+      .value as Symptom["severity"];
     setSymptoms(newSymptoms);
   };
 
@@ -61,7 +58,7 @@ export default function HealthAdd() {
 
     setSubmitting(true);
     try {
-      await addHealthRecord({
+      await addSymptomRecord({
         date,
         time,
         symptoms,
@@ -144,10 +141,7 @@ export default function HealthAdd() {
                         range={SEVERITY_OPTIONS.map((s) => s.label)}
                         onChange={(e) => handleSeverityChange(index, e)}
                       >
-                        <View
-                          className="severity-btn"
-                          style={{ backgroundColor: severity?.color }}
-                        >
+                        <View className="severity-btn" style={{ backgroundColor: severity?.color }}>
                           {severity?.label}
                         </View>
                       </Picker>
