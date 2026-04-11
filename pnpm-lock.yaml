@@ -69,9 +69,6 @@ importers:
       babel-preset-taro:
         specifier: 4.1.11
         version: 4.1.11(@babel/core@7.29.0)(@babel/plugin-transform-typescript@7.28.6(@babel/core@7.29.0))(@babel/preset-react@7.28.5(@babel/core@7.29.0))(react-refresh@0.14.2)
-      dotenv-cli:
-        specifier: ^11.0.0
-        version: 11.0.0
       knip:
         specifier: ^6.3.1
         version: 6.3.1(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
@@ -3171,24 +3168,12 @@ packages:
     resolution: {integrity: sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==}
     engines: {node: '>=8'}
 
-  dotenv-cli@11.0.0:
-    resolution: {integrity: sha512-r5pA8idbk7GFWuHEU7trSTflWcdBpQEK+Aw17UrSHjS6CReuhrrPcyC3zcQBPQvhArRHnBo/h6eLH1fkCvNlww==}
-    hasBin: true
-
   dotenv-expand@11.0.7:
     resolution: {integrity: sha512-zIHwmZPRshsCdpMDyVsqGmgyP0yT8GAgXUnkdAoJisxvf33k7yO6OuoKmcTGuXPWSsm8Oh88nZicRLA9Y0rUeA==}
     engines: {node: '>=12'}
 
-  dotenv-expand@12.0.3:
-    resolution: {integrity: sha512-uc47g4b+4k/M/SeaW1y4OApx+mtLWl92l5LMPP0GNXctZqELk+YGgOPIIC5elYmUH4OuoK3JLhuRUYegeySiFA==}
-    engines: {node: '>=12'}
-
   dotenv@16.6.1:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
-    engines: {node: '>=12'}
-
-  dotenv@17.4.1:
-    resolution: {integrity: sha512-k8DaKGP6r1G30Lx8V4+pCsLzKr8vLmV2paqEj1Y55GdAgJuIqpRp5FfajGF8KtwMxCz9qJc6wUIJnm053d/WCw==}
     engines: {node: '>=12'}
 
   download-git-repo@3.0.2:
@@ -8423,24 +8408,11 @@ snapshots:
     dependencies:
       is-obj: 2.0.0
 
-  dotenv-cli@11.0.0:
-    dependencies:
-      cross-spawn: 7.0.6
-      dotenv: 17.4.1
-      dotenv-expand: 12.0.3
-      minimist: 1.2.8
-
   dotenv-expand@11.0.7:
     dependencies:
       dotenv: 16.6.1
 
-  dotenv-expand@12.0.3:
-    dependencies:
-      dotenv: 16.6.1
-
   dotenv@16.6.1: {}
-
-  dotenv@17.4.1: {}
 
   download-git-repo@3.0.2:
     dependencies:
