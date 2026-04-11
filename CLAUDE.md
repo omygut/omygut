@@ -25,4 +25,19 @@ Examples:
 - `docs: update README with badges`
 - `test: fix flaky navigation test`
 
-After creating a PR, monitor its CI status. If CI fails, investigate and fix promptly.
+After creating or updating a PR:
+1. Push changes to trigger CI
+2. Run E2E tests locally (can run in parallel with CI)
+3. Monitor CI status. If CI fails, investigate and fix promptly.
+
+## E2E Testing
+
+E2E tests require WeChat DevTools and cannot run in CI. Run locally after pushing:
+
+```bash
+pnpm test:e2e
+```
+
+Prerequisites:
+- WeChat DevTools installed with Service Port enabled (Settings > Security)
+- `.env.local` configured with valid appID and cloud environment

@@ -10,6 +10,8 @@ pre-commit:
     stylelint:
       glob: "*.{css,scss}"
       run: pnpm stylelint {staged_files}
+    knip:
+      run: pnpm knip
 
 commit-msg:
   commands:

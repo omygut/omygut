@@ -10,13 +10,11 @@
   "project": ["src/**/*.{ts,tsx}", "config/**/*.ts"],
   "ignoreDependencies": [
     "@babel/runtime",
-    "@babel/plugin-transform-class-properties",
     "@tarojs/plugin-*",
     "@tarojs/react",
     "@tarojs/runtime",
     "@tarojs/vite-runner",
     "@vitejs/plugin-react",
-    "terser",
     "vite"
   ],
   "ignoreExportsUsedInFile": true,
