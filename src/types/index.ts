@@ -37,16 +37,16 @@ export interface MealRecord {
 }
 
 // 排便记录
-export interface BowelRecord {
+export interface StoolRecord {
   _id?: string;
   userId: string;
   date: string;
   time: string;
   type: 1 | 2 | 3 | 4 | 5 | 6 | 7; // Bristol 分类
-  color?: "normal" | "dark" | "light" | "red" | "black";
+  color: "normal" | "dark" | "light" | "red" | "black";
+  amount: 1 | 2 | 3; // 1-少量 2-适中 3-大量
   hasBlood?: boolean;
   hasMucus?: boolean;
-  urgency?: 1 | 2 | 3;
   note?: string;
   createdAt: Date;
 }

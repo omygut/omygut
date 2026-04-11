@@ -1,0 +1,207 @@
+.add-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 120px;
+}
+
+.section {
+  background-color: #fff;
+  margin-bottom: 20px;
+  padding: 28px 32px;
+}
+
+.section-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24px;
+  display: block;
+}
+
+/* 时间选择 */
+.time-row {
+  display: flex;
+  gap: 24px;
+}
+
+.picker-value {
+  padding: 20px 32px;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  font-size: 30px;
+  color: #333;
+}
+
+/* Bristol 类型 */
+.bristol-options {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bristol-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  border: 2px solid #f0f0f0;
+  transition: all 0.2s;
+}
+
+.bristol-item.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+}
+
+.bristol-emoji {
+  font-size: 36px;
+}
+
+.bristol-selected {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.bristol-selected-label {
+  font-size: 28px;
+  color: #333;
+  margin-right: 16px;
+}
+
+.bristol-selected-desc {
+  font-size: 24px;
+  color: #999;
+}
+
+/* 量选择 */
+.amount-options {
+  display: flex;
+  gap: 16px;
+}
+
+.amount-item {
+  flex: 1;
+  padding: 16px;
+  border-radius: 8px;
+  border: 2px solid #f0f0f0;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.amount-item.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+}
+
+.amount-label {
+  font-size: 28px;
+  color: #333;
+}
+
+.amount-item.active .amount-label {
+  color: #1890ff;
+}
+
+/* 颜色选择 */
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.color-item {
+  padding: 16px 28px;
+  border-radius: 8px;
+  border: 2px solid #f0f0f0;
+  transition: all 0.2s;
+}
+
+.color-item.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+}
+
+.color-label {
+  font-size: 28px;
+  color: #333;
+}
+
+.color-item.active .color-label {
+  color: #1890ff;
+}
+
+/* 复选框 */
+.checkbox-group {
+  display: flex;
+  gap: 40px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkbox-box {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #d9d9d9;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-item.checked .checkbox-box {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.checkbox-tick {
+  color: #fff;
+  font-size: 28px;
+}
+
+.checkbox-label {
+  font-size: 30px;
+  color: #333;
+}
+
+/* 备注 */
+.note-input {
+  width: 100%;
+  min-height: 160px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  font-size: 28px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+/* 提交按钮 */
+.submit-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 32px;
+  background-color: #fff;
+  box-shadow: 0 -2px 10px rgb(0 0 0 / 5%);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 28px;
+  background-color: #07c160;
+  color: #fff;
+  font-size: 32px;
+  text-align: center;
+  border-radius: 12px;
+}
+
+.submit-btn.disabled {
+  background-color: #ccc;
+}

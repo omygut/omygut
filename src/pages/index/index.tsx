@@ -24,7 +24,7 @@ export default function Index() {
           <Text className="menu-arrow">›</Text>
         </View>
 
-        <View className="menu-item disabled">
+        <View className="menu-item" onClick={() => handleNavigate("/pages/meal/index/index")}>
           <Text className="menu-icon">🍚</Text>
           <View className="menu-content">
             <Text className="menu-title">饮食记录</Text>
@@ -33,7 +33,7 @@ export default function Index() {
           <Text className="menu-arrow">›</Text>
         </View>
 
-        <View className="menu-item disabled">
+        <View className="menu-item" onClick={() => handleNavigate("/pages/stool/index/index")}>
           <Text className="menu-icon">🚽</Text>
           <View className="menu-content">
             <Text className="menu-title">排便记录</Text>

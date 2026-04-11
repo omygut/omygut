@@ -5,6 +5,8 @@ export default defineAppConfig({
     "pages/symptom/add/index",
     "pages/meal/index/index",
     "pages/meal/add/index",
+    "pages/stool/index/index",
+    "pages/stool/add/index",
   ],
   window: {
     backgroundTextStyle: "light",
