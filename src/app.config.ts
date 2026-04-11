@@ -7,6 +7,8 @@ export default defineAppConfig({
     "pages/meal/add/index",
     "pages/stool/index/index",
     "pages/stool/add/index",
+    "pages/medication/index/index",
+    "pages/medication/add/index",
   ],
   window: {
     backgroundTextStyle: "light",
