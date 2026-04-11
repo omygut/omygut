@@ -13,6 +13,7 @@
     "knip": "knip",
     "format": "oxfmt src --write",
     "format:check": "oxfmt src",
+    "test": "vitest run",
     "test:e2e": "pnpm build:test && vitest run --config e2e/vitest.config.ts"
   },
   "dependencies": {
