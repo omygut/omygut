@@ -30,9 +30,13 @@ After creating or updating a PR:
 2. Run E2E tests locally (can run in parallel with CI)
 3. Monitor CI status. If CI fails, investigate and fix promptly.
 
-## E2E Testing
+## Testing Strategy
 
-E2E tests require WeChat DevTools and cannot run in CI. Run locally after pushing:
+### E2E Tests
+
+E2E tests use `miniprogram-automator` to test the full mini program in WeChat DevTools. They require local environment and cannot run in CI.
+
+Run locally after pushing:
 
 ```bash
 pnpm test:e2e
@@ -41,3 +45,17 @@ pnpm test:e2e
 Prerequisites:
 - WeChat DevTools installed with Service Port enabled (Settings > Security)
 - `.env.local` configured with valid appID and cloud environment
+
+### Integration Tests
+
+Integration tests verify service layer logic using the in-memory database mock. They can run in CI.
+
+```bash
+pnpm test
+```
+
+Test files: `src/services/**/*.test.ts`
+
+### Database Mock
+
+Both E2E and integration tests use the in-memory database (`TARO_APP_ENV=test`) to avoid polluting production data. The mock supports: `add`, `where`, `orderBy`, `limit`, `get`, `doc`, `remove`, `update`.
