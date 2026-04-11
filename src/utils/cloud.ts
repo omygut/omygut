@@ -34,9 +34,3 @@ export async function getOpenId(): Promise<string> {
     throw error;
   }
 }
-
-// 清除缓存的 openid
-export function clearOpenId() {
-  cachedOpenId = null;
-  Taro.removeStorageSync("openid");
-}

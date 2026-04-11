@@ -29,14 +29,3 @@ export const FEELING_OPTIONS = [
   { value: 4, label: "良好", emoji: "😊" },
   { value: 5, label: "很好", emoji: "😄" },
 ] as const;
-
-// 症状部位
-export const SYMPTOM_LOCATIONS = [
-  { value: "upper_abdomen", label: "上腹部" },
-  { value: "lower_abdomen", label: "下腹部" },
-  { value: "left_abdomen", label: "左腹部" },
-  { value: "right_abdomen", label: "右腹部" },
-  { value: "navel", label: "肚脐周围" },
-  { value: "stomach", label: "胃部" },
-  { value: "whole_abdomen", label: "全腹部" },
-] as const;

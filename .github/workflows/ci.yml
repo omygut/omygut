@@ -32,6 +32,9 @@ jobs:
       - name: Stylelint
         run: pnpm stylelint "src/**/*.css"
 
+      - name: Knip
+        run: pnpm knip
+
   build:
     runs-on: ubuntu-latest
     needs: lint

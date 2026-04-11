@@ -13,16 +13,6 @@ export function formatTime(date: Date = new Date()): string {
   return `${hours}:${minutes}`;
 }
 
-// 解析日期字符串
-export function parseDate(dateStr: string): Date {
-  return new Date(dateStr);
-}
-
-// 获取今天的日期字符串
-export function getToday(): string {
-  return formatDate(new Date());
-}
-
 // 格式化显示日期 (4月10日)
 export function formatDisplayDate(dateStr: string): string {
   const date = new Date(dateStr);

@@ -10,7 +10,6 @@ export interface User {
 export interface Symptom {
   type: string;
   severity: 1 | 2 | 3; // 轻度、中度、重度
-  location?: string;
 }
 
 // 身体状态记录
