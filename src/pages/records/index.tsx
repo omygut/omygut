@@ -140,7 +140,7 @@ export default function Records() {
           <View className="record-card">
             <View className="card-header">
               <View className="card-title-row">
-                <Text className="card-icon">🩺</Text>
+                <Text className="card-icon">🌡️</Text>
                 <Text className="card-title">体感</Text>
                 <Text className="card-count">[{symptomRecords.length}条]</Text>
               </View>
