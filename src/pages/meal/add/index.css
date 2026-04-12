@@ -1,4 +1,4 @@
-@import "../../../styles/form.css";
+@import url("../../../styles/form.css");
 
 /* 食物分类标签 */
 .category-tabs {

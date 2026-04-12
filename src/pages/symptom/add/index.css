@@ -1,4 +1,4 @@
-@import "../../../styles/form.css";
+@import url("../../../styles/form.css");
 
 .section-header {
   display: flex;
