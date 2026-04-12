@@ -45,12 +45,10 @@ export async function recognizeLabTestImage(imageFilePath: string): Promise<LabT
     const base64 = await imageToBase64(imageFilePath);
     const imageUrl = `data:image/jpeg;base64,${base64}`;
 
-    // 调用视觉模型
+    // 调用视觉模型（非流式）
     const model = Taro.cloud.extend.AI.createModel("siliconflow-custom");
 
-    let fullResponse = "";
-
-    const res = await model.streamText({
+    const res = await model.generateText({
       data: {
         model: VISION_MODEL,
         messages: [
@@ -77,21 +75,7 @@ export async function recognizeLabTestImage(imageFilePath: string): Promise<LabT
       },
     });
 
-    // 收集流式响应
-    for await (const event of res.eventStream) {
-      if (event.data === "[DONE]") {
-        break;
-      }
-      try {
-        const data = JSON.parse(event.data);
-        const text = data?.choices?.[0]?.delta?.content;
-        if (text) {
-          fullResponse += text;
-        }
-      } catch {
-        // 忽略解析错误
-      }
-    }
+    const fullResponse = res.text || "";
 
     // 解析 JSON 响应
     const jsonMatch = fullResponse.match(/\[[\s\S]*\]/);
