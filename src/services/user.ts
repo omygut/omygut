@@ -11,26 +11,29 @@ interface UserSettings {
   updatedAt?: Date;
 }
 
-// 获取当前用户设置
+// 获取当前用户设置（不存在则自动创建）
 export async function getUserSettings(): Promise<UserSettings> {
   const db = getDatabase();
   const userId = await getOpenId();
 
-  try {
-    const res = (await db.collection(COLLECTION).doc(userId).get()) as { data: UserSettings | null };
+  // 先查询是否存在
+  const res = await db.collection(COLLECTION).where({ _id: userId }).limit(1).get();
 
-    if (res.data) {
-      return res.data;
-    }
-  } catch (error) {
-    // 用户设置不存在，这是正常情况
-    console.debug("用户设置不存在，使用默认值");
+  if (res.data && res.data.length > 0) {
+    return res.data[0] as UserSettings;
   }
 
-  // 返回默认值
-  return {
+  // 不存在，创建新记录
+  const newSettings: UserSettings = {
     _id: userId,
+    createdAt: new Date(),
   };
+
+  await db.collection(COLLECTION).add({
+    data: newSettings,
+  });
+
+  return newSettings;
 }
 
 // 获取默认昵称
@@ -38,7 +41,7 @@ export function getDefaultNickname(userId: string): string {
   return `微信用户 ${userId.slice(-4)}`;
 }
 
-// 更新用户设置（使用 set 实现 upsert）
+// 更新用户设置
 export async function updateUserSettings(data: {
   nickname?: string;
   avatar?: string;
@@ -46,27 +49,15 @@ export async function updateUserSettings(data: {
   const db = getDatabase();
   const userId = await getOpenId();
 
-  // 先尝试更新
-  try {
-    await db
-      .collection(COLLECTION)
-      .doc(userId)
-      .update({
-        data: {
-          ...data,
-          updatedAt: new Date(),
-        },
-      });
-  } catch {
-    // 记录不存在，创建新记录（指定 _id 为 userId）
-    await db.collection(COLLECTION).add({
+  await db
+    .collection(COLLECTION)
+    .doc(userId)
+    .update({
       data: {
-        _id: userId,
         ...data,
-        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
-  }
 }
 
 // 上传头像到云存储
