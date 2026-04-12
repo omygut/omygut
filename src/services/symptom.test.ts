@@ -118,4 +118,52 @@ describe("symptom service", () => {
       await expect(symptomService.delete("non_existent_id")).resolves.not.toThrow();
     });
   });
+
+  describe("getById", () => {
+    it("should return a record by id", async () => {
+      const id = await symptomService.add({
+        date: "2026-04-12",
+        time: "14:00",
+        symptoms: ["腹痛"],
+        severity: 2,
+        overallFeeling: 2,
+        note: "Test record",
+      });
+
+      const record = await symptomService.getById(id);
+
+      expect(record).toBeDefined();
+      expect(record?.date).toBe("2026-04-12");
+      expect(record?.time).toBe("14:00");
+      expect(record?.symptoms).toEqual(["腹痛"]);
+      expect(record?.overallFeeling).toBe(2);
+    });
+
+    it("should return null for non-existent id", async () => {
+      const record = await symptomService.getById("non_existent_id");
+      expect(record).toBeNull();
+    });
+  });
+
+  describe("update", () => {
+    it("should update a record", async () => {
+      const id = await symptomService.add({
+        date: "2026-04-12",
+        time: "10:00",
+        symptoms: [],
+        overallFeeling: 3,
+      });
+
+      await symptomService.update(id, {
+        time: "11:00",
+        symptoms: ["腹胀"],
+        overallFeeling: 4,
+      });
+
+      const updated = await symptomService.getById(id);
+      expect(updated?.time).toBe("11:00");
+      expect(updated?.symptoms).toEqual(["腹胀"]);
+      expect(updated?.overallFeeling).toBe(4);
+    });
+  });
 });

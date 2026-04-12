@@ -33,22 +33,8 @@ export default function StoolIndex() {
     Taro.navigateTo({ url: "/pages/stool/add/index" });
   };
 
-  const handleDelete = async (id: string) => {
-    const res = await Taro.showModal({
-      title: "确认删除",
-      content: "确定要删除这条记录吗？",
-    });
-
-    if (res.confirm) {
-      try {
-        const { stoolService: svc } = await import("../../../services/stool");
-        await svc.delete(id);
-        Taro.showToast({ title: "已删除", icon: "success" });
-        loadRecords();
-      } catch {
-        Taro.showToast({ title: "删除失败", icon: "none" });
-      }
-    }
+  const handleEdit = (id: string) => {
+    Taro.navigateTo({ url: `/pages/stool/add/index?id=${id}` });
   };
 
   const getBristolInfo = (type: number) => {
@@ -80,7 +66,11 @@ export default function StoolIndex() {
           {records.map((record) => {
             const bristol = getBristolInfo(record.type);
             return (
-              <View key={record._id} className="record-item">
+              <View
+                key={record._id}
+                className="record-item"
+                onClick={() => handleEdit(record._id!)}
+              >
                 <View className="record-main">
                   <View className="record-header">
                     <Text className="record-date">
@@ -104,9 +94,6 @@ export default function StoolIndex() {
                   </View>
 
                   {record.note && <Text className="record-note">{record.note}</Text>}
-                </View>
-                <View className="delete-btn" onClick={() => handleDelete(record._id!)}>
-                  删除
                 </View>
               </View>
             );

@@ -60,5 +60,19 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
         .get();
       return res.data as T[];
     },
+
+    async getById(id: string): Promise<T | null> {
+      const db = getDatabase();
+      const res = await db.collection(collection).doc(id).get();
+      return (res.data as T) || null;
+    },
+
+    async update(
+      id: string,
+      data: Partial<Omit<T, "_id" | "userId" | "createdAt">>,
+    ): Promise<void> {
+      const db = getDatabase();
+      await db.collection(collection).doc(id).update({ data });
+    },
   };
 }

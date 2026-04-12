@@ -32,22 +32,8 @@ export default function MealIndex() {
     Taro.navigateTo({ url: "/pages/meal/add/index" });
   };
 
-  const handleDelete = async (id: string) => {
-    const res = await Taro.showModal({
-      title: "确认删除",
-      content: "确定要删除这条记录吗？",
-    });
-
-    if (res.confirm) {
-      try {
-        const { mealService: svc } = await import("../../../services/meal");
-        await svc.delete(id);
-        Taro.showToast({ title: "已删除", icon: "success" });
-        loadRecords();
-      } catch {
-        Taro.showToast({ title: "删除失败", icon: "none" });
-      }
-    }
+  const handleEdit = (id: string) => {
+    Taro.navigateTo({ url: `/pages/meal/add/index?id=${id}` });
   };
 
   const getAmountInfo = (amount: 1 | 2 | 3) => {
@@ -75,7 +61,11 @@ export default function MealIndex() {
           {records.map((record) => {
             const amount = getAmountInfo(record.amount);
             return (
-              <View key={record._id} className="record-item">
+              <View
+                key={record._id}
+                className="record-item"
+                onClick={() => handleEdit(record._id!)}
+              >
                 <View className="record-main">
                   <View className="record-header">
                     <Text className="record-date">
@@ -96,9 +86,6 @@ export default function MealIndex() {
                   </View>
 
                   {record.note && <Text className="record-note">{record.note}</Text>}
-                </View>
-                <View className="delete-btn" onClick={() => handleDelete(record._id!)}>
-                  删除
                 </View>
               </View>
             );

@@ -1,6 +1,6 @@
 import { View, Text, Textarea, Picker } from "@tarojs/components";
-import Taro from "@tarojs/taro";
-import { useState } from "react";
+import Taro, { useRouter } from "@tarojs/taro";
+import { useState, useEffect } from "react";
 import { stoolService } from "../../../services/stool";
 import { BRISTOL_TYPES, STOOL_AMOUNTS, NOTE_SHORTCUTS } from "../../../constants/stool";
 import { formatDate, formatTime } from "../../../utils/date";
@@ -9,27 +9,63 @@ import type { StoolRecord } from "../../../types";
 import "./index.css";
 
 export default function StoolAdd() {
+  const router = useRouter();
+  const editId = router.params.id;
+  const isEdit = !!editId;
+
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState(formatTime());
   const [bristolType, setBristolType] = useState<StoolRecord["type"]>(4);
   const [amount, setAmount] = useState<StoolRecord["amount"]>(2);
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(isEdit);
+
+  useEffect(() => {
+    if (editId) {
+      loadRecord(editId);
+    }
+  }, [editId]);
+
+  const loadRecord = async (id: string) => {
+    try {
+      const record = await stoolService.getById(id);
+      if (record) {
+        setDate(record.date);
+        setTime(record.time || formatTime());
+        setBristolType(record.type);
+        setAmount(record.amount);
+        setNote(record.note || "");
+      }
+    } catch (error) {
+      console.error("加载记录失败:", error);
+      Taro.showToast({ title: "加载失败", icon: "none" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (submitting) return;
 
     setSubmitting(true);
     try {
-      await stoolService.add({
+      const data = {
         date,
         time,
         type: bristolType,
         amount,
         note: note.trim() || undefined,
-      });
+      };
 
-      Taro.showToast({ title: "记录成功", icon: "success" });
+      if (isEdit && editId) {
+        await stoolService.update(editId, data);
+        Taro.showToast({ title: "更新成功", icon: "success" });
+      } else {
+        await stoolService.add(data);
+        Taro.showToast({ title: "记录成功", icon: "success" });
+      }
+
       setTimeout(() => {
         Taro.navigateBack();
       }, 1500);
@@ -40,6 +76,14 @@ export default function StoolAdd() {
       setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return (
+      <View className="add-page">
+        <View className="loading">加载中...</View>
+      </View>
+    );
+  }
 
   return (
     <View className="add-page">
@@ -121,7 +165,7 @@ export default function StoolAdd() {
       {/* 提交按钮 */}
       <View className="submit-section">
         <View className={`submit-btn ${submitting ? "disabled" : ""}`} onClick={handleSubmit}>
-          {submitting ? "保存中..." : "保存记录"}
+          {submitting ? "保存中..." : isEdit ? "更新记录" : "保存记录"}
         </View>
       </View>
     </View>

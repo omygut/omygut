@@ -1,6 +1,6 @@
 import { View, Text, Input, Textarea, Picker } from "@tarojs/components";
-import Taro, { useDidShow } from "@tarojs/taro";
-import { useState } from "react";
+import Taro, { useDidShow, useRouter } from "@tarojs/taro";
+import { useState, useEffect } from "react";
 import { mealService } from "../../../services/meal";
 import { FOOD_CATEGORIES, AMOUNT_OPTIONS } from "../../../constants/meal";
 import { formatDate, formatTime } from "../../../utils/date";
@@ -39,6 +39,10 @@ function removeCustomFood(food: string) {
 }
 
 export default function MealAdd() {
+  const router = useRouter();
+  const editId = router.params.id;
+  const isEdit = !!editId;
+
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState(formatTime());
   const [selectedCategory, setSelectedCategory] = useState(-1); // -1 = 我的常用
@@ -49,6 +53,31 @@ export default function MealAdd() {
   const [submitting, setSubmitting] = useState(false);
   const [customFoods, setCustomFoods] = useState<string[]>([]);
   const [topFoods, setTopFoods] = useState<string[]>([]);
+  const [loading, setLoading] = useState(isEdit);
+
+  useEffect(() => {
+    if (editId) {
+      loadRecord(editId);
+    }
+  }, [editId]);
+
+  const loadRecord = async (id: string) => {
+    try {
+      const record = await mealService.getById(id);
+      if (record) {
+        setDate(record.date);
+        setTime(record.time || formatTime());
+        setSelectedFoods(record.foods);
+        setAmount(record.amount);
+        setNote(record.note || "");
+      }
+    } catch (error) {
+      console.error("加载记录失败:", error);
+      Taro.showToast({ title: "加载失败", icon: "none" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useDidShow(() => {
     setCustomFoods(getStoredCustomFoods());
@@ -100,6 +129,27 @@ export default function MealAdd() {
     setSelectedFoods(selectedFoods.filter((f) => f !== food));
   };
 
+  const handleDelete = async () => {
+    if (!editId) return;
+
+    const res = await Taro.showModal({
+      title: "确认删除",
+      content: "确定要删除这条记录吗？",
+    });
+
+    if (res.confirm) {
+      try {
+        await mealService.delete(editId);
+        Taro.showToast({ title: "已删除", icon: "success" });
+        setTimeout(() => {
+          Taro.navigateBack();
+        }, 1500);
+      } catch {
+        Taro.showToast({ title: "删除失败", icon: "none" });
+      }
+    }
+  };
+
   const handleSubmit = async () => {
     if (submitting) return;
 
@@ -110,15 +160,22 @@ export default function MealAdd() {
 
     setSubmitting(true);
     try {
-      await mealService.add({
+      const data = {
         date,
         time,
         foods: selectedFoods,
         amount,
         note: note.trim() || undefined,
-      });
+      };
 
-      Taro.showToast({ title: "记录成功", icon: "success" });
+      if (isEdit && editId) {
+        await mealService.update(editId, data);
+        Taro.showToast({ title: "更新成功", icon: "success" });
+      } else {
+        await mealService.add(data);
+        Taro.showToast({ title: "记录成功", icon: "success" });
+      }
+
       setTimeout(() => {
         Taro.navigateBack();
       }, 1500);
@@ -138,6 +195,14 @@ export default function MealAdd() {
     selectedCategory === -1
       ? myFavoriteFoods.map((name) => ({ name, emoji: FOOD_EMOJI_MAP.get(name) }))
       : FOOD_CATEGORIES[selectedCategory].items;
+
+  if (loading) {
+    return (
+      <View className="add-page">
+        <View className="loading">加载中...</View>
+      </View>
+    );
+  }
 
   return (
     <View className="add-page">
@@ -265,8 +330,13 @@ export default function MealAdd() {
       {/* 提交按钮 */}
       <View className="submit-section">
         <View className={`submit-btn ${submitting ? "disabled" : ""}`} onClick={handleSubmit}>
-          {submitting ? "保存中..." : "保存记录"}
+          {submitting ? "保存中..." : isEdit ? "更新记录" : "保存记录"}
         </View>
+        {isEdit && (
+          <View className="delete-btn" onClick={handleDelete}>
+            删除记录
+          </View>
+        )}
       </View>
     </View>
   );

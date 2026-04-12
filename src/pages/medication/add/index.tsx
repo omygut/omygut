@@ -1,6 +1,6 @@
 import { View, Text, Input, Textarea, Picker } from "@tarojs/components";
-import Taro, { useDidShow } from "@tarojs/taro";
-import { useState } from "react";
+import Taro, { useDidShow, useRouter } from "@tarojs/taro";
+import { useState, useEffect } from "react";
 import { medicationService } from "../../../services/medication";
 import { MEDICATION_CATEGORIES } from "../../../constants/medication";
 import { formatDate, formatTime } from "../../../utils/date";
@@ -32,6 +32,10 @@ function removeCustomMedication(medication: string) {
 }
 
 export default function MedicationAdd() {
+  const router = useRouter();
+  const editId = router.params.id;
+  const isEdit = !!editId;
+
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState(formatTime());
   const [selectedCategory, setSelectedCategory] = useState(-1); // -1 = 常用
@@ -41,6 +45,30 @@ export default function MedicationAdd() {
   const [submitting, setSubmitting] = useState(false);
   const [customMedications, setCustomMedications] = useState<string[]>([]);
   const [topMedications, setTopMedications] = useState<string[]>([]);
+  const [loading, setLoading] = useState(isEdit);
+
+  useEffect(() => {
+    if (editId) {
+      loadRecord(editId);
+    }
+  }, [editId]);
+
+  const loadRecord = async (id: string) => {
+    try {
+      const record = await medicationService.getById(id);
+      if (record) {
+        setDate(record.date);
+        setTime(record.time || formatTime());
+        setSelectedMedications([record.name]);
+        setNote(record.note || "");
+      }
+    } catch (error) {
+      console.error("加载记录失败:", error);
+      Taro.showToast({ title: "加载失败", icon: "none" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useDidShow(() => {
     setCustomMedications(getStoredCustomMedications());
@@ -90,6 +118,27 @@ export default function MedicationAdd() {
     setSelectedMedications(selectedMedications.filter((m) => m !== medication));
   };
 
+  const handleDelete = async () => {
+    if (!editId) return;
+
+    const res = await Taro.showModal({
+      title: "确认删除",
+      content: "确定要删除这条记录吗？",
+    });
+
+    if (res.confirm) {
+      try {
+        await medicationService.delete(editId);
+        Taro.showToast({ title: "已删除", icon: "success" });
+        setTimeout(() => {
+          Taro.navigateBack();
+        }, 1500);
+      } catch {
+        Taro.showToast({ title: "删除失败", icon: "none" });
+      }
+    }
+  };
+
   const handleSubmit = async () => {
     if (submitting) return;
 
@@ -100,17 +149,28 @@ export default function MedicationAdd() {
 
     setSubmitting(true);
     try {
-      // 为每个选中的药物创建一条记录
-      for (const medication of selectedMedications) {
-        await medicationService.add({
+      if (isEdit && editId) {
+        // 编辑模式：更新单条记录
+        await medicationService.update(editId, {
           date,
           time,
-          name: medication,
+          name: selectedMedications[0],
           note: note.trim() || undefined,
         });
+        Taro.showToast({ title: "更新成功", icon: "success" });
+      } else {
+        // 新增模式：为每个选中的药物创建一条记录
+        for (const medication of selectedMedications) {
+          await medicationService.add({
+            date,
+            time,
+            name: medication,
+            note: note.trim() || undefined,
+          });
+        }
+        Taro.showToast({ title: "记录成功", icon: "success" });
       }
 
-      Taro.showToast({ title: "记录成功", icon: "success" });
       setTimeout(() => {
         Taro.navigateBack();
       }, 1500);
@@ -131,6 +191,14 @@ export default function MedicationAdd() {
   // 当前分类的药品列表
   const currentMedications =
     selectedCategory === -1 ? myFavoriteMedications : MEDICATION_CATEGORIES[selectedCategory].items;
+
+  if (loading) {
+    return (
+      <View className="add-page">
+        <View className="loading">加载中...</View>
+      </View>
+    );
+  }
 
   return (
     <View className="add-page">
@@ -246,8 +314,13 @@ export default function MedicationAdd() {
       {/* 提交按钮 */}
       <View className="submit-section">
         <View className={`submit-btn ${submitting ? "disabled" : ""}`} onClick={handleSubmit}>
-          {submitting ? "保存中..." : "保存记录"}
+          {submitting ? "保存中..." : isEdit ? "更新记录" : "保存记录"}
         </View>
+        {isEdit && (
+          <View className="delete-btn" onClick={handleDelete}>
+            删除记录
+          </View>
+        )}
       </View>
     </View>
   );

@@ -120,7 +120,10 @@ export default function Records() {
           {/* 体感 */}
           <View className="record-card">
             <View className="card-header">
-              <View className="card-title-row">
+              <View
+                className="card-title-row"
+                onClick={() => handleNavigate("/pages/symptom/index/index")}
+              >
                 <Text className="card-icon">🌡️</Text>
                 <Text className="card-title">体感</Text>
                 <Text className="card-count">[{symptomRecords.length}条]</Text>
@@ -132,17 +135,18 @@ export default function Records() {
                 ＋
               </Text>
             </View>
-            <View
-              className="card-content"
-              onClick={() => handleNavigate("/pages/symptom/index/index")}
-            >
+            <View className="card-content">
               {symptomRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
                 symptomRecords.slice(0, 3).map((record) => {
                   const severity = getSeverityInfo(record.severity);
                   return (
-                    <View key={record._id} className="record-item">
+                    <View
+                      key={record._id}
+                      className="record-item"
+                      onClick={() => handleNavigate(`/pages/symptom/add/index?id=${record._id}`)}
+                    >
                       <Text className="record-time">{record.time || "--:--"}</Text>
                       <Text className="record-feeling">
                         {getFeelingEmoji(record.overallFeeling)}
@@ -168,7 +172,10 @@ export default function Records() {
           {/* 用药记录 */}
           <View className="record-card">
             <View className="card-header">
-              <View className="card-title-row">
+              <View
+                className="card-title-row"
+                onClick={() => handleNavigate("/pages/medication/index/index")}
+              >
                 <Text className="card-icon">💊</Text>
                 <Text className="card-title">用药</Text>
                 <Text className="card-count">[{medicationRecords.length}条]</Text>
@@ -180,15 +187,16 @@ export default function Records() {
                 ＋
               </Text>
             </View>
-            <View
-              className="card-content"
-              onClick={() => handleNavigate("/pages/medication/index/index")}
-            >
+            <View className="card-content">
               {medicationRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
                 medicationRecords.slice(0, 3).map((record) => (
-                  <View key={record._id} className="record-item">
+                  <View
+                    key={record._id}
+                    className="record-item"
+                    onClick={() => handleNavigate(`/pages/medication/add/index?id=${record._id}`)}
+                  >
                     <Text className="record-time">{record.time}</Text>
                     <Text className="record-desc">
                       {record.name}
@@ -203,7 +211,10 @@ export default function Records() {
           {/* 饮食记录 */}
           <View className="record-card">
             <View className="card-header">
-              <View className="card-title-row">
+              <View
+                className="card-title-row"
+                onClick={() => handleNavigate("/pages/meal/index/index")}
+              >
                 <Text className="card-icon">🍱</Text>
                 <Text className="card-title">饮食</Text>
                 <Text className="card-count">[{mealRecords.length}条]</Text>
@@ -215,15 +226,16 @@ export default function Records() {
                 ＋
               </Text>
             </View>
-            <View
-              className="card-content"
-              onClick={() => handleNavigate("/pages/meal/index/index")}
-            >
+            <View className="card-content">
               {mealRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
                 mealRecords.slice(0, 3).map((record) => (
-                  <View key={record._id} className="record-item">
+                  <View
+                    key={record._id}
+                    className="record-item"
+                    onClick={() => handleNavigate(`/pages/meal/add/index?id=${record._id}`)}
+                  >
                     <Text className="record-time">{record.time}</Text>
                     <Text className="record-feeling">{getAmountEmoji(record.amount)}</Text>
                     <Text className="record-desc">{record.foods.join("、")}</Text>
@@ -236,7 +248,10 @@ export default function Records() {
           {/* 排便记录 */}
           <View className="record-card">
             <View className="card-header">
-              <View className="card-title-row">
+              <View
+                className="card-title-row"
+                onClick={() => handleNavigate("/pages/stool/index/index")}
+              >
                 <Text className="card-icon">💩</Text>
                 <Text className="card-title">排便</Text>
                 <Text className="card-count">[{stoolRecords.length}条]</Text>
@@ -248,15 +263,16 @@ export default function Records() {
                 ＋
               </Text>
             </View>
-            <View
-              className="card-content"
-              onClick={() => handleNavigate("/pages/stool/index/index")}
-            >
+            <View className="card-content">
               {stoolRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
                 stoolRecords.slice(0, 3).map((record) => (
-                  <View key={record._id} className="record-item">
+                  <View
+                    key={record._id}
+                    className="record-item"
+                    onClick={() => handleNavigate(`/pages/stool/add/index?id=${record._id}`)}
+                  >
                     <Text className="record-time">{record.time}</Text>
                     <Text className="record-feeling">{getBristolEmoji(record.type)}</Text>
                     <Text className="record-desc">
