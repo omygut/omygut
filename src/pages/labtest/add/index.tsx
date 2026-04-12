@@ -302,17 +302,33 @@ export default function LabTestAdd() {
           </View>
           {indicators.length > 0 ? (
             <View className="indicators-list">
-              {indicators.map((indicator, index) => (
-                <View key={index} className="indicator-item">
-                  {indicator.category && (
-                    <Text className="indicator-category">{indicator.category}</Text>
-                  )}
-                  <Text className="indicator-name">{indicator.name}</Text>
-                  <Text className="indicator-value">
-                    {indicator.value} {indicator.unit || ""}
-                  </Text>
-                </View>
-              ))}
+              {indicators.map((indicator, index) => {
+                const refText =
+                  indicator.refValue ||
+                  (indicator.refMin !== undefined && indicator.refMax !== undefined
+                    ? `${indicator.refMin}-${indicator.refMax}`
+                    : indicator.refMin !== undefined
+                      ? `≥${indicator.refMin}`
+                      : indicator.refMax !== undefined
+                        ? `≤${indicator.refMax}`
+                        : "");
+                return (
+                  <View key={index} className="indicator-item">
+                    <View className="indicator-header">
+                      {indicator.category && (
+                        <Text className="indicator-category">{indicator.category}</Text>
+                      )}
+                      <Text className="indicator-name">{indicator.name}</Text>
+                    </View>
+                    <View className="indicator-details">
+                      <Text className="indicator-value">
+                        {indicator.value} {indicator.unit || ""}
+                      </Text>
+                      {refText && <Text className="indicator-ref">参考: {refText}</Text>}
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           ) : (
             <Text className="no-indicators">点击"AI 识别"按钮识别化验指标</Text>

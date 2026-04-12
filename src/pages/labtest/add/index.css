@@ -117,12 +117,17 @@
 
 .indicator-item {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 12px;
   padding: 16px;
   background-color: #f5f5f5;
   border-radius: 8px;
+}
+
+.indicator-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .indicator-category {
@@ -139,9 +144,21 @@
   font-weight: 500;
 }
 
+.indicator-details {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
 .indicator-value {
   font-size: 28px;
   color: #1890ff;
+  font-weight: 500;
+}
+
+.indicator-ref {
+  font-size: 24px;
+  color: #999;
 }
 
 .no-indicators {
