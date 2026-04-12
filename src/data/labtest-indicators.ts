@@ -641,14 +641,26 @@ export const STANDARD_INDICATORS: StandardIndicator[] = [
   },
   {
     "category": "血糖",
-    "nameZh": "葡萄糖",
-    "abbr": "Glu-S",
+    "nameZh": "空腹血糖",
+    "abbr": "Glu-F",
     "unit": "mmol/L",
     "refMin": 3.9,
     "refMax": 6.1,
     "aliases": [
-      "空腹血糖",
+      "葡萄糖",
       "血糖"
+    ]
+  },
+  {
+    "category": "血糖",
+    "nameZh": "餐后血糖",
+    "abbr": "Glu-P",
+    "unit": "mmol/L",
+    "refMin": 3.9,
+    "refMax": 7.8,
+    "aliases": [
+      "餐后2小时血糖",
+      "GLU(p)"
     ]
   }
 ];
