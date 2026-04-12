@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "./dist",
   "projectname": "mygut",
-  "description": "Gut Health",
+  "description": "MyGut - 肠道健康记录",
   "appid": "touristappid",
   "setting": {
     "urlCheck": true,

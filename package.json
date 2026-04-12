@@ -2,7 +2,7 @@
   "name": "mygut",
   "version": "1.0.0",
   "private": true,
-  "description": "Gut Health Tracker - 肠胃健康追踪",
+  "description": "MyGut - 肠道健康记录",
   "scripts": {
     "prepare": "lefthook install",
     "postinstall": "lefthook install",
