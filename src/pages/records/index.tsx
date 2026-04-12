@@ -5,11 +5,12 @@ import { symptomService } from "../../services/symptom";
 import { mealService } from "../../services/meal";
 import { stoolService } from "../../services/stool";
 import { medicationService } from "../../services/medication";
+import { labTestService } from "../../services/labtest";
 import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/date";
 import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
 import { AMOUNT_OPTIONS } from "../../constants/meal";
 import { BRISTOL_TYPES, STOOL_AMOUNTS } from "../../constants/stool";
-import type { SymptomRecord, MealRecord, StoolRecord, MedicationRecord } from "../../types";
+import type { SymptomRecord, MealRecord, StoolRecord, MedicationRecord, LabTestRecord } from "../../types";
 import "./index.css";
 
 const getFeelingEmoji = (value: number): string => {
@@ -44,20 +45,23 @@ export default function Records() {
   const [mealRecords, setMealRecords] = useState<MealRecord[]>([]);
   const [stoolRecords, setStoolRecords] = useState<StoolRecord[]>([]);
   const [medicationRecords, setMedicationRecords] = useState<MedicationRecord[]>([]);
+  const [labTestRecords, setLabTestRecords] = useState<LabTestRecord[]>([]);
 
   const loadData = useCallback(async (date: string) => {
     setLoading(true);
     try {
-      const [symptoms, meals, stools, medications] = await Promise.all([
+      const [symptoms, meals, stools, medications, labTests] = await Promise.all([
         symptomService.getByDate(date),
         mealService.getByDate(date),
         stoolService.getByDate(date),
         medicationService.getByDate(date),
+        labTestService.getByDate(date),
       ]);
       setSymptomRecords(symptoms);
       setMealRecords(meals);
       setStoolRecords(stools);
       setMedicationRecords(medications);
+      setLabTestRecords(labTests);
     } catch (error) {
       console.error("加载数据失败:", error);
       Taro.showToast({ title: "加载失败", icon: "none" });
@@ -278,6 +282,42 @@ export default function Records() {
                     <Text className="record-desc">
                       {getStoolAmountLabel(record.amount)}
                       {record.note && ` · ${record.note}`}
+                    </Text>
+                  </View>
+                ))
+              )}
+            </View>
+          </View>
+
+          {/* 化验记录 */}
+          <View className="record-card">
+            <View className="card-header">
+              <View className="card-title-row">
+                <Text className="card-icon">🧪</Text>
+                <Text className="card-title">化验</Text>
+                <Text className="card-count">[{labTestRecords.length}条]</Text>
+              </View>
+              <Text
+                className="card-add-btn"
+                onClick={() => handleNavigate("/pages/labtest/add/index")}
+              >
+                ＋
+              </Text>
+            </View>
+            <View className="card-content">
+              {labTestRecords.length === 0 ? (
+                <Text className="empty-hint">暂无记录</Text>
+              ) : (
+                labTestRecords.slice(0, 3).map((record) => (
+                  <View
+                    key={record._id}
+                    className="record-item"
+                    onClick={() => handleNavigate(`/pages/labtest/add/index?id=${record._id}`)}
+                  >
+                    <Text className="record-time">{record.time}</Text>
+                    <Text className="record-desc">
+                      {record.type}
+                      {record.imageFileIds.length > 0 && ` · ${record.imageFileIds.length}张图片`}
                     </Text>
                   </View>
                 ))

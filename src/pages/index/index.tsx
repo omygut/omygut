@@ -66,6 +66,13 @@ export default function Index() {
             <Text className="action-icon">💊</Text>
             <Text className="action-label">用药</Text>
           </View>
+          <View
+            className="action-item"
+            onClick={() => handleNavigate("/pages/labtest/add/index")}
+          >
+            <Text className="action-icon">🧪</Text>
+            <Text className="action-label">化验</Text>
+          </View>
         </View>
       </View>
     </View>
