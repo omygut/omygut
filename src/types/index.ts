@@ -50,7 +50,6 @@ export interface LabTestIndicator {
   name: string; // 指标名称
   value: string; // 数值
   unit?: string; // 单位
-  reference?: string; // 参考范围
   abnormal?: boolean; // 是否异常
 }
 

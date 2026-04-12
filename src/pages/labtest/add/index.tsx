@@ -328,9 +328,6 @@ export default function LabTestAdd() {
                   <Text className="indicator-value">
                     {indicator.value} {indicator.unit || ""}
                   </Text>
-                  {indicator.reference && (
-                    <Text className="indicator-reference">参考: {indicator.reference}</Text>
-                  )}
                 </View>
               ))}
             </View>

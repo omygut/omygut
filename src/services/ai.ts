@@ -2,22 +2,15 @@ import type { LabTestIndicator } from "../types";
 
 const MODEL = "Pro/moonshotai/Kimi-K2.5";
 
-const SYSTEM_PROMPT = `你是一个专业的医学化验单识别助手。请分析用户上传的化验单图片，提取所有化验指标信息。
+const SYSTEM_PROMPT = `识别化验单图片中的指标，返回CSV格式（无表头）。
 
-对于每个指标，请提取：
-- name: 指标名称
-- value: 检测数值
-- unit: 单位（如有）
-- reference: 参考范围（如有）
-- abnormal: 是否异常（true/false，根据参考范围判断，或根据图片上的标记如↑↓等）
+列：名称,数值,单位,异常(1或0,根据↑↓标记判断)
 
-请以 JSON 数组格式返回，例如：
-[
-  {"name": "白细胞", "value": "6.5", "unit": "10^9/L", "reference": "4.0-10.0", "abnormal": false},
-  {"name": "红细胞", "value": "3.2", "unit": "10^12/L", "reference": "4.0-5.5", "abnormal": true}
-]
+示例：
+白细胞,6.5,10^9/L,0
+红细胞,3.2,10^12/L,1
 
-只返回 JSON 数组，不要包含其他文字说明。如果无法识别任何指标，返回空数组 []。`;
+只返回CSV，无其他文字。`;
 
 type MessageContent =
   | string
@@ -111,14 +104,25 @@ export async function recognizeLabTestImage(imageFilePath: string): Promise<LabT
 
     console.log("AI 响应:", fullResponse);
 
-    // 解析 JSON 响应
-    const jsonMatch = fullResponse.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) {
-      console.error("无法解析 AI 响应:", fullResponse);
-      return [];
+    // 解析 CSV 响应
+    const lines = fullResponse
+      .trim()
+      .split("\n")
+      .filter((line) => line.trim());
+    const indicators: LabTestIndicator[] = [];
+
+    for (const line of lines) {
+      const parts = line.split(",");
+      if (parts.length >= 2) {
+        indicators.push({
+          name: parts[0]?.trim() || "",
+          value: parts[1]?.trim() || "",
+          unit: parts[2]?.trim() || undefined,
+          abnormal: parts[3]?.trim() === "1",
+        });
+      }
     }
 
-    const indicators = JSON.parse(jsonMatch[0]) as LabTestIndicator[];
     return indicators;
   } catch (error) {
     console.error("AI 识别失败:", error);
