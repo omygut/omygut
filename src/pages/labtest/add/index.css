@@ -159,7 +159,6 @@
   flex: 2;
   font-size: 24px;
   color: #1890ff;
-  text-align: center;
 }
 
 .abnormal-flag {
@@ -179,14 +178,12 @@
   flex: 2;
   font-size: 24px;
   color: #999;
-  text-align: center;
 }
 
 .indicator-col-unit {
   flex: 2;
   font-size: 24px;
   color: #666;
-  text-align: right;
 }
 
 .indicator-table-header .indicator-col-name,
