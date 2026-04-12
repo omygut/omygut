@@ -11,6 +11,7 @@ export default defineAppConfig({
     "pages/stool/add/index",
     "pages/medication/index/index",
     "pages/medication/add/index",
+    "pages/privacy/index",
   ],
   window: {
     backgroundTextStyle: "light",

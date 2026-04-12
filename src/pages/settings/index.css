@@ -88,6 +88,11 @@
   color: #999;
 }
 
+.about-arrow {
+  font-size: 36px;
+  color: #ccc;
+}
+
 /* 数据管理 */
 .data-section {
   background-color: #fff;
@@ -122,6 +127,7 @@
 .data-label-danger {
   color: #ff4d4f;
 }
+
 
 /* 联系客服 */
 .contact-section {

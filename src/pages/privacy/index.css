@@ -1,0 +1,26 @@
+.privacy-page {
+  min-height: 100vh;
+  padding: 32px;
+  background-color: #f5f5f5;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #333;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.section-content {
+  font-size: 28px;
+  color: #666;
+  line-height: 1.6;
+}

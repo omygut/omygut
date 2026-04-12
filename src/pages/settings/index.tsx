@@ -1,5 +1,5 @@
 import { View, Text, Image, Button } from "@tarojs/components";
-import { useDidShow } from "@tarojs/taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import { useState, useCallback } from "react";
 import { getUserSettings, getDefaultNickname } from "../../services/user";
 import { saveExportToFile } from "../../services/export";
@@ -82,6 +82,13 @@ export default function Settings() {
         <View className="about-item">
           <Text className="about-label">名称</Text>
           <Text className="about-value">{APP_NAME}</Text>
+        </View>
+        <View
+          className="about-item"
+          onClick={() => Taro.navigateTo({ url: "/pages/privacy/index" })}
+        >
+          <Text className="about-label">隐私政策</Text>
+          <Text className="about-arrow">›</Text>
         </View>
       </View>
 
