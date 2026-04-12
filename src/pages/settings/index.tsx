@@ -3,6 +3,7 @@ import { useDidShow } from "@tarojs/taro";
 import { useState, useCallback } from "react";
 import { getUserSettings, getDefaultNickname } from "../../services/user";
 import { saveExportToFile } from "../../services/export";
+import { confirmAndDeleteAllData } from "../../services/deleteAll";
 import ProfilePopup from "../../components/ProfilePopup";
 import "./index.css";
 
@@ -91,6 +92,11 @@ export default function Settings() {
           <Text className="data-arrow">›</Text>
         </View>
         <Text className="data-hint">导出所有历史记录为 JSON 文件</Text>
+        <View className="data-item" onClick={confirmAndDeleteAllData}>
+          <Text className="data-label data-label-danger">删除全部数据</Text>
+          <Text className="data-arrow">›</Text>
+        </View>
+        <Text className="data-hint">删除后数据无法恢复</Text>
       </View>
 
       <View className="contact-section">

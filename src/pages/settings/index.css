@@ -116,6 +116,11 @@
   font-size: 24px;
   color: #999;
   margin-top: 12px;
+  margin-bottom: 20px;
+}
+
+.data-label-danger {
+  color: #ff4d4f;
 }
 
 /* 联系客服 */
