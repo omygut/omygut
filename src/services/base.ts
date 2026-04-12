@@ -1,12 +1,7 @@
 import { getDatabase, getOpenId } from "../utils/cloud";
+import type { BaseRecord } from "../types";
 
-interface BaseRecord {
-  _id?: string;
-  userId: string;
-  date: string;
-  createdAt: Date;
-  deletedAt?: Date;
-}
+export type { BaseRecord };
 
 export function createRecordService<T extends BaseRecord>(collection: string) {
   return {
