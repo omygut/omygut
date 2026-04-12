@@ -1,58 +1,85 @@
-import { View, Text, Textarea, Picker } from "@tarojs/components";
-import Taro from "@tarojs/taro";
+import { View, Text, Textarea, Picker, Input } from "@tarojs/components";
+import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { symptomService } from "../../../services/symptom";
-import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
+import { SYMPTOM_SHORTCUTS, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
 import { formatDate, formatTime } from "../../../utils/date";
-import type { Symptom } from "../../../types";
+import type { SymptomRecord } from "../../../types";
 import "./index.css";
+
+const CUSTOM_SYMPTOMS_KEY = "custom_symptoms";
+
+function getStoredCustomSymptoms(): string[] {
+  const stored = Taro.getStorageSync(CUSTOM_SYMPTOMS_KEY);
+  return Array.isArray(stored) ? stored : [];
+}
+
+function saveCustomSymptom(symptom: string) {
+  const existing = getStoredCustomSymptoms();
+  if (!existing.includes(symptom)) {
+    Taro.setStorageSync(CUSTOM_SYMPTOMS_KEY, [...existing, symptom]);
+  }
+}
+
+function removeCustomSymptom(symptom: string) {
+  const existing = getStoredCustomSymptoms();
+  Taro.setStorageSync(
+    CUSTOM_SYMPTOMS_KEY,
+    existing.filter((s) => s !== symptom),
+  );
+}
 
 export default function SymptomAdd() {
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState(formatTime());
-  const [symptoms, setSymptoms] = useState<Symptom[]>([]);
+  const [symptoms, setSymptoms] = useState<string[]>([]);
+  const [customSymptom, setCustomSymptom] = useState("");
+  const [savedCustomSymptoms, setSavedCustomSymptoms] = useState<string[]>([]);
+  const [severity, setSeverity] = useState<SymptomRecord["severity"]>(undefined);
   const [overallFeeling, setOverallFeeling] = useState<1 | 2 | 3 | 4 | 5>(3);
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // 添加症状
-  const handleAddSymptom = (e) => {
-    const index = e.detail.value;
-    const selected = SYMPTOM_TYPES[index];
-    // 检查是否已添加
-    if (symptoms.some((s) => s.type === selected.value)) {
+  useDidShow(() => {
+    setSavedCustomSymptoms(getStoredCustomSymptoms());
+  });
+
+  const handleToggleSymptom = (symptom: string) => {
+    if (symptoms.includes(symptom)) {
+      setSymptoms(symptoms.filter((s) => s !== symptom));
+    } else {
+      setSymptoms([...symptoms, symptom]);
+    }
+  };
+
+  const handleAddCustomSymptom = () => {
+    const trimmed = customSymptom.trim();
+    if (!trimmed) return;
+    if (symptoms.includes(trimmed)) {
       Taro.showToast({ title: "已添加该症状", icon: "none" });
       return;
     }
-    setSymptoms([...symptoms, { type: selected.value, severity: 1 }]);
+    setSymptoms([...symptoms, trimmed]);
+    setCustomSymptom("");
+    // 保存到本地存储（如果不是预设的）
+    if (!SYMPTOM_SHORTCUTS.includes(trimmed as (typeof SYMPTOM_SHORTCUTS)[number])) {
+      saveCustomSymptom(trimmed);
+      setSavedCustomSymptoms(getStoredCustomSymptoms());
+    }
   };
 
-  // 修改症状严重程度
-  const handleSeverityChange = (symptomIndex: number, e) => {
-    const severityIndex = e.detail.value;
-    const newSymptoms = [...symptoms];
-    newSymptoms[symptomIndex].severity = SEVERITY_OPTIONS[severityIndex]
-      .value as Symptom["severity"];
-    setSymptoms(newSymptoms);
+  const handleDeleteCustomSymptom = async (symptom: string) => {
+    const res = await Taro.showModal({
+      title: "删除症状",
+      content: `确定要删除"${symptom}"吗？`,
+    });
+    if (res.confirm) {
+      removeCustomSymptom(symptom);
+      setSavedCustomSymptoms(getStoredCustomSymptoms());
+      setSymptoms(symptoms.filter((s) => s !== symptom));
+    }
   };
 
-  // 删除症状
-  const handleRemoveSymptom = (index: number) => {
-    const newSymptoms = [...symptoms];
-    newSymptoms.splice(index, 1);
-    setSymptoms(newSymptoms);
-  };
-
-  // 获取标签显示
-  const getSymptomLabel = (type: string) => {
-    return SYMPTOM_TYPES.find((s) => s.value === type)?.label || type;
-  };
-
-  const getSeverityInfo = (severity: 1 | 2 | 3) => {
-    return SEVERITY_OPTIONS.find((s) => s.value === severity);
-  };
-
-  // 提交
   const handleSubmit = async () => {
     if (submitting) return;
 
@@ -62,6 +89,7 @@ export default function SymptomAdd() {
         date,
         time,
         symptoms,
+        severity: symptoms.length > 0 ? severity : undefined,
         overallFeeling,
         note: note.trim() || undefined,
       });
@@ -112,50 +140,64 @@ export default function SymptomAdd() {
 
       {/* 症状 */}
       <View className="section">
-        <View className="section-header">
-          <Text className="section-title">症状</Text>
-          <Picker
-            mode="selector"
-            range={SYMPTOM_TYPES.map((s) => s.label)}
-            onChange={handleAddSymptom}
-          >
-            <Text className="add-symptom-btn">+ 添加症状</Text>
-          </Picker>
+        <Text className="section-title">症状（可选）</Text>
+        <View className="symptom-shortcuts">
+          {SYMPTOM_SHORTCUTS.map((symptom) => (
+            <View
+              key={symptom}
+              className={`symptom-tag ${symptoms.includes(symptom) ? "active" : ""}`}
+              onClick={() => handleToggleSymptom(symptom)}
+            >
+              {symptom}
+            </View>
+          ))}
+          {savedCustomSymptoms.map((symptom) => (
+            <View
+              key={symptom}
+              className={`symptom-tag custom ${symptoms.includes(symptom) ? "active" : ""}`}
+              onClick={() => handleToggleSymptom(symptom)}
+              onLongPress={() => handleDeleteCustomSymptom(symptom)}
+            >
+              {symptom}
+            </View>
+          ))}
         </View>
-
-        {symptoms.length === 0 ? (
-          <View className="empty-symptoms">
-            <Text className="empty-text">无症状</Text>
+        <View className="custom-symptom-row">
+          <Input
+            className="custom-symptom-input"
+            placeholder="输入其他症状"
+            value={customSymptom}
+            onInput={(e) => setCustomSymptom(e.detail.value)}
+            onConfirm={handleAddCustomSymptom}
+          />
+          <View className="custom-symptom-add" onClick={handleAddCustomSymptom}>
+            添加
           </View>
-        ) : (
-          <View className="symptom-list">
-            {symptoms.map((symptom, index) => {
-              const severity = getSeverityInfo(symptom.severity);
-              return (
-                <View key={index} className="symptom-item">
-                  <View className="symptom-main">
-                    <Text className="symptom-name">{getSymptomLabel(symptom.type)}</Text>
-                    <View className="symptom-actions">
-                      <Picker
-                        mode="selector"
-                        range={SEVERITY_OPTIONS.map((s) => s.label)}
-                        onChange={(e) => handleSeverityChange(index, e)}
-                      >
-                        <View className="severity-btn" style={{ backgroundColor: severity?.color }}>
-                          {severity?.label}
-                        </View>
-                      </Picker>
-                      <Text className="remove-btn" onClick={() => handleRemoveSymptom(index)}>
-                        删除
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-        )}
+        </View>
       </View>
+
+      {/* 严重程度 */}
+      {symptoms.length > 0 && (
+        <View className="section">
+          <Text className="section-title">严重程度</Text>
+          <View className="severity-options">
+            {SEVERITY_OPTIONS.map((option) => (
+              <View
+                key={option.value}
+                className={`severity-item ${severity === option.value ? "active" : ""}`}
+                style={{
+                  borderColor: severity === option.value ? option.color : "#f0f0f0",
+                  backgroundColor: severity === option.value ? `${option.color}15` : "transparent",
+                }}
+                onClick={() => setSeverity(option.value as SymptomRecord["severity"])}
+              >
+                <View className="severity-dot" style={{ backgroundColor: option.color }} />
+                <Text className="severity-label">{option.label}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
 
       {/* 备注 */}
       <View className="section">

@@ -111,19 +111,19 @@
   margin-bottom: 16px;
 }
 
+.severity-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 24px;
+  color: #fff;
+}
+
 .symptom-tag {
   display: flex;
   align-items: center;
-  gap: 8px;
   padding: 8px 16px;
   background-color: #f8f8f8;
   border-radius: 8px;
-}
-
-.severity-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
 }
 
 .symptom-name {

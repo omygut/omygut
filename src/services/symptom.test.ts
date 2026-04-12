@@ -20,7 +20,8 @@ describe("symptom service", () => {
       const id = await symptomService.add({
         date: "2026-04-11",
         time: "10:00",
-        symptoms: [{ type: "bloating", severity: 2 }],
+        symptoms: ["腹胀", "恶心"],
+        severity: 2,
         overallFeeling: 3,
       });
 

@@ -2,7 +2,7 @@ import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { symptomService } from "../../../services/symptom";
-import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
+import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
 import { formatDisplayDate } from "../../../utils/date";
 import type { SymptomRecord } from "../../../types";
 import "./index.css";
@@ -50,11 +50,8 @@ export default function SymptomIndex() {
     }
   };
 
-  const getSymptomLabel = (type: string) => {
-    return SYMPTOM_TYPES.find((s) => s.value === type)?.label || type;
-  };
-
-  const getSeverityInfo = (severity: 1 | 2 | 3) => {
+  const getSeverityInfo = (severity?: 1 | 2 | 3) => {
+    if (!severity) return null;
     return SEVERITY_OPTIONS.find((s) => s.value === severity);
   };
 
@@ -98,18 +95,19 @@ export default function SymptomIndex() {
 
                   {record.symptoms.length > 0 && (
                     <View className="symptoms">
-                      {record.symptoms.map((symptom, idx) => {
-                        const severity = getSeverityInfo(symptom.severity);
-                        return (
-                          <View key={idx} className="symptom-tag">
-                            <Text
-                              className="severity-dot"
-                              style={{ backgroundColor: severity?.color }}
-                            />
-                            <Text className="symptom-name">{getSymptomLabel(symptom.type)}</Text>
-                          </View>
-                        );
-                      })}
+                      {record.severity && (
+                        <View
+                          className="severity-badge"
+                          style={{ backgroundColor: getSeverityInfo(record.severity)?.color }}
+                        >
+                          {getSeverityInfo(record.severity)?.label}
+                        </View>
+                      )}
+                      {record.symptoms.map((symptom, idx) => (
+                        <View key={idx} className="symptom-tag">
+                          <Text className="symptom-name">{symptom}</Text>
+                        </View>
+                      ))}
                     </View>
                   )}
 

@@ -6,26 +6,23 @@ import { mealService } from "../../services/meal";
 import { stoolService } from "../../services/stool";
 import { medicationService } from "../../services/medication";
 import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/date";
-import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
+import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
 import { AMOUNT_OPTIONS } from "../../constants/meal";
 import { BRISTOL_TYPES, STOOL_AMOUNTS } from "../../constants/stool";
-import type {
-  SymptomRecord,
-  MealRecord,
-  StoolRecord,
-  MedicationRecord,
-  Symptom,
-} from "../../types";
+import type { SymptomRecord, MealRecord, StoolRecord, MedicationRecord } from "../../types";
 import "./index.css";
 
 const getFeelingEmoji = (value: number): string => {
   return FEELING_OPTIONS.find((f) => f.value === value)?.emoji || "😐";
 };
 
-const formatSymptom = (symptom: Symptom): string => {
-  const typeLabel = SYMPTOM_TYPES.find((t) => t.value === symptom.type)?.label || symptom.type;
-  const severityLabel = SEVERITY_OPTIONS.find((s) => s.value === symptom.severity)?.label || "";
-  return `${typeLabel}(${severityLabel})`;
+const formatSymptoms = (symptoms: string[]): string => {
+  return symptoms.join("、");
+};
+
+const getSeverityInfo = (severity?: 1 | 2 | 3) => {
+  if (!severity) return null;
+  return SEVERITY_OPTIONS.find((s) => s.value === severity);
 };
 
 const getAmountEmoji = (amount: number): string => {
@@ -38,22 +35,6 @@ const getBristolEmoji = (type: number): string => {
 
 const getStoolAmountLabel = (amount: number): string => {
   return STOOL_AMOUNTS.find((a) => a.value === amount)?.label || "";
-};
-
-const formatStoolAbnormal = (record: StoolRecord): string => {
-  const abnormals: string[] = [];
-  if (record.hasBlood) abnormals.push("带血");
-  if (record.hasMucus) abnormals.push("带粘液");
-  if (record.color !== "normal") {
-    const colorLabels: Record<string, string> = {
-      dark: "深色",
-      light: "浅色",
-      red: "带红",
-      black: "黑色",
-    };
-    abnormals.push(colorLabels[record.color] || "");
-  }
-  return abnormals.length > 0 ? abnormals.join("、") : "";
 };
 
 export default function Records() {
@@ -158,17 +139,28 @@ export default function Records() {
               {symptomRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
-                symptomRecords.slice(0, 3).map((record) => (
-                  <View key={record._id} className="record-item">
-                    <Text className="record-time">{record.time || "--:--"}</Text>
-                    <Text className="record-feeling">{getFeelingEmoji(record.overallFeeling)}</Text>
-                    {record.symptoms.length > 0 && (
-                      <Text className="record-desc">
-                        {record.symptoms.map(formatSymptom).join("、")}
+                symptomRecords.slice(0, 3).map((record) => {
+                  const severity = getSeverityInfo(record.severity);
+                  return (
+                    <View key={record._id} className="record-item">
+                      <Text className="record-time">{record.time || "--:--"}</Text>
+                      <Text className="record-feeling">
+                        {getFeelingEmoji(record.overallFeeling)}
                       </Text>
-                    )}
-                  </View>
-                ))
+                      {severity && (
+                        <Text
+                          className="record-severity"
+                          style={{ backgroundColor: severity.color }}
+                        >
+                          {severity.label}
+                        </Text>
+                      )}
+                      {record.symptoms.length > 0 && (
+                        <Text className="record-desc">{formatSymptoms(record.symptoms)}</Text>
+                      )}
+                    </View>
+                  );
+                })
               )}
             </View>
           </View>
@@ -263,19 +255,16 @@ export default function Records() {
               {stoolRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
-                stoolRecords.slice(0, 3).map((record) => {
-                  const abnormal = formatStoolAbnormal(record);
-                  return (
-                    <View key={record._id} className="record-item">
-                      <Text className="record-time">{record.time}</Text>
-                      <Text className="record-feeling">{getBristolEmoji(record.type)}</Text>
-                      <Text className="record-desc">
-                        {getStoolAmountLabel(record.amount)}
-                        {abnormal && ` · ${abnormal}`}
-                      </Text>
-                    </View>
-                  );
-                })
+                stoolRecords.slice(0, 3).map((record) => (
+                  <View key={record._id} className="record-item">
+                    <Text className="record-time">{record.time}</Text>
+                    <Text className="record-feeling">{getBristolEmoji(record.type)}</Text>
+                    <Text className="record-desc">
+                      {getStoolAmountLabel(record.amount)}
+                      {record.note && ` · ${record.note}`}
+                    </Text>
+                  </View>
+                ))
               )}
             </View>
           </View>

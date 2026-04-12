@@ -6,19 +6,14 @@ export interface User {
   createdAt: Date;
 }
 
-// 症状
-export interface Symptom {
-  type: string;
-  severity: 1 | 2 | 3; // 轻度、中度、重度
-}
-
 // 症状记录
 export interface SymptomRecord {
   _id?: string;
   userId: string;
   date: string; // 2026-04-10
   time: string; // 08:30
-  symptoms: Symptom[];
+  symptoms: string[]; // 症状列表
+  severity?: 1 | 2 | 3; // 整体严重程度：轻度、中度、重度
   overallFeeling: 1 | 2 | 3 | 4 | 5; // 整体感受 1很差 - 5很好
   note?: string;
   createdAt: Date;
