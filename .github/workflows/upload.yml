@@ -1,0 +1,66 @@
+name: Upload to WeChat
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version_changed: ${{ steps.check.outputs.changed }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if version changed
+        id: check
+        run: |
+          CURRENT=$(jq -r .version package.json)
+          git show HEAD^:package.json > /tmp/prev.json 2>/dev/null || echo '{"version":"0.0.0"}' > /tmp/prev.json
+          PREVIOUS=$(jq -r .version /tmp/prev.json)
+          echo "Current: $CURRENT, Previous: $PREVIOUS"
+          if [ "$CURRENT" != "$PREVIOUS" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  upload:
+    runs-on: ubuntu-latest
+    needs: check-version
+    if: needs.check-version.outputs.version_changed == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Setup upload key
+        run: echo "${{ secrets.WEIXIN_UPLOAD_KEY }}" > /tmp/upload.key
+
+      - name: Upload to WeChat
+        run: |
+          npx miniprogram-ci upload \
+            --pp ./dist \
+            --pkp /tmp/upload.key \
+            --appid ${{ secrets.WEIXIN_APPID }} \
+            --uv ${{ needs.check-version.outputs.version }} \
+            -r 1 \
+            --desc "Auto upload from CI"
