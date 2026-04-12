@@ -5,6 +5,7 @@ interface BaseRecord {
   userId: string;
   date: string;
   createdAt: Date;
+  deletedAt?: Date;
 }
 
 export function createRecordService<T extends BaseRecord>(collection: string) {
@@ -21,9 +22,13 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
     async getRecent(limit = 20): Promise<T[]> {
       const db = getDatabase();
       const userId = await getOpenId();
+      const _ = db.command;
       const res = await db
         .collection(collection)
-        .where({ userId })
+        .where({
+          userId,
+          deletedAt: _.exists(false),
+        })
         .orderBy("createdAt", "desc")
         .limit(limit)
         .get();
@@ -32,15 +37,25 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
 
     async delete(id: string): Promise<void> {
       const db = getDatabase();
-      await db.collection(collection).doc(id).remove();
+      await db
+        .collection(collection)
+        .doc(id)
+        .update({
+          data: { deletedAt: new Date() },
+        });
     },
 
     async getByDate(date: string): Promise<T[]> {
       const db = getDatabase();
       const userId = await getOpenId();
+      const _ = db.command;
       const res = await db
         .collection(collection)
-        .where({ userId, date })
+        .where({
+          userId,
+          date,
+          deletedAt: _.exists(false),
+        })
         .orderBy("time", "asc")
         .get();
       return res.data as T[];

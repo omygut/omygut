@@ -8,9 +8,23 @@ const E2E_TEST_USER_ID = "e2e_test_user";
 // 内存数据库存储
 const memoryStore: Map<string, Record<string, unknown>[]> = new Map();
 
+// 查询命令标记
+const EXISTS_FALSE = Symbol("exists_false");
+
+// 内存数据库命令
+const memoryCommand = {
+  exists(value: boolean) {
+    if (value === false) {
+      return EXISTS_FALSE;
+    }
+    return { __exists: value };
+  },
+};
+
 // 内存数据库实现
 function createMemoryDatabase() {
   return {
+    command: memoryCommand,
     collection(name: string) {
       if (!memoryStore.has(name)) {
         memoryStore.set(name, []);
@@ -43,7 +57,12 @@ function createMemoryCollection(data: Record<string, unknown>[]) {
     },
     async get() {
       let result = data.filter((item) => {
-        return Object.entries(filters).every(([key, value]) => item[key] === value);
+        return Object.entries(filters).every(([key, value]) => {
+          if (value === EXISTS_FALSE) {
+            return !(key in item) || item[key] === undefined || item[key] === null;
+          }
+          return item[key] === value;
+        });
       });
 
       if (sortField) {
