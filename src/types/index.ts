@@ -44,3 +44,12 @@ export interface MedicationRecord extends BaseRecord {
   dosage: string;
   note?: string;
 }
+
+// 导出数据
+export interface ExportData {
+  exportedAt: string;
+  stool_records: StoolRecord[];
+  symptom_records: SymptomRecord[];
+  meal_records: MealRecord[];
+  medication_records: MedicationRecord[];
+}

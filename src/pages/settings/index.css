@@ -88,6 +88,30 @@
   color: #999;
 }
 
+/* 数据管理 */
+.data-section {
+  background-color: #fff;
+  padding: 28px 32px;
+  margin-top: 20px;
+}
+
+.data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.data-label {
+  font-size: 30px;
+  color: #333;
+}
+
+.data-arrow {
+  font-size: 40px;
+  color: #ccc;
+}
+
 /* 联系客服 */
 .contact-section {
   padding: 40px 32px;
