@@ -164,7 +164,7 @@ export default function MealAdd() {
             className={`category-tab ${selectedCategory === -1 ? "active" : ""}`}
             onClick={() => setSelectedCategory(-1)}
           >
-            我的常用
+            常用
           </View>
           {FOOD_CATEGORIES.map((cat, index) => (
             <View
