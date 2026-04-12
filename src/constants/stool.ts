@@ -17,13 +17,4 @@ export const STOOL_AMOUNTS = [
 ] as const;
 
 // 备注快捷输入
-export const NOTE_SHORTCUTS = [
-  "带血",
-  "带粘液",
-  "黑便",
-  "恶臭",
-  "未消化食物",
-  "便秘",
-  "急迫感",
-  "排不净",
-] as const;
+export const NOTE_SHORTCUTS = ["血便", "黑便", "粘液", "便秘", "急迫感", "排不净"] as const;
