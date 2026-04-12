@@ -119,6 +119,13 @@
   margin-right: 8px;
 }
 
+.record-severity {
+  font-size: 22px;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
 .record-desc {
   font-size: 28px;
   color: #333;
