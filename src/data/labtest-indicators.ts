@@ -662,5 +662,46 @@ export const STANDARD_INDICATORS: StandardIndicator[] = [
       "餐后2小时血糖",
       "GLU(p)"
     ]
+  },
+  {
+    "category": "心肌标志物",
+    "nameZh": "肌酸激酶",
+    "abbr": "CK",
+    "unit": "U/L",
+    "refMin": 24,
+    "refMax": 195,
+    "aliases": [
+      "肌酸激酶"
+    ]
+  },
+  {
+    "category": "心肌标志物",
+    "nameZh": "肌酸激酶MB质量",
+    "abbr": "CK-MB",
+    "unit": "μg/L",
+    "refMax": 5,
+    "aliases": [
+      "肌酸激酶MB",
+      "CK-MB质量"
+    ]
+  },
+  {
+    "category": "心肌标志物",
+    "nameZh": "高敏心肌肌钙蛋白I",
+    "abbr": "hs-cTnI",
+    "unit": "ng/L",
+    "refMax": 54,
+    "aliases": [
+      "心肌肌钙蛋白I",
+      "肌钙蛋白I",
+      "cTnI"
+    ]
+  },
+  {
+    "category": "心肌标志物",
+    "nameZh": "肌红蛋白",
+    "abbr": "MYO",
+    "unit": "μg/L",
+    "refMax": 110
   }
 ];
