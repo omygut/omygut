@@ -3,6 +3,7 @@ import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect, useRef } from "react";
 import { labTestService } from "../../../services/labtest";
 import { recognizeLabTestImage } from "../../../services/ai";
+import { normalizeIndicators } from "../../../services/lab-standards";
 import { chooseImage, uploadImage, deleteCloudFile } from "../../../utils/upload";
 import { formatDate, formatTime } from "../../../utils/date";
 import type { LabTestIndicator } from "../../../types";
@@ -126,7 +127,9 @@ export default function LabTestAdd() {
       // 识别本地图片
       const recognitionPromises = localImages.map((path) => recognizeLabTestImage(path));
       const recognitionResults = await Promise.all(recognitionPromises);
-      const newIndicators = recognitionResults.flat();
+      const rawIndicators = recognitionResults.flat();
+      // 归一化指标
+      const newIndicators = normalizeIndicators(rawIndicators);
       setIndicators(newIndicators);
       Taro.hideLoading();
 
