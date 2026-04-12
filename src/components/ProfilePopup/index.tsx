@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, Image, Input, Button } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { updateUser, uploadAvatar } from "../../services/user";
+import { updateUserSettings, uploadAvatar } from "../../services/user";
 import "./index.css";
 
 interface ProfilePopupProps {
@@ -48,8 +48,8 @@ export default function ProfilePopup({
         avatarFileId = await uploadAvatar(tempAvatarPath);
       }
 
-      // 更新用户信息
-      await updateUser({
+      // 更新用户设置
+      await updateUserSettings({
         nickname: currentNickname,
         avatar: avatarFileId,
       });

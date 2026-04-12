@@ -5,7 +5,7 @@ import { getSymptomRecordsByDate } from "../../services/symptom";
 import { getMealRecordsByDate } from "../../services/meal";
 import { getStoolRecordsByDate } from "../../services/stool";
 import { getMedicationRecordsByDate } from "../../services/medication";
-import { getCurrentUser, getDefaultNickname } from "../../services/user";
+import { getUserSettings, getDefaultNickname } from "../../services/user";
 import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/date";
 import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
 import { AMOUNT_OPTIONS } from "../../constants/meal";
@@ -17,7 +17,6 @@ import type {
   StoolRecord,
   MedicationRecord,
   Symptom,
-  User,
 } from "../../types";
 import "./index.css";
 
@@ -66,7 +65,11 @@ export default function Index() {
   const [mealRecords, setMealRecords] = useState<MealRecord[]>([]);
   const [stoolRecords, setStoolRecords] = useState<StoolRecord[]>([]);
   const [medicationRecords, setMedicationRecords] = useState<MedicationRecord[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+  const [userSettings, setUserSettings] = useState<{
+    userId: string;
+    nickname?: string;
+    avatar?: string;
+  } | null>(null);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
 
   const loadData = useCallback(async (date: string) => {
@@ -90,18 +93,18 @@ export default function Index() {
     }
   }, []);
 
-  const loadUser = useCallback(async () => {
+  const loadUserSettings = useCallback(async () => {
     try {
-      const userData = await getCurrentUser();
-      setUser(userData);
+      const settings = await getUserSettings();
+      setUserSettings(settings);
     } catch (error) {
-      console.error("加载用户信息失败:", error);
+      console.error("加载用户设置失败:", error);
     }
   }, []);
 
   useDidShow(() => {
     loadData(currentDate);
-    loadUser();
+    loadUserSettings();
   });
 
   const handlePrevDate = () => {
@@ -139,19 +142,20 @@ export default function Index() {
   };
 
   const handleProfileSave = (data: { nickname: string; avatar?: string }) => {
-    setUser((prev) => (prev ? { ...prev, ...data } : prev));
+    setUserSettings((prev) => (prev ? { ...prev, ...data } : prev));
     setShowProfilePopup(false);
   };
 
-  const displayNickname = user?.nickname || (user?._id ? getDefaultNickname(user._id) : "");
+  const displayNickname =
+    userSettings?.nickname || (userSettings?.userId ? getDefaultNickname(userSettings.userId) : "");
 
   return (
     <View className="overview-page">
       {/* 顶部栏：头像 + 日期选择器 */}
       <View className="top-header">
         <View className="header-avatar" onClick={handleAvatarClick}>
-          {user?.avatar ? (
-            <Image className="avatar-img" src={user.avatar} mode="aspectFill" />
+          {userSettings?.avatar ? (
+            <Image className="avatar-img" src={userSettings.avatar} mode="aspectFill" />
           ) : (
             <View className="avatar-default" />
           )}
@@ -174,7 +178,7 @@ export default function Index() {
       <ProfilePopup
         visible={showProfilePopup}
         nickname={displayNickname}
-        avatar={user?.avatar}
+        avatar={userSettings?.avatar}
         onClose={handleProfileClose}
         onSave={handleProfileSave}
       />

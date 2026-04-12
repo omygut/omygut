@@ -1,57 +1,71 @@
 import Taro from "@tarojs/taro";
 import { getDatabase, getOpenId } from "../utils/cloud";
-import type { User } from "../types";
 
-const COLLECTION = "users";
+const COLLECTION = "user_settings";
 
-// 获取当前用户信息
-export async function getCurrentUser(): Promise<User> {
+interface UserSettings {
+  _id?: string;
+  userId: string;
+  nickname?: string;
+  avatar?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+// 获取当前用户设置
+export async function getUserSettings(): Promise<UserSettings> {
   const db = getDatabase();
-  const openId = await getOpenId();
+  const userId = await getOpenId();
 
   try {
-    const res = (await db.collection(COLLECTION).doc(openId).get()) as { data: User | null };
+    const res = await db.collection(COLLECTION).where({ userId }).limit(1).get();
 
-    if (res.data) {
-      return res.data;
+    if (res.data && res.data.length > 0) {
+      return res.data[0] as UserSettings;
     }
   } catch {
-    // 用户不存在
+    // 用户设置不存在
   }
 
-  // 用户不存在，返回默认值
+  // 返回默认值
   return {
-    _id: openId,
-    createdAt: new Date(),
+    userId,
   };
 }
 
 // 获取默认昵称
-export function getDefaultNickname(openId: string): string {
-  return `微信用户 ${openId.slice(-4)}`;
+export function getDefaultNickname(userId: string): string {
+  return `微信用户 ${userId.slice(-4)}`;
 }
 
-// 更新用户信息（如果用户不存在则创建）
-export async function updateUser(data: { nickname?: string; avatar?: string }): Promise<void> {
+// 更新用户设置（如果不存在则创建）
+export async function updateUserSettings(data: {
+  nickname?: string;
+  avatar?: string;
+}): Promise<void> {
   const db = getDatabase();
-  const openId = await getOpenId();
+  const userId = await getOpenId();
 
-  try {
-    // 先尝试更新
+  // 查找现有记录
+  const res = await db.collection(COLLECTION).where({ userId }).limit(1).get();
+
+  if (res.data && res.data.length > 0) {
+    // 更新现有记录
+    const doc = res.data[0] as UserSettings;
     await db
       .collection(COLLECTION)
-      .doc(openId)
+      .doc(doc._id!)
       .update({
         data: {
           ...data,
           updatedAt: new Date(),
         },
       });
-  } catch {
-    // 用户不存在，创建新记录
+  } else {
+    // 创建新记录
     await db.collection(COLLECTION).add({
       data: {
-        _id: openId,
+        userId,
         ...data,
         createdAt: new Date(),
       },
