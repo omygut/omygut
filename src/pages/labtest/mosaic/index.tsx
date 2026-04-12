@@ -209,8 +209,8 @@ export default function MosaicEditor() {
     <View className="mosaic-page">
       <View className="tips">
         <Text className="tips-text">
-          图片将用于 AI
-          识别化验指标，除此之外只有您本人可以读写，其他人无法访问。请用手指框选并遮盖姓名、身份证号、住址、电话等敏感信息。点击"确认"即表示您已确认图片中不含敏感个人信息。
+          您上传的图片将用于 AI
+          自动识别化验指标。请用手指框选并遮盖姓名、身份证号、住址、电话等敏感信息，确认图片中不含敏感个人信息后再点击"确认"。
         </Text>
       </View>
 
