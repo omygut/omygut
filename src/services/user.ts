@@ -31,20 +31,32 @@ export function getDefaultNickname(openId: string): string {
   return `微信用户 ${openId.slice(-4)}`;
 }
 
-// 更新用户信息
+// 更新用户信息（如果用户不存在则创建）
 export async function updateUser(data: { nickname?: string; avatar?: string }): Promise<void> {
   const db = getDatabase();
   const openId = await getOpenId();
 
-  await db
-    .collection(COLLECTION)
-    .doc(openId)
-    .update({
+  try {
+    // 先尝试更新
+    await db
+      .collection(COLLECTION)
+      .doc(openId)
+      .update({
+        data: {
+          ...data,
+          updatedAt: new Date(),
+        },
+      });
+  } catch {
+    // 用户不存在，创建新记录
+    await db.collection(COLLECTION).add({
       data: {
+        _id: openId,
         ...data,
-        updatedAt: new Date(),
+        createdAt: new Date(),
       },
     });
+  }
 }
 
 // 上传头像到云存储
