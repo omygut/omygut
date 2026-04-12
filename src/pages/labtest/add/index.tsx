@@ -54,6 +54,7 @@ export default function LabTestAdd() {
         setTime(record.time || formatTime());
         setType(record.type);
         setUploadedImages(record.imageFileIds || []);
+        setIndicators(record.indicators || []);
       }
     } catch (error) {
       console.error("加载记录失败:", error);
