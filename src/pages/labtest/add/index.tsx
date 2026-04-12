@@ -331,14 +331,14 @@ export default function LabTestAdd() {
                       <View className="indicator-table-header">
                         <Text className="indicator-col-name">指标</Text>
                         <Text className="indicator-col-value">结果</Text>
-                        <Text className="indicator-col-ref">参考范围</Text>
+                        <Text className="indicator-col-unit">单位</Text>
+                        <Text className="indicator-col-ref">参考</Text>
                       </View>
                       {items.map((ind, idx) => (
                         <View key={idx} className="indicator-table-row">
                           <Text className="indicator-col-name">{ind.name}</Text>
-                          <Text className="indicator-col-value">
-                            {ind.value} {ind.unit || ""}
-                          </Text>
+                          <Text className="indicator-col-value">{ind.value}</Text>
+                          <Text className="indicator-col-unit">{ind.unit || "-"}</Text>
                           <Text className="indicator-col-ref">{getRefText(ind)}</Text>
                         </View>
                       ))}

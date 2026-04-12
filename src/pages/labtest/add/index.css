@@ -150,7 +150,7 @@
 }
 
 .indicator-col-name {
-  flex: 2;
+  flex: 3;
   font-size: 26px;
   color: #333;
 }
@@ -159,6 +159,13 @@
   flex: 2;
   font-size: 26px;
   color: #1890ff;
+  text-align: center;
+}
+
+.indicator-col-unit {
+  flex: 2;
+  font-size: 26px;
+  color: #666;
   text-align: center;
 }
 
@@ -171,6 +178,7 @@
 
 .indicator-table-header .indicator-col-name,
 .indicator-table-header .indicator-col-value,
+.indicator-table-header .indicator-col-unit,
 .indicator-table-header .indicator-col-ref {
   font-size: 24px;
   color: #666;
