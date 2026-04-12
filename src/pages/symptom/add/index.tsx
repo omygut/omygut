@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { symptomService } from "../../../services/symptom";
 import { SYMPTOM_SHORTCUTS, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
 import { formatDate, formatTime } from "../../../utils/date";
+import { validateSymptom } from "../../../utils/validation";
 import type { SymptomRecord } from "../../../types";
 import "./index.css";
 
@@ -85,6 +86,13 @@ export default function SymptomAdd() {
   const handleAddCustomSymptom = () => {
     const trimmed = customSymptom.trim();
     if (!trimmed) return;
+
+    const error = validateSymptom(trimmed);
+    if (error) {
+      Taro.showToast({ title: error, icon: "none" });
+      return;
+    }
+
     if (symptoms.includes(trimmed)) {
       Taro.showToast({ title: "已添加该症状", icon: "none" });
       return;
