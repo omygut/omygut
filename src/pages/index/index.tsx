@@ -6,15 +6,24 @@ import { getMealRecordsByDate } from "../../services/meal";
 import { getStoolRecordsByDate } from "../../services/stool";
 import { getMedicationRecordsByDate } from "../../services/medication";
 import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/date";
-import type { SymptomRecord, MealRecord, StoolRecord, MedicationRecord } from "../../types";
+import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
+import type {
+  SymptomRecord,
+  MealRecord,
+  StoolRecord,
+  MedicationRecord,
+  Symptom,
+} from "../../types";
 import "./index.css";
 
-const FEELING_EMOJI: Record<number, string> = {
-  1: "😫",
-  2: "😟",
-  3: "😐",
-  4: "😊",
-  5: "😄",
+const getFeelingEmoji = (value: number): string => {
+  return FEELING_OPTIONS.find((f) => f.value === value)?.emoji || "😐";
+};
+
+const formatSymptom = (symptom: Symptom): string => {
+  const typeLabel = SYMPTOM_TYPES.find((t) => t.value === symptom.type)?.label || symptom.type;
+  const severityLabel = SEVERITY_OPTIONS.find((s) => s.value === symptom.severity)?.label || "";
+  return `${typeLabel}(${severityLabel})`;
 };
 
 export default function Index() {
@@ -122,10 +131,10 @@ export default function Index() {
                 symptomRecords.slice(0, 3).map((record) => (
                   <View key={record._id} className="record-item">
                     <Text className="record-time">{record.time || "--:--"}</Text>
-                    <Text className="record-feeling">{FEELING_EMOJI[record.overallFeeling]}</Text>
+                    <Text className="record-feeling">{getFeelingEmoji(record.overallFeeling)}</Text>
                     {record.symptoms.length > 0 && (
                       <Text className="record-desc">
-                        {record.symptoms.map((s) => s.type).join("、")}
+                        {record.symptoms.map(formatSymptom).join("、")}
                       </Text>
                     )}
                   </View>
