@@ -22,6 +22,7 @@ export interface SymptomRecord {
   overallFeeling: 1 | 2 | 3 | 4 | 5; // 整体感受 1很差 - 5很好
   note?: string;
   createdAt: Date;
+  deletedAt?: Date;
 }
 
 // 饮食记录
@@ -34,6 +35,7 @@ export interface MealRecord {
   amount: 1 | 2 | 3; // 1-少量 2-适中 3-大量
   note?: string;
   createdAt: Date;
+  deletedAt?: Date;
 }
 
 // 排便记录
@@ -49,6 +51,7 @@ export interface StoolRecord {
   hasMucus?: boolean;
   note?: string;
   createdAt: Date;
+  deletedAt?: Date;
 }
 
 // 用药记录
@@ -61,4 +64,5 @@ export interface MedicationRecord {
   dosage: string;
   note?: string;
   createdAt: Date;
+  deletedAt?: Date;
 }
