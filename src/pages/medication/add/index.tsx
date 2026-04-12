@@ -1,7 +1,7 @@
 import { View, Text, Input, Textarea, Picker } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
-import { addMedicationRecord } from "../../../services/medication";
+import { medicationService } from "../../../services/medication";
 import { MEDICATION_CATEGORIES } from "../../../constants/medication";
 import { formatDate, formatTime } from "../../../utils/date";
 import "./index.css";
@@ -48,7 +48,7 @@ export default function MedicationAdd() {
 
     setSubmitting(true);
     try {
-      await addMedicationRecord({
+      await medicationService.add({
         date,
         time,
         name: selectedMedication,

@@ -1,7 +1,7 @@
 import { View, Text, Textarea, Picker } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
-import { addSymptomRecord } from "../../../services/symptom";
+import { symptomService } from "../../../services/symptom";
 import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
 import { formatDate, formatTime } from "../../../utils/date";
 import type { Symptom } from "../../../types";
@@ -58,7 +58,7 @@ export default function SymptomAdd() {
 
     setSubmitting(true);
     try {
-      await addSymptomRecord({
+      await symptomService.add({
         date,
         time,
         symptoms,

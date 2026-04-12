@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { addStoolRecord, getRecentStoolRecords, deleteStoolRecord } from "./stool";
+import { stoolService } from "./stool";
 
 vi.mock("../utils/cloud", async (importOriginal) => {
   const original = await importOriginal<typeof import("../utils/cloud")>();
@@ -14,9 +14,9 @@ describe("stool service", () => {
     vi.clearAllMocks();
   });
 
-  describe("addStoolRecord", () => {
+  describe("add", () => {
     it("should add a stool record and return id", async () => {
-      const id = await addStoolRecord({
+      const id = await stoolService.add({
         date: "2026-04-11",
         time: "08:30",
         type: 4,
@@ -29,7 +29,7 @@ describe("stool service", () => {
     });
 
     it("should add record with optional fields", async () => {
-      const id = await addStoolRecord({
+      const id = await stoolService.add({
         date: "2026-04-11",
         time: "09:00",
         type: 6,
@@ -44,9 +44,9 @@ describe("stool service", () => {
     });
   });
 
-  describe("getRecentStoolRecords", () => {
+  describe("getRecent", () => {
     it("should return records for current user", async () => {
-      await addStoolRecord({
+      await stoolService.add({
         date: "2026-04-11",
         time: "08:30",
         type: 4,
@@ -54,13 +54,13 @@ describe("stool service", () => {
         amount: 2,
       });
 
-      const records = await getRecentStoolRecords(10);
+      const records = await stoolService.getRecent(10);
       expect(records.length).toBeGreaterThan(0);
       expect(records[0].userId).toBe("test_user_001");
     });
 
     it("should order by createdAt descending", async () => {
-      const records = await getRecentStoolRecords(10);
+      const records = await stoolService.getRecent(10);
 
       if (records.length >= 2) {
         for (let i = 0; i < records.length - 1; i++) {
@@ -72,9 +72,9 @@ describe("stool service", () => {
     });
   });
 
-  describe("deleteStoolRecord", () => {
+  describe("delete", () => {
     it("should delete a record", async () => {
-      const id = await addStoolRecord({
+      const id = await stoolService.add({
         date: "2026-04-11",
         time: "10:00",
         type: 4,
@@ -82,12 +82,12 @@ describe("stool service", () => {
         amount: 2,
       });
 
-      const beforeRecords = await getRecentStoolRecords(100);
+      const beforeRecords = await stoolService.getRecent(100);
       const countBefore = beforeRecords.length;
 
-      await deleteStoolRecord(id);
+      await stoolService.delete(id);
 
-      const afterRecords = await getRecentStoolRecords(100);
+      const afterRecords = await stoolService.getRecent(100);
       expect(afterRecords.length).toBe(countBefore - 1);
     });
   });

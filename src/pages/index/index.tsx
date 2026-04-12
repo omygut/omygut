@@ -1,10 +1,10 @@
 import { View, Text, Picker, Image } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState, useCallback } from "react";
-import { getSymptomRecordsByDate } from "../../services/symptom";
-import { getMealRecordsByDate } from "../../services/meal";
-import { getStoolRecordsByDate } from "../../services/stool";
-import { getMedicationRecordsByDate } from "../../services/medication";
+import { symptomService } from "../../services/symptom";
+import { mealService } from "../../services/meal";
+import { stoolService } from "../../services/stool";
+import { medicationService } from "../../services/medication";
 import { getUserSettings, getDefaultNickname } from "../../services/user";
 import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/date";
 import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
@@ -76,10 +76,10 @@ export default function Index() {
     setLoading(true);
     try {
       const [symptoms, meals, stools, medications] = await Promise.all([
-        getSymptomRecordsByDate(date),
-        getMealRecordsByDate(date),
-        getStoolRecordsByDate(date),
-        getMedicationRecordsByDate(date),
+        symptomService.getByDate(date),
+        mealService.getByDate(date),
+        stoolService.getByDate(date),
+        medicationService.getByDate(date),
       ]);
       setSymptomRecords(symptoms);
       setMealRecords(meals);

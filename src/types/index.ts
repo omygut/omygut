@@ -17,7 +17,7 @@ export interface SymptomRecord {
   _id?: string;
   userId: string;
   date: string; // 2026-04-10
-  time?: string; // 08:30
+  time: string; // 08:30
   symptoms: Symptom[];
   overallFeeling: 1 | 2 | 3 | 4 | 5; // 整体感受 1很差 - 5很好
   note?: string;

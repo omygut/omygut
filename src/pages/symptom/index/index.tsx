@@ -1,7 +1,7 @@
 import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
-import { getRecentSymptomRecords } from "../../../services/symptom";
+import { symptomService } from "../../../services/symptom";
 import { SYMPTOM_TYPES, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
 import { formatDisplayDate } from "../../../utils/date";
 import type { SymptomRecord } from "../../../types";
@@ -18,7 +18,7 @@ export default function SymptomIndex() {
   const loadRecords = async () => {
     setLoading(true);
     try {
-      const data = await getRecentSymptomRecords(50);
+      const data = await symptomService.getRecent(50);
       setRecords(data);
     } catch (error) {
       console.error("加载记录失败:", error);
@@ -40,8 +40,8 @@ export default function SymptomIndex() {
 
     if (res.confirm) {
       try {
-        const { deleteSymptomRecord } = await import("../../../services/symptom");
-        await deleteSymptomRecord(id);
+        const { symptomService: svc } = await import("../../../services/symptom");
+        await svc.delete(id);
         Taro.showToast({ title: "已删除", icon: "success" });
         loadRecords();
       } catch {

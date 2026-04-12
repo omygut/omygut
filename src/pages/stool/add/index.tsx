@@ -1,7 +1,7 @@
 import { View, Text, Textarea, Picker } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
-import { addStoolRecord } from "../../../services/stool";
+import { stoolService } from "../../../services/stool";
 import { BRISTOL_TYPES, STOOL_AMOUNTS, STOOL_COLORS } from "../../../constants/stool";
 import { formatDate, formatTime } from "../../../utils/date";
 import type { StoolRecord } from "../../../types";
@@ -23,7 +23,7 @@ export default function StoolAdd() {
 
     setSubmitting(true);
     try {
-      await addStoolRecord({
+      await stoolService.add({
         date,
         time,
         type: bristolType,
@@ -121,14 +121,18 @@ export default function StoolAdd() {
             className={`checkbox-item ${hasBlood ? "checked" : ""}`}
             onClick={() => setHasBlood(!hasBlood)}
           >
-            <View className="checkbox-box">{hasBlood && <Text className="checkbox-tick">✓</Text>}</View>
+            <View className="checkbox-box">
+              {hasBlood && <Text className="checkbox-tick">✓</Text>}
+            </View>
             <Text className="checkbox-label">带血</Text>
           </View>
           <View
             className={`checkbox-item ${hasMucus ? "checked" : ""}`}
             onClick={() => setHasMucus(!hasMucus)}
           >
-            <View className="checkbox-box">{hasMucus && <Text className="checkbox-tick">✓</Text>}</View>
+            <View className="checkbox-box">
+              {hasMucus && <Text className="checkbox-tick">✓</Text>}
+            </View>
             <Text className="checkbox-label">带粘液</Text>
           </View>
         </View>

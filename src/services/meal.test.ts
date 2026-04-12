@@ -1,10 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import {
-  addMealRecord,
-  getRecentMealRecords,
-  deleteMealRecord,
-  getMealRecordsByDate,
-} from "./meal";
+import { mealService } from "./meal";
 
 // Mock getOpenId to return a test user
 vi.mock("../utils/cloud", async (importOriginal) => {
@@ -20,9 +15,9 @@ describe("meal service", () => {
     vi.clearAllMocks();
   });
 
-  describe("addMealRecord", () => {
+  describe("add", () => {
     it("should add a meal record and return id", async () => {
-      const id = await addMealRecord({
+      const id = await mealService.add({
         date: "2026-04-11",
         time: "12:00",
         foods: ["米饭", "青菜"],
@@ -34,7 +29,7 @@ describe("meal service", () => {
     });
 
     it("should add record with note", async () => {
-      const id = await addMealRecord({
+      const id = await mealService.add({
         date: "2026-04-11",
         time: "08:00",
         foods: ["面包", "牛奶"],
@@ -46,23 +41,23 @@ describe("meal service", () => {
     });
   });
 
-  describe("getRecentMealRecords", () => {
+  describe("getRecent", () => {
     it("should return records for current user", async () => {
-      await addMealRecord({
+      await mealService.add({
         date: "2026-04-11",
         time: "12:00",
         foods: ["米饭"],
         amount: 2,
       });
 
-      const records = await getRecentMealRecords(10);
+      const records = await mealService.getRecent(10);
       expect(records.length).toBeGreaterThan(0);
       expect(records[0].userId).toBe("test_user_001");
     });
 
     it("should respect limit parameter", async () => {
       for (let i = 0; i < 5; i++) {
-        await addMealRecord({
+        await mealService.add({
           date: `2026-04-${10 + i}`,
           time: "12:00",
           foods: ["米饭"],
@@ -70,58 +65,58 @@ describe("meal service", () => {
         });
       }
 
-      const records = await getRecentMealRecords(3);
+      const records = await mealService.getRecent(3);
       expect(records.length).toBeLessThanOrEqual(3);
     });
   });
 
-  describe("deleteMealRecord", () => {
+  describe("delete", () => {
     it("should delete a record", async () => {
-      const id = await addMealRecord({
+      const id = await mealService.add({
         date: "2026-04-11",
         time: "12:00",
         foods: ["米饭"],
         amount: 2,
       });
 
-      const beforeRecords = await getRecentMealRecords(100);
+      const beforeRecords = await mealService.getRecent(100);
       const countBefore = beforeRecords.length;
 
-      await deleteMealRecord(id);
+      await mealService.delete(id);
 
-      const afterRecords = await getRecentMealRecords(100);
+      const afterRecords = await mealService.getRecent(100);
       expect(afterRecords.length).toBe(countBefore - 1);
     });
   });
 
-  describe("getMealRecordsByDate", () => {
+  describe("getByDate", () => {
     it("should return records for specific date", async () => {
-      await addMealRecord({
+      await mealService.add({
         date: "2026-04-15",
         time: "08:00",
         foods: ["早餐"],
         amount: 2,
       });
-      await addMealRecord({
+      await mealService.add({
         date: "2026-04-15",
         time: "12:00",
         foods: ["午餐"],
         amount: 2,
       });
-      await addMealRecord({
+      await mealService.add({
         date: "2026-04-16",
         time: "08:00",
         foods: ["其他日期"],
         amount: 2,
       });
 
-      const records = await getMealRecordsByDate("2026-04-15");
+      const records = await mealService.getByDate("2026-04-15");
       expect(records.length).toBe(2);
       expect(records.every((r) => r.date === "2026-04-15")).toBe(true);
     });
 
     it("should return empty array for date with no records", async () => {
-      const records = await getMealRecordsByDate("2020-01-01");
+      const records = await mealService.getByDate("2020-01-01");
       expect(records).toEqual([]);
     });
   });

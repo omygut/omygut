@@ -1,7 +1,7 @@
 import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
-import { getRecentStoolRecords } from "../../../services/stool";
+import { stoolService } from "../../../services/stool";
 import { BRISTOL_TYPES, STOOL_AMOUNTS, STOOL_COLORS } from "../../../constants/stool";
 import { formatDisplayDate } from "../../../utils/date";
 import type { StoolRecord } from "../../../types";
@@ -18,7 +18,7 @@ export default function StoolIndex() {
   const loadRecords = async () => {
     setLoading(true);
     try {
-      const data = await getRecentStoolRecords(50);
+      const data = await stoolService.getRecent(50);
       setRecords(data);
     } catch (error) {
       console.error("加载记录失败:", error);
@@ -40,8 +40,8 @@ export default function StoolIndex() {
 
     if (res.confirm) {
       try {
-        const { deleteStoolRecord } = await import("../../../services/stool");
-        await deleteStoolRecord(id);
+        const { stoolService: svc } = await import("../../../services/stool");
+        await svc.delete(id);
         Taro.showToast({ title: "已删除", icon: "success" });
         loadRecords();
       } catch {

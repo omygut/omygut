@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import {
-  addMedicationRecord,
-  getRecentMedicationRecords,
-  deleteMedicationRecord,
-} from "./medication";
+import { medicationService } from "./medication";
 
 // Mock getOpenId to return a test user
 vi.mock("../utils/cloud", async (importOriginal) => {
@@ -19,9 +15,9 @@ describe("medication service", () => {
     vi.clearAllMocks();
   });
 
-  describe("addMedicationRecord", () => {
+  describe("add", () => {
     it("should add a medication record and return id", async () => {
-      const id = await addMedicationRecord({
+      const id = await medicationService.add({
         date: "2026-04-11",
         time: "08:00",
         name: "美沙拉嗪",
@@ -33,7 +29,7 @@ describe("medication service", () => {
     });
 
     it("should add record without dosage", async () => {
-      const id = await addMedicationRecord({
+      const id = await medicationService.add({
         date: "2026-04-11",
         time: "20:00",
         name: "益生菌",
@@ -44,7 +40,7 @@ describe("medication service", () => {
     });
 
     it("should add record with note", async () => {
-      const id = await addMedicationRecord({
+      const id = await medicationService.add({
         date: "2026-04-11",
         time: "12:00",
         name: "奥美拉唑",
@@ -56,23 +52,23 @@ describe("medication service", () => {
     });
   });
 
-  describe("getRecentMedicationRecords", () => {
+  describe("getRecent", () => {
     it("should return records for current user", async () => {
-      await addMedicationRecord({
+      await medicationService.add({
         date: "2026-04-11",
         time: "08:00",
         name: "美沙拉嗪",
         dosage: "1片",
       });
 
-      const records = await getRecentMedicationRecords(10);
+      const records = await medicationService.getRecent(10);
       expect(records.length).toBeGreaterThan(0);
       expect(records[0].userId).toBe("test_user_001");
     });
 
     it("should respect limit parameter", async () => {
       for (let i = 0; i < 5; i++) {
-        await addMedicationRecord({
+        await medicationService.add({
           date: `2026-04-${10 + i}`,
           time: "08:00",
           name: "美沙拉嗪",
@@ -80,26 +76,26 @@ describe("medication service", () => {
         });
       }
 
-      const records = await getRecentMedicationRecords(3);
+      const records = await medicationService.getRecent(3);
       expect(records.length).toBeLessThanOrEqual(3);
     });
   });
 
-  describe("deleteMedicationRecord", () => {
+  describe("delete", () => {
     it("should delete a record", async () => {
-      const id = await addMedicationRecord({
+      const id = await medicationService.add({
         date: "2026-04-11",
         time: "08:00",
         name: "美沙拉嗪",
         dosage: "1片",
       });
 
-      const beforeRecords = await getRecentMedicationRecords(100);
+      const beforeRecords = await medicationService.getRecent(100);
       const countBefore = beforeRecords.length;
 
-      await deleteMedicationRecord(id);
+      await medicationService.delete(id);
 
-      const afterRecords = await getRecentMedicationRecords(100);
+      const afterRecords = await medicationService.getRecent(100);
       expect(afterRecords.length).toBe(countBefore - 1);
     });
   });

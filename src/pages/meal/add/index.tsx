@@ -1,7 +1,7 @@
 import { View, Text, Input, Textarea, Picker } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
-import { addMealRecord } from "../../../services/meal";
+import { mealService } from "../../../services/meal";
 import { FOOD_CATEGORIES, AMOUNT_OPTIONS } from "../../../constants/meal";
 import { formatDate, formatTime } from "../../../utils/date";
 import "./index.css";
@@ -52,7 +52,7 @@ export default function MealAdd() {
 
     setSubmitting(true);
     try {
-      await addMealRecord({
+      await mealService.add({
         date,
         time,
         foods: selectedFoods,

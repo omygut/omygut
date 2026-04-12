@@ -1,7 +1,7 @@
 import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
-import { getRecentMedicationRecords } from "../../../services/medication";
+import { medicationService } from "../../../services/medication";
 import { formatDisplayDate } from "../../../utils/date";
 import type { MedicationRecord } from "../../../types";
 import "./index.css";
@@ -17,7 +17,7 @@ export default function MedicationIndex() {
   const loadRecords = async () => {
     setLoading(true);
     try {
-      const data = await getRecentMedicationRecords(50);
+      const data = await medicationService.getRecent(50);
       setRecords(data);
     } catch (error) {
       console.error("加载记录失败:", error);
@@ -39,8 +39,8 @@ export default function MedicationIndex() {
 
     if (res.confirm) {
       try {
-        const { deleteMedicationRecord } = await import("../../../services/medication");
-        await deleteMedicationRecord(id);
+        const { medicationService: svc } = await import("../../../services/medication");
+        await svc.delete(id);
         Taro.showToast({ title: "已删除", icon: "success" });
         loadRecords();
       } catch {

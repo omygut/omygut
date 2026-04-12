@@ -1,7 +1,7 @@
 import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
-import { getRecentMealRecords } from "../../../services/meal";
+import { mealService } from "../../../services/meal";
 import { AMOUNT_OPTIONS } from "../../../constants/meal";
 import { formatDisplayDate } from "../../../utils/date";
 import type { MealRecord } from "../../../types";
@@ -18,7 +18,7 @@ export default function MealIndex() {
   const loadRecords = async () => {
     setLoading(true);
     try {
-      const data = await getRecentMealRecords(50);
+      const data = await mealService.getRecent(50);
       setRecords(data);
     } catch (error) {
       console.error("加载记录失败:", error);
@@ -40,8 +40,8 @@ export default function MealIndex() {
 
     if (res.confirm) {
       try {
-        const { deleteMealRecord } = await import("../../../services/meal");
-        await deleteMealRecord(id);
+        const { mealService: svc } = await import("../../../services/meal");
+        await svc.delete(id);
         Taro.showToast({ title: "已删除", icon: "success" });
         loadRecords();
       } catch {
