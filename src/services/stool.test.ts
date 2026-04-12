@@ -20,7 +20,6 @@ describe("stool service", () => {
         date: "2026-04-11",
         time: "08:30",
         type: 4,
-        color: "normal",
         amount: 2,
       });
 
@@ -33,11 +32,8 @@ describe("stool service", () => {
         date: "2026-04-11",
         time: "09:00",
         type: 6,
-        color: "dark",
         amount: 1,
-        hasBlood: true,
-        hasMucus: false,
-        note: "Not feeling well",
+        note: "带血、带粘液",
       });
 
       expect(id).toBeDefined();
@@ -50,7 +46,6 @@ describe("stool service", () => {
         date: "2026-04-11",
         time: "08:30",
         type: 4,
-        color: "normal",
         amount: 2,
       });
 
@@ -78,7 +73,6 @@ describe("stool service", () => {
         date: "2026-04-11",
         time: "10:00",
         type: 4,
-        color: "normal",
         amount: 2,
       });
 

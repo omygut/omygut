@@ -124,28 +124,6 @@
   color: #333;
 }
 
-.warning-tags {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.warning-tag {
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 24px;
-}
-
-.warning-tag.blood {
-  background-color: #fff1f0;
-  color: #f5222d;
-}
-
-.warning-tag.mucus {
-  background-color: #fff7e6;
-  color: #fa8c16;
-}
-
 .record-note {
   font-size: 26px;
   color: #999;

@@ -45,10 +45,7 @@ export interface StoolRecord {
   date: string;
   time: string;
   type: 1 | 2 | 3 | 4 | 5 | 6 | 7; // Bristol 分类
-  color: "normal" | "dark" | "light" | "red" | "black";
   amount: 1 | 2 | 3; // 1-少量 2-适中 3-大量
-  hasBlood?: boolean;
-  hasMucus?: boolean;
   note?: string;
   createdAt: Date;
   deletedAt?: Date;

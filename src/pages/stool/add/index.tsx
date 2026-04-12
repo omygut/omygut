@@ -2,8 +2,9 @@ import { View, Text, Textarea, Picker } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
 import { stoolService } from "../../../services/stool";
-import { BRISTOL_TYPES, STOOL_AMOUNTS, STOOL_COLORS } from "../../../constants/stool";
+import { BRISTOL_TYPES, STOOL_AMOUNTS, NOTE_SHORTCUTS } from "../../../constants/stool";
 import { formatDate, formatTime } from "../../../utils/date";
+import BristolIcon from "../../../components/BristolIcon";
 import type { StoolRecord } from "../../../types";
 import "./index.css";
 
@@ -11,10 +12,7 @@ export default function StoolAdd() {
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState(formatTime());
   const [bristolType, setBristolType] = useState<StoolRecord["type"]>(4);
-  const [color, setColor] = useState<StoolRecord["color"]>("normal");
   const [amount, setAmount] = useState<StoolRecord["amount"]>(2);
-  const [hasBlood, setHasBlood] = useState(false);
-  const [hasMucus, setHasMucus] = useState(false);
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -27,10 +25,7 @@ export default function StoolAdd() {
         date,
         time,
         type: bristolType,
-        color,
         amount,
-        hasBlood: hasBlood || undefined,
-        hasMucus: hasMucus || undefined,
         note: note.trim() || undefined,
       });
 
@@ -71,7 +66,7 @@ export default function StoolAdd() {
               className={`bristol-item ${bristolType === option.value ? "active" : ""}`}
               onClick={() => setBristolType(option.value as StoolRecord["type"])}
             >
-              <Text className="bristol-emoji">{option.emoji}</Text>
+              <BristolIcon type={option.value} size={48} />
             </View>
           ))}
         </View>
@@ -97,50 +92,23 @@ export default function StoolAdd() {
         </View>
       </View>
 
-      {/* 颜色 */}
-      <View className="section">
-        <Text className="section-title">颜色</Text>
-        <View className="color-options">
-          {STOOL_COLORS.map((option) => (
-            <View
-              key={option.value}
-              className={`color-item ${color === option.value ? "active" : ""}`}
-              onClick={() => setColor(option.value as StoolRecord["color"])}
-            >
-              <Text className="color-label">{option.label}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-
-      {/* 异常情况 */}
-      <View className="section">
-        <Text className="section-title">异常情况</Text>
-        <View className="checkbox-group">
-          <View
-            className={`checkbox-item ${hasBlood ? "checked" : ""}`}
-            onClick={() => setHasBlood(!hasBlood)}
-          >
-            <View className="checkbox-box">
-              {hasBlood && <Text className="checkbox-tick">✓</Text>}
-            </View>
-            <Text className="checkbox-label">带血</Text>
-          </View>
-          <View
-            className={`checkbox-item ${hasMucus ? "checked" : ""}`}
-            onClick={() => setHasMucus(!hasMucus)}
-          >
-            <View className="checkbox-box">
-              {hasMucus && <Text className="checkbox-tick">✓</Text>}
-            </View>
-            <Text className="checkbox-label">带粘液</Text>
-          </View>
-        </View>
-      </View>
-
       {/* 备注 */}
       <View className="section">
         <Text className="section-title">备注</Text>
+        <View className="note-shortcuts">
+          {NOTE_SHORTCUTS.map((shortcut) => (
+            <View
+              key={shortcut}
+              className="note-shortcut"
+              onClick={() => {
+                const newNote = note ? `${note}、${shortcut}` : shortcut;
+                setNote(newNote);
+              }}
+            >
+              {shortcut}
+            </View>
+          ))}
+        </View>
         <Textarea
           className="note-input"
           placeholder="添加备注（可选）"

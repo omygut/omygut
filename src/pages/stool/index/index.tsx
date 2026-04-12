@@ -2,8 +2,9 @@ import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { stoolService } from "../../../services/stool";
-import { BRISTOL_TYPES, STOOL_AMOUNTS, STOOL_COLORS } from "../../../constants/stool";
+import { BRISTOL_TYPES, STOOL_AMOUNTS } from "../../../constants/stool";
 import { formatDisplayDate } from "../../../utils/date";
+import BristolIcon from "../../../components/BristolIcon";
 import type { StoolRecord } from "../../../types";
 import "./index.css";
 
@@ -54,10 +55,6 @@ export default function StoolIndex() {
     return BRISTOL_TYPES.find((t) => t.value === type);
   };
 
-  const getColorLabel = (color: string) => {
-    return STOOL_COLORS.find((c) => c.value === color)?.label || color;
-  };
-
   const getAmountLabel = (amount: number) => {
     return STOOL_AMOUNTS.find((a) => a.value === amount)?.label || "";
   };
@@ -90,7 +87,7 @@ export default function StoolIndex() {
                       {formatDisplayDate(record.date)} {record.time}
                     </Text>
                     <View className="bristol-badge">
-                      <Text className="bristol-emoji">{bristol?.emoji}</Text>
+                      <BristolIcon type={record.type} size={32} />
                       <Text className="bristol-desc">{bristol?.desc}</Text>
                     </View>
                   </View>
@@ -104,18 +101,7 @@ export default function StoolIndex() {
                       <Text className="detail-label">量:</Text>
                       <Text className="detail-value">{getAmountLabel(record.amount)}</Text>
                     </View>
-                    <View className="detail-row">
-                      <Text className="detail-label">颜色:</Text>
-                      <Text className="detail-value">{getColorLabel(record.color)}</Text>
-                    </View>
                   </View>
-
-                  {(record.hasBlood || record.hasMucus) && (
-                    <View className="warning-tags">
-                      {record.hasBlood && <Text className="warning-tag blood">带血</Text>}
-                      {record.hasMucus && <Text className="warning-tag mucus">带粘液</Text>}
-                    </View>
-                  )}
 
                   {record.note && <Text className="record-note">{record.note}</Text>}
                 </View>
