@@ -304,6 +304,9 @@ export default function LabTestAdd() {
             <View className="indicators-list">
               {indicators.map((indicator, index) => (
                 <View key={index} className="indicator-item">
+                  {indicator.category && (
+                    <Text className="indicator-category">{indicator.category}</Text>
+                  )}
                   <Text className="indicator-name">{indicator.name}</Text>
                   <Text className="indicator-value">
                     {indicator.value} {indicator.unit || ""}

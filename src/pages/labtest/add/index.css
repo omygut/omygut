@@ -125,6 +125,14 @@
   border-radius: 8px;
 }
 
+.indicator-category {
+  font-size: 24px;
+  color: #999;
+  background-color: #e8e8e8;
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
 .indicator-name {
   font-size: 28px;
   color: #333;
