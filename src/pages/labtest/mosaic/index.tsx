@@ -208,11 +208,16 @@ export default function MosaicEditor() {
   return (
     <View className="mosaic-page">
       <View className="tips">
-        <Text className="tips-text">请对敏感信息（姓名、身份证号等）进行打码，完成后点击"确认"</Text>
+        <Text className="tips-text">
+          图片将用于 AI 识别，请先对姓名、身份证号等敏感信息打码，以保护个人隐私
+        </Text>
       </View>
 
       <View className="canvas-container">
-        <View className="canvas-wrapper" style={{ width: `${canvasSize.width}px`, height: `${canvasSize.height}px` }}>
+        <View
+          className="canvas-wrapper"
+          style={{ width: `${canvasSize.width}px`, height: `${canvasSize.height}px` }}
+        >
           {canvasSize.width > 0 && (
             <Canvas
               canvasId={canvasRef.current}
