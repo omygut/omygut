@@ -50,13 +50,10 @@ export interface LabTestIndicator {
   name: string; // 指标名称
   value: string; // 数值
   unit?: string; // 单位
-  reference?: string; // 参考范围
-  abnormal?: boolean; // 是否异常
 }
 
 // 化验记录
 export interface LabTestRecord extends BaseRecord {
-  type: string; // 化验类型：血常规、肝功能等
   imageFileIds: string[]; // 原图云存储 ID 列表
   indicators: LabTestIndicator[];
   note?: string;

@@ -2,9 +2,10 @@ import { View, Text, Image, Picker } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect, useRef } from "react";
 import { labTestService } from "../../../services/labtest";
+import { recognizeLabTestImage } from "../../../services/ai";
 import { chooseImage, uploadImage, deleteCloudFile } from "../../../utils/upload";
 import { formatDate, formatTime } from "../../../utils/date";
-import { LABTEST_TYPES } from "../../../constants/labtest";
+import type { LabTestIndicator } from "../../../types";
 import "./index.css";
 
 export default function LabTestAdd() {
@@ -14,12 +15,13 @@ export default function LabTestAdd() {
 
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState(formatTime());
-  const [type, setType] = useState(LABTEST_TYPES[0]);
   // 本地待上传的图片路径
   const [localImages, setLocalImages] = useState<string[]>([]);
   // 已上传到云存储的 fileId（编辑模式）
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [recognizing, setRecognizing] = useState(false);
+  const [indicators, setIndicators] = useState<LabTestIndicator[]>([]);
   const [loading, setLoading] = useState(isEdit);
 
   const localImagesRef = useRef(localImages);
@@ -48,8 +50,8 @@ export default function LabTestAdd() {
       if (record) {
         setDate(record.date);
         setTime(record.time || formatTime());
-        setType(record.type);
         setUploadedImages(record.imageFileIds || []);
+        setIndicators(record.indicators || []);
       }
     } catch (error) {
       console.error("加载记录失败:", error);
@@ -109,6 +111,39 @@ export default function LabTestAdd() {
     }
   };
 
+  const handleRecognize = async () => {
+    if (recognizing) return;
+
+    const totalImages = localImages.length + uploadedImages.length;
+    if (totalImages === 0) {
+      Taro.showToast({ title: "请先添加图片", icon: "none" });
+      return;
+    }
+
+    setRecognizing(true);
+    try {
+      Taro.showLoading({ title: "识别中..." });
+      // 识别本地图片
+      const recognitionPromises = localImages.map((path) => recognizeLabTestImage(path));
+      const recognitionResults = await Promise.all(recognitionPromises);
+      const newIndicators = recognitionResults.flat();
+      setIndicators(newIndicators);
+      Taro.hideLoading();
+
+      if (newIndicators.length === 0) {
+        Taro.showToast({ title: "未识别到指标", icon: "none" });
+      } else {
+        Taro.showToast({ title: `识别到 ${newIndicators.length} 项指标`, icon: "success" });
+      }
+    } catch (error) {
+      console.error("识别失败:", error);
+      Taro.hideLoading();
+      Taro.showToast({ title: "识别失败", icon: "none" });
+    } finally {
+      setRecognizing(false);
+    }
+  };
+
   const handleDeleteRecord = async () => {
     if (!editId) return;
 
@@ -145,7 +180,7 @@ export default function LabTestAdd() {
 
     setSubmitting(true);
     try {
-      // 上传本地图片
+      // 上传本地图片到云存储
       let newFileIds: string[] = [];
       if (localImages.length > 0) {
         Taro.showLoading({ title: "上传中..." });
@@ -159,9 +194,8 @@ export default function LabTestAdd() {
       const data = {
         date,
         time,
-        type,
         imageFileIds,
-        indicators: [],
+        indicators,
       };
 
       if (isEdit && editId) {
@@ -209,22 +243,6 @@ export default function LabTestAdd() {
         </View>
       </View>
 
-      {/* 化验类型 */}
-      <View className="section">
-        <Text className="section-title">化验类型</Text>
-        <View className="type-options">
-          {LABTEST_TYPES.map((t) => (
-            <View
-              key={t}
-              className={`type-item ${type === t ? "active" : ""}`}
-              onClick={() => setType(t)}
-            >
-              {t}
-            </View>
-          ))}
-        </View>
-      </View>
-
       {/* 图片 */}
       <View className="section">
         <Text className="section-title">化验单图片</Text>
@@ -267,12 +285,38 @@ export default function LabTestAdd() {
         </View>
       </View>
 
+      {/* AI 识别 */}
+      {totalImages > 0 && (
+        <View className="section">
+          <View className="section-header">
+            <Text className="section-title">识别结果</Text>
+            <View
+              className={`recognize-btn ${recognizing ? "disabled" : ""}`}
+              onClick={handleRecognize}
+            >
+              {recognizing ? "识别中..." : "AI 识别"}
+            </View>
+          </View>
+          {indicators.length > 0 ? (
+            <View className="indicators-list">
+              {indicators.map((indicator, index) => (
+                <View key={index} className="indicator-item">
+                  <Text className="indicator-name">{indicator.name}</Text>
+                  <Text className="indicator-value">
+                    {indicator.value} {indicator.unit || ""}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <Text className="no-indicators">点击"AI 识别"按钮识别化验指标</Text>
+          )}
+        </View>
+      )}
+
       {/* 提交按钮 */}
       <View className="submit-section">
-        <View
-          className={`submit-btn ${submitting ? "disabled" : ""}`}
-          onClick={handleSubmit}
-        >
+        <View className={`submit-btn ${submitting ? "disabled" : ""}`} onClick={handleSubmit}>
           {submitting ? "保存中..." : isEdit ? "更新记录" : "保存记录"}
         </View>
         {isEdit && (

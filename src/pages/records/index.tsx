@@ -10,7 +10,13 @@ import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/da
 import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
 import { AMOUNT_OPTIONS } from "../../constants/meal";
 import { BRISTOL_TYPES, STOOL_AMOUNTS } from "../../constants/stool";
-import type { SymptomRecord, MealRecord, StoolRecord, MedicationRecord, LabTestRecord } from "../../types";
+import type {
+  SymptomRecord,
+  MealRecord,
+  StoolRecord,
+  MedicationRecord,
+  LabTestRecord,
+} from "../../types";
 import "./index.css";
 
 const getFeelingEmoji = (value: number): string => {
@@ -143,7 +149,7 @@ export default function Records() {
               {symptomRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
-                symptomRecords.slice(0, 3).map((record) => {
+                symptomRecords.map((record) => {
                   const severity = getSeverityInfo(record.severity);
                   return (
                     <View
@@ -195,7 +201,7 @@ export default function Records() {
               {medicationRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
-                medicationRecords.slice(0, 3).map((record) => (
+                medicationRecords.map((record) => (
                   <View
                     key={record._id}
                     className="record-item"
@@ -234,7 +240,7 @@ export default function Records() {
               {mealRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
-                mealRecords.slice(0, 3).map((record) => (
+                mealRecords.map((record) => (
                   <View
                     key={record._id}
                     className="record-item"
@@ -271,7 +277,7 @@ export default function Records() {
               {stoolRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
-                stoolRecords.slice(0, 3).map((record) => (
+                stoolRecords.map((record) => (
                   <View
                     key={record._id}
                     className="record-item"
@@ -308,7 +314,7 @@ export default function Records() {
               {labTestRecords.length === 0 ? (
                 <Text className="empty-hint">暂无记录</Text>
               ) : (
-                labTestRecords.slice(0, 3).map((record) => (
+                labTestRecords.map((record) => (
                   <View
                     key={record._id}
                     className="record-item"
@@ -316,8 +322,8 @@ export default function Records() {
                   >
                     <Text className="record-time">{record.time}</Text>
                     <Text className="record-desc">
-                      {record.type}
-                      {record.imageFileIds.length > 0 && ` · ${record.imageFileIds.length}张图片`}
+                      {record.imageFileIds.length}张图片
+                      {record.indicators.length > 0 && ` · ${record.indicators.length}项指标`}
                     </Text>
                   </View>
                 ))
