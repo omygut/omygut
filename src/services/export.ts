@@ -71,14 +71,11 @@ export async function saveExportToFile(): Promise<void> {
 
     Taro.hideLoading();
 
-    // Save to system file manager
-    const date = new Date().toISOString().split("T")[0];
-    const fileName = `mygut-export-${date}.json`;
-
+    // Share file (user can save to chat or favorites)
     await new Promise<void>((resolve, reject) => {
-      wx.saveFileToPlatform({
+      wx.shareFileMessage({
         filePath: tempFilePath,
-        fileName,
+        fileName: `mygut-export-${new Date().toISOString().split("T")[0]}.json`,
         success: () => resolve(),
         fail: (err: { errMsg?: string }) => reject(err),
       });
