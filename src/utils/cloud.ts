@@ -87,6 +87,18 @@ function createMemoryCollection(data: Record<string, unknown>[]) {
       data.push({ _id, ...doc });
       return { _id };
     },
+    async update({ data: updates }: { data: Record<string, unknown> }) {
+      const items = data.filter((item) => {
+        return Object.entries(filters).every(([key, value]) => {
+          if (value === EXISTS_FALSE) {
+            return !(key in item) || item[key] === undefined || item[key] === null;
+          }
+          return item[key] === value;
+        });
+      });
+      items.forEach((item) => Object.assign(item, updates));
+      return { stats: { updated: items.length } };
+    },
     doc(id: string) {
       return {
         async get() {

@@ -66,6 +66,18 @@ Test files: `src/services/**/*.test.ts`
 
 Integration tests use the in-memory fake database (`TARO_APP_ENV=test`). The fake database supports: `add`, `where`, `orderBy`, `limit`, `get`, `doc`, `remove`, `update`.
 
+## Cloud Database (tcb CLI)
+
+Use `tcb` CLI to manage cloud resources. Environment ID: `cloud1-8gzx205084c1da0f`
+
+```bash
+# Check collection permissions
+tcb permission get collection -e cloud1-8gzx205084c1da0f
+
+# List environments
+tcb env list
+```
+
 ## Build-time Constants
 
 Use `defineConstants` in `config/index.ts` for environment-specific values. Do not use `process.env` directly in source code — it doesn't exist at runtime in mini programs.

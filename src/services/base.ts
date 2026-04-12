@@ -32,9 +32,10 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
 
     async delete(id: string): Promise<void> {
       const db = getDatabase();
+      const userId = await getOpenId();
       await db
         .collection(collection)
-        .doc(id)
+        .where({ _id: id, userId })
         .update({
           data: { deletedAt: new Date() },
         });
@@ -58,8 +59,9 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
 
     async getById(id: string): Promise<T | null> {
       const db = getDatabase();
-      const res = await db.collection(collection).doc(id).get();
-      return (res.data as T) || null;
+      const userId = await getOpenId();
+      const res = await db.collection(collection).where({ _id: id, userId }).get();
+      return (res.data[0] as T) || null;
     },
 
     async update(
@@ -67,7 +69,8 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
       data: Partial<Omit<T, "_id" | "userId" | "createdAt">>,
     ): Promise<void> {
       const db = getDatabase();
-      await db.collection(collection).doc(id).update({ data });
+      const userId = await getOpenId();
+      await db.collection(collection).where({ _id: id, userId }).update({ data });
     },
   };
 }
