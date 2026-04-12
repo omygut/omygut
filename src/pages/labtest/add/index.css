@@ -150,13 +150,13 @@
 }
 
 .indicator-col-name {
-  flex: 3;
+  flex: 4;
   font-size: 24px;
   color: #333;
 }
 
 .indicator-col-value {
-  flex: 2;
+  flex: 1.5;
   font-size: 24px;
   color: #1890ff;
 }
@@ -175,13 +175,13 @@
 }
 
 .indicator-col-ref {
-  flex: 2;
+  flex: 1.5;
   font-size: 22px;
   color: #999;
 }
 
 .indicator-col-unit {
-  flex: 2;
+  flex: 1.5;
   font-size: 22px;
   color: #666;
 }
