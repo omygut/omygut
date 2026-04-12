@@ -2,7 +2,7 @@ import Taro from "@tarojs/taro";
 import type { LabTestIndicator } from "../types";
 
 // 视觉模型 - 支持图片识别
-const VISION_MODEL = "Pro/Qwen/Qwen2.5-VL-72B-Instruct";
+const VISION_MODEL = "Pro/moonshotai/Kimi-K2.5";
 
 const SYSTEM_PROMPT = `你是一个专业的医学化验单识别助手。请分析用户上传的化验单图片，提取所有化验指标信息。
 
