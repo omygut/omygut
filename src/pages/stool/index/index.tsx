@@ -4,6 +4,7 @@ import { useState } from "react";
 import { stoolService } from "../../../services/stool";
 import { BRISTOL_TYPES, STOOL_AMOUNTS, STOOL_COLORS } from "../../../constants/stool";
 import { formatDisplayDate } from "../../../utils/date";
+import BristolIcon from "../../../components/BristolIcon";
 import type { StoolRecord } from "../../../types";
 import "./index.css";
 
@@ -90,7 +91,7 @@ export default function StoolIndex() {
                       {formatDisplayDate(record.date)} {record.time}
                     </Text>
                     <View className="bristol-badge">
-                      <Text className="bristol-emoji">{bristol?.emoji}</Text>
+                      <BristolIcon type={record.type} size={32} />
                       <Text className="bristol-desc">{bristol?.desc}</Text>
                     </View>
                   </View>

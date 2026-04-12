@@ -4,6 +4,7 @@ import { useState } from "react";
 import { stoolService } from "../../../services/stool";
 import { BRISTOL_TYPES, STOOL_AMOUNTS, STOOL_COLORS } from "../../../constants/stool";
 import { formatDate, formatTime } from "../../../utils/date";
+import BristolIcon from "../../../components/BristolIcon";
 import type { StoolRecord } from "../../../types";
 import "./index.css";
 
@@ -71,7 +72,7 @@ export default function StoolAdd() {
               className={`bristol-item ${bristolType === option.value ? "active" : ""}`}
               onClick={() => setBristolType(option.value as StoolRecord["type"])}
             >
-              <Text className="bristol-emoji">{option.emoji}</Text>
+              <BristolIcon type={option.value} size={48} />
             </View>
           ))}
         </View>
