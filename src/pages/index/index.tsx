@@ -9,6 +9,14 @@ import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/da
 import type { SymptomRecord, MealRecord, StoolRecord, MedicationRecord } from "../../types";
 import "./index.css";
 
+const FEELING_EMOJI: Record<number, string> = {
+  1: "😫",
+  2: "😟",
+  3: "😐",
+  4: "😊",
+  5: "😄",
+};
+
 export default function Index() {
   const [currentDate, setCurrentDate] = useState(formatDate());
   const [loading, setLoading] = useState(true);
@@ -114,9 +122,12 @@ export default function Index() {
                 symptomRecords.slice(0, 3).map((record) => (
                   <View key={record._id} className="record-item">
                     <Text className="record-time">{record.time || "--:--"}</Text>
-                    <Text className="record-desc">
-                      {record.symptoms.map((s) => s.type).join("、") || "无症状"}
-                    </Text>
+                    <Text className="record-feeling">{FEELING_EMOJI[record.overallFeeling]}</Text>
+                    {record.symptoms.length > 0 && (
+                      <Text className="record-desc">
+                        {record.symptoms.map((s) => s.type).join("、")}
+                      </Text>
+                    )}
                   </View>
                 ))
               )}

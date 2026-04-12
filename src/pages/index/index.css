@@ -114,6 +114,11 @@
   min-width: 90px;
 }
 
+.record-feeling {
+  font-size: 28px;
+  margin-right: 8px;
+}
+
 .record-desc {
   font-size: 28px;
   color: #333;
