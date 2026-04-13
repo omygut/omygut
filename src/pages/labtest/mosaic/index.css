@@ -35,11 +35,20 @@
   position: relative;
 }
 
-.selection-rect {
+.select-hint {
   position: absolute;
-  border: 4px dashed #07c160;
-  background-color: rgb(7 193 96 / 20%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(0 0 0 / 60%);
+  padding: 16px 24px;
+  border-radius: 8px;
   pointer-events: none;
+}
+
+.select-hint-text {
+  font-size: 28px;
+  color: #fff;
 }
 
 .action-bar {
@@ -58,14 +67,16 @@
   text-align: center;
 }
 
-.undo-btn {
+.secondary-btn {
   background-color: #555;
   color: #fff;
+  flex: 0.6;
 }
 
 .save-btn {
   background-color: #07c160;
   color: #fff;
+  flex: 1;
 }
 
 .action-btn.disabled {
