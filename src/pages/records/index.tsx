@@ -11,7 +11,8 @@ import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/da
 import { EXAM_TYPES } from "../../constants/exam";
 import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
 import { AMOUNT_OPTIONS } from "../../constants/meal";
-import { BRISTOL_TYPES, STOOL_AMOUNTS } from "../../constants/stool";
+import { STOOL_AMOUNTS } from "../../constants/stool";
+import BristolIcon from "../../components/BristolIcon";
 import type {
   SymptomRecord,
   MealRecord,
@@ -37,10 +38,6 @@ const getSeverityInfo = (severity?: 1 | 2 | 3) => {
 
 const getAmountEmoji = (amount: number): string => {
   return AMOUNT_OPTIONS.find((a) => a.value === amount)?.emoji || "🍚";
-};
-
-const getBristolEmoji = (type: number): string => {
-  return BRISTOL_TYPES.find((b) => b.value === type)?.emoji || "";
 };
 
 const getStoolAmountLabel = (amount: number): string => {
@@ -294,7 +291,9 @@ export default function Records() {
                     onClick={() => handleNavigate(`/pages/stool/add/index?id=${record._id}`)}
                   >
                     <Text className="record-time">{record.time}</Text>
-                    <Text className="record-feeling">{getBristolEmoji(record.type)}</Text>
+                    <View className="record-feeling">
+                      <BristolIcon type={record.type} size={24} />
+                    </View>
                     <Text className="record-desc">
                       {getStoolAmountLabel(record.amount)}
                       {record.note && ` · ${record.note}`}

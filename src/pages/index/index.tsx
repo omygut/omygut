@@ -51,6 +51,13 @@ export default function Index() {
             <Text className="action-icon">🌡️</Text>
             <Text className="action-label">体感</Text>
           </View>
+          <View
+            className="action-item"
+            onClick={() => handleNavigate("/pages/medication/add/index")}
+          >
+            <Text className="action-icon">💊</Text>
+            <Text className="action-label">用药</Text>
+          </View>
           <View className="action-item" onClick={() => handleNavigate("/pages/meal/add/index")}>
             <Text className="action-icon">🍱</Text>
             <Text className="action-label">饮食</Text>
@@ -59,24 +66,11 @@ export default function Index() {
             <Text className="action-icon">💩</Text>
             <Text className="action-label">排便</Text>
           </View>
-          <View
-            className="action-item"
-            onClick={() => handleNavigate("/pages/medication/add/index")}
-          >
-            <Text className="action-icon">💊</Text>
-            <Text className="action-label">用药</Text>
-          </View>
-          <View
-            className="action-item"
-            onClick={() => handleNavigate("/pages/labtest/add/index")}
-          >
+          <View className="action-item" onClick={() => handleNavigate("/pages/labtest/add/index")}>
             <Text className="action-icon">🧪</Text>
             <Text className="action-label">化验</Text>
           </View>
-          <View
-            className="action-item"
-            onClick={() => handleNavigate("/pages/exam/add/index")}
-          >
+          <View className="action-item" onClick={() => handleNavigate("/pages/exam/add/index")}>
             <Text className="action-icon">🩺</Text>
             <Text className="action-label">检查</Text>
           </View>
