@@ -1,7 +1,24 @@
 import * as fs from "fs";
 import * as path from "path";
 
-const MODELS = ["Qwen/Qwen3.5-35B-A3B", "zai-org/GLM-4.6V", "PaddlePaddle/PaddleOCR-VL-1.5"];
+interface ModelConfig {
+  model: string;
+  apiUrl: string;
+  apiKeyEnv: string;
+}
+
+const MODELS: ModelConfig[] = [
+  {
+    model: "doubao-seed-2-0-lite-260215",
+    apiUrl: "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+    apiKeyEnv: "ARK_API_KEY",
+  },
+  {
+    model: "Qwen/Qwen3-VL-32B-Instruct",
+    apiUrl: "https://api.siliconflow.cn/v1/chat/completions",
+    apiKeyEnv: "SILICONFLOW_API_KEY",
+  },
+];
 
 const SYSTEM_PROMPT = `请识别图片中的所有文字，按原始布局输出。`;
 
@@ -13,28 +30,28 @@ async function imageToBase64(filePath: string): Promise<string> {
   return buffer.toString("base64");
 }
 
-async function testModel(model: string, imageBase64: string): Promise<void> {
+async function testModel(config: ModelConfig, imageBase64: string): Promise<void> {
   console.log(`\n${"=".repeat(60)}`);
-  console.log(`Testing model: ${model}`);
+  console.log(`Testing model: ${config.model}`);
   console.log("=".repeat(60));
 
-  const apiKey = process.env.SILICONFLOW_API_KEY;
+  const apiKey = process.env[config.apiKeyEnv];
   if (!apiKey) {
-    console.error("Error: SILICONFLOW_API_KEY environment variable is not set");
-    process.exit(1);
+    console.error(`Error: ${config.apiKeyEnv} environment variable is not set`);
+    return;
   }
 
   const startTime = Date.now();
 
   try {
-    const response = await fetch("https://api.siliconflow.cn/v1/chat/completions", {
+    const response = await fetch(config.apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model,
+        model: config.model,
         messages: [
           {
             role: "system",
@@ -90,7 +107,7 @@ async function testModel(model: string, imageBase64: string): Promise<void> {
       );
     }
   } catch (error) {
-    console.error(`Error testing ${model}:`, error);
+    console.error(`Error testing ${config.model}:`, error);
   }
 }
 
@@ -101,8 +118,8 @@ async function main() {
   const imageBase64 = await imageToBase64(imagePath);
   console.log(`Image size: ${(imageBase64.length / 1024).toFixed(2)} KB (base64)`);
 
-  for (const model of MODELS) {
-    await testModel(model, imageBase64);
+  for (const config of MODELS) {
+    await testModel(config, imageBase64);
   }
 
   console.log("\n" + "=".repeat(60));
