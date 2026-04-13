@@ -245,6 +245,19 @@ export default function LabTestAdd() {
 
   return (
     <View className="add-page">
+      {/* 日期时间 */}
+      <View className="section">
+        <Text className="section-title">时间</Text>
+        <View className="time-row">
+          <Picker mode="date" value={date} onChange={(e) => setDate(e.detail.value)}>
+            <View className="picker-value">{date}</View>
+          </Picker>
+          <Picker mode="time" value={time} onChange={(e) => setTime(e.detail.value)}>
+            <View className="picker-value">{time}</View>
+          </Picker>
+        </View>
+      </View>
+
       {/* 标本类型 */}
       <View className="section">
         <Text className="section-title">标本类型</Text>
@@ -258,19 +271,6 @@ export default function LabTestAdd() {
               {opt.label}
             </View>
           ))}
-        </View>
-      </View>
-
-      {/* 日期时间 */}
-      <View className="section">
-        <Text className="section-title">时间</Text>
-        <View className="time-row">
-          <Picker mode="date" value={date} onChange={(e) => setDate(e.detail.value)}>
-            <View className="picker-value">{date}</View>
-          </Picker>
-          <Picker mode="time" value={time} onChange={(e) => setTime(e.detail.value)}>
-            <View className="picker-value">{time}</View>
-          </Picker>
         </View>
       </View>
 
