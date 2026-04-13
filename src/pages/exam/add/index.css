@@ -1,5 +1,31 @@
 @import url("../../../styles/form.css");
 
+/* 检查类型选择 */
+.exam-type-scroll {
+  white-space: nowrap;
+}
+
+.exam-type-options {
+  display: inline-flex;
+  gap: 16px;
+}
+
+.exam-type-item {
+  padding: 16px 24px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-size: 28px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.exam-type-item.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
 /* 图片网格 */
 .image-grid {
   display: flex;

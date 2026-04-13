@@ -1,4 +1,4 @@
-import { View, Text, Image, Picker, Input, Textarea } from "@tarojs/components";
+import { View, Text, Image, Picker, Input, Textarea, ScrollView } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect, useRef } from "react";
 import { examService } from "../../../services/exam";
@@ -15,7 +15,7 @@ export default function ExamAdd() {
 
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState("10:00");
-  const [examType, setExamType] = useState(EXAM_TYPES[0].value);
+  const [examType, setExamType] = useState<(typeof EXAM_TYPES)[number]["value"]>(EXAM_TYPES[0].value);
   const [content, setContent] = useState("");
   const [note, setNote] = useState("");
   const [localImages, setLocalImages] = useState<string[]>([]);
@@ -48,7 +48,7 @@ export default function ExamAdd() {
       if (record) {
         setDate(record.date);
         setTime(record.time || "10:00");
-        setExamType(record.examType);
+        setExamType(record.examType as (typeof EXAM_TYPES)[number]["value"]);
         setContent(record.content || "");
         setNote(record.note || "");
         setUploadedImages(record.imageFileIds || []);
@@ -225,14 +225,6 @@ export default function ExamAdd() {
     }
   };
 
-  const getExamTypeIndex = () => {
-    return EXAM_TYPES.findIndex((t) => t.value === examType);
-  };
-
-  const handleExamTypeChange = (e: { detail: { value: number } }) => {
-    setExamType(EXAM_TYPES[e.detail.value].value);
-  };
-
   if (loading) {
     return (
       <View className="add-page">
@@ -242,7 +234,6 @@ export default function ExamAdd() {
   }
 
   const totalImages = localImages.length + uploadedImages.length;
-  const selectedExamType = EXAM_TYPES.find((t) => t.value === examType);
 
   return (
     <View className="add-page">
@@ -262,17 +253,19 @@ export default function ExamAdd() {
       {/* 检查类型 */}
       <View className="section">
         <Text className="section-title">检查类型</Text>
-        <Picker
-          mode="selector"
-          range={EXAM_TYPES}
-          rangeKey="label"
-          value={getExamTypeIndex()}
-          onChange={handleExamTypeChange}
-        >
-          <View className="picker-value">
-            {selectedExamType?.emoji} {selectedExamType?.label}
+        <ScrollView scrollX className="exam-type-scroll">
+          <View className="exam-type-options">
+            {EXAM_TYPES.map((opt) => (
+              <View
+                key={opt.value}
+                className={`exam-type-item ${examType === opt.value ? "active" : ""}`}
+                onClick={() => setExamType(opt.value)}
+              >
+                {opt.emoji} {opt.label}
+              </View>
+            ))}
           </View>
-        </Picker>
+        </ScrollView>
       </View>
 
       {/* 图片 */}
