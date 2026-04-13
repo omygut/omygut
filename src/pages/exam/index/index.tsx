@@ -82,17 +82,17 @@ export default function ExamIndex() {
                       <Text className="stat-icon">🖼️</Text>
                       <Text className="stat-text">{record.imageFileIds.length}张图片</Text>
                     </View>
-                    {record.conclusion && (
+                    {record.content && (
                       <View className="stat-badge">
                         <Text className="stat-icon">📋</Text>
-                        <Text className="stat-text">有结论</Text>
+                        <Text className="stat-text">有内容</Text>
                       </View>
                     )}
                   </View>
 
-                  {record.conclusion && (
-                    <Text className="record-conclusion" numberOfLines={2}>
-                      {record.conclusion}
+                  {record.content && (
+                    <Text className="record-content" numberOfLines={2}>
+                      {record.content}
                     </Text>
                   )}
 

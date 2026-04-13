@@ -75,7 +75,7 @@ export default function LabTestAdd() {
 
   const handleChooseImage = async () => {
     const totalImages = localImages.length + uploadedImages.length;
-    if (totalImages >= 9) return;
+    if (totalImages >= 6) return;
 
     try {
       // 每次只选择一张图片，立即进入打码流程
@@ -307,7 +307,7 @@ export default function LabTestAdd() {
             </View>
           ))}
           {/* 添加按钮 */}
-          {totalImages < 9 && (
+          {totalImages < 6 && (
             <View className="image-add" onClick={handleChooseImage}>
               <Text className="image-add-icon">+</Text>
               <Text className="image-add-text">添加图片</Text>

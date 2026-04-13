@@ -86,9 +86,9 @@
   opacity: 0.5;
 }
 
-.conclusion-input {
+.content-input {
   width: 100%;
-  min-height: 200px;
+  min-height: 300px;
   padding: 16px;
   background-color: #f5f5f5;
   border-radius: 8px;

@@ -17,7 +17,7 @@ export default function ExamAdd() {
   const [time, setTime] = useState(formatTime());
   const [examDate, setExamDate] = useState(formatDate());
   const [examType, setExamType] = useState(EXAM_TYPES[0].value);
-  const [conclusion, setConclusion] = useState("");
+  const [content, setConclusion] = useState("");
   const [note, setNote] = useState("");
   const [localImages, setLocalImages] = useState<string[]>([]);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
@@ -51,7 +51,7 @@ export default function ExamAdd() {
         setTime(record.time || formatTime());
         setExamDate(record.examDate);
         setExamType(record.examType);
-        setConclusion(record.conclusion || "");
+        setConclusion(record.content || "");
         setNote(record.note || "");
         setUploadedImages(record.imageFileIds || []);
       }
@@ -65,7 +65,7 @@ export default function ExamAdd() {
 
   const handleChooseImage = async () => {
     const totalImages = localImages.length + uploadedImages.length;
-    if (totalImages >= 9) return;
+    if (totalImages >= 6) return;
 
     try {
       const tempPaths = await chooseImage(1);
@@ -129,8 +129,8 @@ export default function ExamAdd() {
         if (result.date) {
           setExamDate(result.date);
         }
-        if (result.conclusion) {
-          setConclusion(result.conclusion);
+        if (result.content) {
+          setConclusion(result.content);
         }
       }
       Taro.hideLoading();
@@ -195,7 +195,7 @@ export default function ExamAdd() {
         examDate,
         examType,
         imageFileIds,
-        conclusion: conclusion || undefined,
+        content: content || undefined,
         note: note || undefined,
       };
 
@@ -307,7 +307,7 @@ export default function ExamAdd() {
               </View>
             </View>
           ))}
-          {totalImages < 9 && (
+          {totalImages < 6 && (
             <View className="image-add" onClick={handleChooseImage}>
               <Text className="image-add-icon">+</Text>
               <Text className="image-add-text">添加图片</Text>
@@ -320,7 +320,7 @@ export default function ExamAdd() {
       {totalImages > 0 && (
         <View className="section">
           <View className="section-header">
-            <Text className="section-title">检查结论</Text>
+            <Text className="section-title">报告内容</Text>
             <View
               className={`recognize-btn ${recognizing ? "disabled" : ""}`}
               onClick={handleRecognize}
@@ -329,11 +329,11 @@ export default function ExamAdd() {
             </View>
           </View>
           <Textarea
-            className="conclusion-input"
-            value={conclusion}
+            className="content-input"
+            value={content}
             onInput={(e) => setConclusion(e.detail.value)}
-            placeholder='点击"AI 识别"或手动输入检查结论'
-            maxlength={500}
+            placeholder='点击"AI 识别"或手动输入报告内容'
+            maxlength={2000}
           />
         </View>
       )}
