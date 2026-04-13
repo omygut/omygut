@@ -63,4 +63,10 @@ jobs:
             --appid ${{ secrets.WEIXIN_APPID }} \
             --uv ${{ needs.check-version.outputs.version }} \
             -r 1 \
+            --enable-es6 true \
+            --enable-es7 true \
+            --enable-minify true \
+            --enable-minifyJS true \
+            --enable-minifyWXML true \
+            --enable-minifyWXSS true \
             --desc "Auto upload from CI"
