@@ -74,7 +74,7 @@ export default function Index() {
         <Text className="section-title">快速记录</Text>
         <View className="action-grid">
           <View className="action-item" onClick={() => handleNavigate("/pages/symptom/add/index")}>
-            <Text className="action-icon">⚡️</Text>
+            <Text className="action-icon">🌿</Text>
             <Text className="action-label">体感</Text>
           </View>
           <View

@@ -20,7 +20,7 @@ interface TypeOption {
 }
 
 const TYPE_OPTIONS: TypeOption[] = [
-  { value: "symptom", label: "体感", icon: "⚡️" },
+  { value: "symptom", label: "体感", icon: "🌿" },
   { value: "medication", label: "用药", icon: "💊" },
   { value: "meal", label: "饮食", icon: "🍱" },
   { value: "stool", label: "排便", icon: "💩" },

@@ -49,7 +49,7 @@ export default function Records() {
       setRecordGroups([
         {
           type: "symptom",
-          icon: "⚡️",
+          icon: "🌿",
           title: "体感",
           addPath: "/pages/symptom/add/index",
           records: symptoms.map((r) => ({ ...r, _type: "symptom" as const })),
