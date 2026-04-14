@@ -57,7 +57,7 @@ export default function Privacy() {
       <View className="section">
         <Text className="section-title">开源代码</Text>
         <Text className="section-content">
-          本项目完全开源，您可以在 GitHub 查看源代码：github.com/omygut/mygut
+          本项目完全开源，您可以在 GitHub 查看源代码：github.com/omygut/omygut
         </Text>
       </View>
 

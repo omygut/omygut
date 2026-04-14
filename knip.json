@@ -16,6 +16,7 @@
     "@tarojs/vite-runner",
     "@vitejs/plugin-react",
     "miniprogram-ci",
+    "picocolors",
     "tsx",
     "vite"
   ],

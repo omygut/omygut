@@ -14,6 +14,8 @@ Always create a pull request for changes. Never push directly to main.
 
 Never skip pre-commit hooks (--no-verify). If a hook fails, fix the underlying issue.
 
+Never use `git commit --amend`. Always create new commits.
+
 Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 ```
