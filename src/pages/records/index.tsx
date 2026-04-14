@@ -1,4 +1,4 @@
-import { View, Text, Picker } from "@tarojs/components";
+import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState, useCallback } from "react";
 import { symptomService } from "../../services/symptom";
@@ -13,6 +13,7 @@ import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
 import { AMOUNT_OPTIONS } from "../../constants/meal";
 import { STOOL_AMOUNTS } from "../../constants/stool";
 import BristolIcon from "../../components/BristolIcon";
+import CalendarPopup from "../../components/CalendarPopup";
 import type {
   SymptomRecord,
   MealRecord,
@@ -51,6 +52,7 @@ const getExamTypeInfo = (examType: string) => {
 export default function Records() {
   const [currentDate, setCurrentDate] = useState(formatDate());
   const [loading, setLoading] = useState(true);
+  const [calendarVisible, setCalendarVisible] = useState(false);
   const [symptomRecords, setSymptomRecords] = useState<SymptomRecord[]>([]);
   const [mealRecords, setMealRecords] = useState<MealRecord[]>([]);
   const [stoolRecords, setStoolRecords] = useState<StoolRecord[]>([]);
@@ -103,8 +105,7 @@ export default function Records() {
     loadData(newDate);
   };
 
-  const handleDateChange = (e: { detail: { value: string } }) => {
-    const newDate = e.detail.value;
+  const handleDateChange = (newDate: string) => {
     setCurrentDate(newDate);
     loadData(newDate);
   };
@@ -120,15 +121,20 @@ export default function Records() {
         <Text className="date-arrow" onClick={handlePrevDate}>
           ◀
         </Text>
-        <Picker mode="date" value={currentDate} end={today} onChange={handleDateChange}>
-          <Text className="date-text">
-            {currentDate} {getWeekday(currentDate)}
-          </Text>
-        </Picker>
+        <Text className="date-text" onClick={() => setCalendarVisible(true)}>
+          {currentDate} {getWeekday(currentDate)}
+        </Text>
         <Text className={`date-arrow ${isToday ? "disabled" : ""}`} onClick={handleNextDate}>
           ▶
         </Text>
       </View>
+
+      <CalendarPopup
+        visible={calendarVisible}
+        value={currentDate}
+        onChange={handleDateChange}
+        onClose={() => setCalendarVisible(false)}
+      />
 
       {loading ? (
         <View className="loading">加载中...</View>
