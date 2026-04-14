@@ -78,8 +78,8 @@ const getLabTestCategories = (indicators: LabTestIndicator[]): string => {
   const normalized = normalizeIndicators(indicators);
   const categories = [...new Set(normalized.map((i) => i.category).filter(Boolean))];
   if (categories.length === 0) return "";
-  if (categories.length <= 5) return categories.join("、");
-  return `${categories.slice(0, 5).join("、")}等${categories.length}类`;
+  if (categories.length <= 9) return categories.join("、");
+  return `${categories.slice(0, 9).join("、")}等${categories.length}类`;
 };
 
 export default function RecordItem({ record, showTypeIcon = false }: RecordItemProps) {
