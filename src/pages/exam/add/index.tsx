@@ -6,6 +6,7 @@ import { recognizeExamReport } from "../../../services/ai";
 import { chooseImage, uploadImage, deleteCloudFile } from "../../../utils/upload";
 import { formatDate } from "../../../utils/date";
 import { EXAM_TYPES } from "../../../constants/exam";
+import CalendarPopup from "../../../components/CalendarPopup";
 import "./index.css";
 
 export default function ExamAdd() {
@@ -15,7 +16,9 @@ export default function ExamAdd() {
 
   const [date, setDate] = useState(formatDate());
   const [time, setTime] = useState("10:00");
-  const [examType, setExamType] = useState<(typeof EXAM_TYPES)[number]["value"]>(EXAM_TYPES[0].value);
+  const [examType, setExamType] = useState<(typeof EXAM_TYPES)[number]["value"]>(
+    EXAM_TYPES[0].value,
+  );
   const [content, setContent] = useState("");
   const [note, setNote] = useState("");
   const [localImages, setLocalImages] = useState<string[]>([]);
@@ -23,6 +26,7 @@ export default function ExamAdd() {
   const [submitting, setSubmitting] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
   const [loading, setLoading] = useState(isEdit);
+  const [calendarVisible, setCalendarVisible] = useState(false);
 
   const localImagesRef = useRef(localImages);
   localImagesRef.current = localImages;
@@ -241,13 +245,19 @@ export default function ExamAdd() {
       <View className="section">
         <Text className="section-title">时间</Text>
         <View className="time-row">
-          <Picker mode="date" value={date} onChange={(e) => setDate(e.detail.value)}>
-            <View className="picker-value">{date}</View>
-          </Picker>
+          <View className="picker-value" onClick={() => setCalendarVisible(true)}>
+            {date}
+          </View>
           <Picker mode="time" value={time} onChange={(e) => setTime(e.detail.value)}>
             <View className="picker-value">{time}</View>
           </Picker>
         </View>
+        <CalendarPopup
+          visible={calendarVisible}
+          value={date}
+          onChange={setDate}
+          onClose={() => setCalendarVisible(false)}
+        />
       </View>
 
       {/* 检查类型 */}

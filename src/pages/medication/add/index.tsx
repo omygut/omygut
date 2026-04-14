@@ -5,6 +5,7 @@ import { medicationService } from "../../../services/medication";
 import { MEDICATION_CATEGORIES } from "../../../constants/medication";
 import { formatDate, formatTime } from "../../../utils/date";
 import { validateMedication } from "../../../utils/validation";
+import CalendarPopup from "../../../components/CalendarPopup";
 import "./index.css";
 
 const CUSTOM_MEDICATIONS_KEY = "custom_medications";
@@ -47,6 +48,7 @@ export default function MedicationAdd() {
   const [customMedications, setCustomMedications] = useState<string[]>([]);
   const [topMedications, setTopMedications] = useState<string[]>([]);
   const [loading, setLoading] = useState(isEdit);
+  const [calendarVisible, setCalendarVisible] = useState(false);
 
   useEffect(() => {
     if (editId) {
@@ -207,13 +209,19 @@ export default function MedicationAdd() {
       <View className="section">
         <Text className="section-title">时间</Text>
         <View className="time-row">
-          <Picker mode="date" value={date} onChange={(e) => setDate(e.detail.value)}>
-            <View className="picker-value">{date}</View>
-          </Picker>
+          <View className="picker-value" onClick={() => setCalendarVisible(true)}>
+            {date}
+          </View>
           <Picker mode="time" value={time} onChange={(e) => setTime(e.detail.value)}>
             <View className="picker-value">{time}</View>
           </Picker>
         </View>
+        <CalendarPopup
+          visible={calendarVisible}
+          value={date}
+          onChange={setDate}
+          onClose={() => setCalendarVisible(false)}
+        />
       </View>
 
       {/* 药物选择 */}

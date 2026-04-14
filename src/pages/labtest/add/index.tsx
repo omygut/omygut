@@ -6,6 +6,7 @@ import { recognizeLabTestImage } from "../../../services/ai";
 import { normalizeIndicators, type SpecimenType } from "../../../services/labtest-standards";
 import { chooseImage, uploadImage, deleteCloudFile } from "../../../utils/upload";
 import { formatDate, formatTime } from "../../../utils/date";
+import CalendarPopup from "../../../components/CalendarPopup";
 import type { LabTestIndicator } from "../../../types";
 import "./index.css";
 
@@ -32,6 +33,7 @@ export default function LabTestAdd() {
   const [recognizing, setRecognizing] = useState(false);
   const [indicators, setIndicators] = useState<LabTestIndicator[]>([]);
   const [loading, setLoading] = useState(isEdit);
+  const [calendarVisible, setCalendarVisible] = useState(false);
 
   const localImagesRef = useRef(localImages);
   localImagesRef.current = localImages;
@@ -258,13 +260,19 @@ export default function LabTestAdd() {
       <View className="section">
         <Text className="section-title">时间</Text>
         <View className="time-row">
-          <Picker mode="date" value={date} onChange={(e) => setDate(e.detail.value)}>
-            <View className="picker-value">{date}</View>
-          </Picker>
+          <View className="picker-value" onClick={() => setCalendarVisible(true)}>
+            {date}
+          </View>
           <Picker mode="time" value={time} onChange={(e) => setTime(e.detail.value)}>
             <View className="picker-value">{time}</View>
           </Picker>
         </View>
+        <CalendarPopup
+          visible={calendarVisible}
+          value={date}
+          onChange={setDate}
+          onClose={() => setCalendarVisible(false)}
+        />
       </View>
 
       {/* 标本类型 */}

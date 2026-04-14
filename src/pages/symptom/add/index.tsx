@@ -5,6 +5,7 @@ import { symptomService } from "../../../services/symptom";
 import { SYMPTOM_SHORTCUTS, SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../../constants/symptom";
 import { formatDate, formatTime } from "../../../utils/date";
 import { validateSymptom } from "../../../utils/validation";
+import CalendarPopup from "../../../components/CalendarPopup";
 import type { SymptomRecord } from "../../../types";
 import "./index.css";
 
@@ -45,6 +46,7 @@ export default function SymptomAdd() {
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(isEdit);
+  const [calendarVisible, setCalendarVisible] = useState(false);
 
   useEffect(() => {
     if (editId) {
@@ -186,13 +188,19 @@ export default function SymptomAdd() {
       <View className="section">
         <Text className="section-title">时间</Text>
         <View className="time-row">
-          <Picker mode="date" value={date} onChange={(e) => setDate(e.detail.value)}>
-            <View className="picker-value">{date}</View>
-          </Picker>
+          <View className="picker-value" onClick={() => setCalendarVisible(true)}>
+            {date}
+          </View>
           <Picker mode="time" value={time} onChange={(e) => setTime(e.detail.value)}>
             <View className="picker-value">{time}</View>
           </Picker>
         </View>
+        <CalendarPopup
+          visible={calendarVisible}
+          value={date}
+          onChange={setDate}
+          onClose={() => setCalendarVisible(false)}
+        />
       </View>
 
       {/* 整体感受 */}

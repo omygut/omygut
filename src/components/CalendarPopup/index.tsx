@@ -22,21 +22,54 @@ function getFirstDayOfMonth(year: number, month: number): number {
   return new Date(year, month, 1).getDay();
 }
 
-// 生成日历网格数据
-function generateCalendarDays(year: number, month: number): (number | null)[] {
+interface DayInfo {
+  day: number;
+  isCurrentMonth: boolean;
+  dateStr: string;
+}
+
+// 生成日历网格数据（固定 42 格 = 6 行）
+function generateCalendarDays(year: number, month: number): DayInfo[] {
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
 
-  const days: (number | null)[] = [];
+  const days: DayInfo[] = [];
 
-  // 前面的空白
-  for (let i = 0; i < firstDay; i++) {
-    days.push(null);
+  // 前面补上个月的日期
+  if (firstDay > 0) {
+    const prevMonth = month === 0 ? 11 : month - 1;
+    const prevYear = month === 0 ? year - 1 : year;
+    const prevMonthDays = getDaysInMonth(prevYear, prevMonth);
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const day = prevMonthDays - i;
+      days.push({
+        day,
+        isCurrentMonth: false,
+        dateStr: `${prevYear}-${String(prevMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+      });
+    }
   }
 
   // 当月的天数
   for (let i = 1; i <= daysInMonth; i++) {
-    days.push(i);
+    days.push({
+      day: i,
+      isCurrentMonth: true,
+      dateStr: `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`,
+    });
+  }
+
+  // 后面补下个月的日期
+  const nextMonth = month === 11 ? 0 : month + 1;
+  const nextYear = month === 11 ? year + 1 : year;
+  let nextDay = 1;
+  while (days.length < 42) {
+    days.push({
+      day: nextDay,
+      isCurrentMonth: false,
+      dateStr: `${nextYear}-${String(nextMonth + 1).padStart(2, "0")}-${String(nextDay).padStart(2, "0")}`,
+    });
+    nextDay++;
   }
 
   return days;
@@ -83,34 +116,12 @@ export default function CalendarPopup({ visible, value, onChange, onClose }: Cal
     }
   };
 
-  const handleDayClick = (day: number | null) => {
-    if (day === null) return;
-
-    const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
+  const handleDayClick = (dayInfo: DayInfo) => {
     // 不能选择未来的日期
-    if (dateStr > today) return;
+    if (dayInfo.dateStr > today) return;
 
-    onChange(dateStr);
+    onChange(dayInfo.dateStr);
     onClose();
-  };
-
-  const isToday = (day: number | null): boolean => {
-    if (day === null) return false;
-    const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return dateStr === today;
-  };
-
-  const isSelected = (day: number | null): boolean => {
-    if (day === null) return false;
-    const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return dateStr === value;
-  };
-
-  const isFuture = (day: number | null): boolean => {
-    if (day === null) return false;
-    const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return dateStr > today;
   };
 
   const todayYear = parseInt(today.slice(0, 4));
@@ -147,13 +158,13 @@ export default function CalendarPopup({ visible, value, onChange, onClose }: Cal
 
         {/* 日期网格 */}
         <View className="calendar-days">
-          {days.map((day, index) => (
+          {days.map((dayInfo, index) => (
             <View
               key={index}
-              className={`calendar-day ${day === null ? "empty" : ""} ${isToday(day) ? "today" : ""} ${isSelected(day) ? "selected" : ""} ${isFuture(day) ? "future" : ""}`}
-              onClick={() => handleDayClick(day)}
+              className={`calendar-day ${!dayInfo.isCurrentMonth ? "other-month" : ""} ${dayInfo.dateStr === today ? "today" : ""} ${dayInfo.dateStr === value ? "selected" : ""} ${dayInfo.dateStr > today ? "future" : ""}`}
+              onClick={() => handleDayClick(dayInfo)}
             >
-              {day !== null && <Text className="day-text">{day}</Text>}
+              <Text className="day-text">{dayInfo.day}</Text>
             </View>
           ))}
         </View>
