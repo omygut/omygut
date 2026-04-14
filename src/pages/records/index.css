@@ -100,37 +100,3 @@
   display: block;
   padding: 20px 0;
 }
-
-.record-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 0;
-  gap: 16px;
-}
-
-.record-time {
-  font-size: 26px;
-  color: #999;
-  min-width: 90px;
-}
-
-.record-feeling {
-  font-size: 28px;
-  margin-right: 8px;
-}
-
-.record-severity {
-  font-size: 22px;
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 4px;
-}
-
-.record-desc {
-  font-size: 28px;
-  color: #333;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}

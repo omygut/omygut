@@ -8,19 +8,7 @@ import { medicationService } from "../../services/medication";
 import { labTestService } from "../../services/labtest";
 import { examService } from "../../services/exam";
 import { formatDisplayDate, getWeekday } from "../../utils/date";
-import { EXAM_TYPES } from "../../constants/exam";
-import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
-import { AMOUNT_OPTIONS } from "../../constants/meal";
-import { STOOL_AMOUNTS } from "../../constants/stool";
-import BristolIcon from "../../components/BristolIcon";
-import type {
-  SymptomRecord,
-  MealRecord,
-  StoolRecord,
-  MedicationRecord,
-  LabTestRecord,
-  ExamRecord,
-} from "../../types";
+import RecordItem, { AnyRecord } from "../../components/RecordItem";
 import "./index.css";
 
 type RecordType = "symptom" | "medication" | "meal" | "stool" | "labtest" | "exam";
@@ -39,40 +27,6 @@ const TYPE_OPTIONS: TypeOption[] = [
   { value: "labtest", label: "化验", icon: "🧪" },
   { value: "exam", label: "检查", icon: "🩺" },
 ];
-
-// 统一的记录类型
-type AnyRecord =
-  | (SymptomRecord & { _type: "symptom" })
-  | (MealRecord & { _type: "meal" })
-  | (StoolRecord & { _type: "stool" })
-  | (MedicationRecord & { _type: "medication" })
-  | (LabTestRecord & { _type: "labtest" })
-  | (ExamRecord & { _type: "exam" });
-
-const getFeelingEmoji = (value: number): string => {
-  return FEELING_OPTIONS.find((f) => f.value === value)?.emoji || "😐";
-};
-
-const formatSymptoms = (symptoms: string[]): string => {
-  return symptoms.join("、");
-};
-
-const getSeverityInfo = (severity?: 1 | 2 | 3) => {
-  if (!severity) return null;
-  return SEVERITY_OPTIONS.find((s) => s.value === severity);
-};
-
-const getAmountEmoji = (amount: number): string => {
-  return AMOUNT_OPTIONS.find((a) => a.value === amount)?.emoji || "🍚";
-};
-
-const getStoolAmountLabel = (amount: number): string => {
-  return STOOL_AMOUNTS.find((a) => a.value === amount)?.label || "";
-};
-
-const getExamTypeInfo = (examType: string) => {
-  return EXAM_TYPES.find((t) => t.value === examType) || EXAM_TYPES[EXAM_TYPES.length - 1];
-};
 
 export default function History() {
   const [selectedTypes, setSelectedTypes] = useState<RecordType[]>([
@@ -168,14 +122,6 @@ export default function History() {
     loadData(newTypes);
   };
 
-  const handleNavigate = (path: string) => {
-    Taro.navigateTo({ url: path });
-  };
-
-  const getTypeInfo = (type: RecordType) => {
-    return TYPE_OPTIONS.find((t) => t.value === type)!;
-  };
-
   // 按日期分组记录
   const groupedRecords: { date: string; records: AnyRecord[] }[] = [];
   let currentDate = "";
@@ -186,111 +132,6 @@ export default function History() {
     }
     groupedRecords[groupedRecords.length - 1].records.push(record);
   });
-
-  const renderRecord = (record: AnyRecord) => {
-    const typeInfo = getTypeInfo(record._type);
-
-    switch (record._type) {
-      case "symptom": {
-        const severity = getSeverityInfo(record.severity);
-        return (
-          <View
-            key={record._id}
-            className="record-item"
-            onClick={() => handleNavigate(`/pages/symptom/add/index?id=${record._id}`)}
-          >
-            <Text className="record-type-icon">{typeInfo.icon}</Text>
-            <Text className="record-time">{record.time || "--:--"}</Text>
-            <Text className="record-feeling">{getFeelingEmoji(record.overallFeeling)}</Text>
-            {severity && (
-              <Text className="record-severity" style={{ backgroundColor: severity.color }}>
-                {severity.label}
-              </Text>
-            )}
-            {record.symptoms.length > 0 && (
-              <Text className="record-desc">{formatSymptoms(record.symptoms)}</Text>
-            )}
-          </View>
-        );
-      }
-      case "medication":
-        return (
-          <View
-            key={record._id}
-            className="record-item"
-            onClick={() => handleNavigate(`/pages/medication/add/index?id=${record._id}`)}
-          >
-            <Text className="record-type-icon">{typeInfo.icon}</Text>
-            <Text className="record-time">{record.time}</Text>
-            <Text className="record-desc">{record.names.join("、")}</Text>
-          </View>
-        );
-      case "meal":
-        return (
-          <View
-            key={record._id}
-            className="record-item"
-            onClick={() => handleNavigate(`/pages/meal/add/index?id=${record._id}`)}
-          >
-            <Text className="record-type-icon">{typeInfo.icon}</Text>
-            <Text className="record-time">{record.time}</Text>
-            <Text className="record-feeling">{getAmountEmoji(record.amount)}</Text>
-            <Text className="record-desc">{record.foods.join("、")}</Text>
-          </View>
-        );
-      case "stool":
-        return (
-          <View
-            key={record._id}
-            className="record-item"
-            onClick={() => handleNavigate(`/pages/stool/add/index?id=${record._id}`)}
-          >
-            <Text className="record-type-icon">{typeInfo.icon}</Text>
-            <Text className="record-time">{record.time}</Text>
-            <View className="record-feeling">
-              <BristolIcon type={record.type} size={24} />
-            </View>
-            <Text className="record-desc">
-              {getStoolAmountLabel(record.amount)}
-              {record.note && ` · ${record.note}`}
-            </Text>
-          </View>
-        );
-      case "labtest":
-        return (
-          <View
-            key={record._id}
-            className="record-item"
-            onClick={() => handleNavigate(`/pages/labtest/add/index?id=${record._id}`)}
-          >
-            <Text className="record-type-icon">{typeInfo.icon}</Text>
-            <Text className="record-time">{record.time}</Text>
-            <Text className="record-desc">
-              {record.imageFileIds.length}张图片
-              {record.indicators.length > 0 && ` · ${record.indicators.length}项指标`}
-            </Text>
-          </View>
-        );
-      case "exam": {
-        const examTypeInfo = getExamTypeInfo(record.examType);
-        return (
-          <View
-            key={record._id}
-            className="record-item"
-            onClick={() => handleNavigate(`/pages/exam/add/index?id=${record._id}`)}
-          >
-            <Text className="record-type-icon">{typeInfo.icon}</Text>
-            <Text className="record-time">{record.time}</Text>
-            <Text className="record-feeling">{examTypeInfo.emoji}</Text>
-            <Text className="record-desc">
-              {examTypeInfo.label}
-              {record.imageFileIds.length > 0 && ` · ${record.imageFileIds.length}张图片`}
-            </Text>
-          </View>
-        );
-      }
-    }
-  };
 
   return (
     <View className="history-page">
@@ -324,7 +165,9 @@ export default function History() {
                 </Text>
               </View>
               <View className="date-records">
-                {group.records.map((record) => renderRecord(record))}
+                {group.records.map((record) => (
+                  <RecordItem key={record._id} record={record} showTypeIcon />
+                ))}
               </View>
             </View>
           ))}
