@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { View, Text, Image, Input, Button } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { updateUserSettings, uploadAvatar } from "../../services/user";
@@ -24,13 +24,16 @@ export default function ProfilePopup({
   const [currentAvatar, setCurrentAvatar] = useState(avatar);
   const [tempAvatarPath, setTempAvatarPath] = useState<string>();
   const [saving, setSaving] = useState(false);
+  const prevVisibleRef = useRef(visible);
 
   useEffect(() => {
-    if (visible) {
+    // 只在弹窗打开时（visible 从 false 变为 true）初始化状态
+    if (visible && !prevVisibleRef.current) {
       setCurrentNickname(nickname);
       setCurrentAvatar(avatar);
       setTempAvatarPath(undefined);
     }
+    prevVisibleRef.current = visible;
   }, [visible, nickname, avatar]);
 
   if (!visible) return null;

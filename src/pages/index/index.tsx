@@ -1,7 +1,8 @@
 import { View, Text, Image } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState, useCallback } from "react";
-import { getUserSettings } from "../../services/user";
+import { getUserSettings, getDefaultNickname } from "../../services/user";
+import ProfilePopup from "../../components/ProfilePopup";
 import "./index.css";
 
 export default function Index() {
@@ -10,6 +11,7 @@ export default function Index() {
     nickname?: string;
     avatar?: string;
   } | null>(null);
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
 
   const loadUserSettings = useCallback(async () => {
     try {
@@ -28,6 +30,22 @@ export default function Index() {
     Taro.navigateTo({ url: path });
   };
 
+  const handleAvatarClick = () => {
+    setShowProfilePopup(true);
+  };
+
+  const handleProfileClose = () => {
+    setShowProfilePopup(false);
+  };
+
+  const handleProfileSave = (data: { nickname: string; avatar?: string }) => {
+    setUserSettings((prev) => (prev ? { ...prev, ...data } : prev));
+    setShowProfilePopup(false);
+  };
+
+  const displayNickname =
+    userSettings?.nickname || (userSettings?._id ? getDefaultNickname(userSettings._id) : "");
+
   return (
     <View className="home-page">
       <View className="top-header">
@@ -35,13 +53,21 @@ export default function Index() {
           <Text className="app-title">MyGut</Text>
           <Text className="app-subtitle">肠道健康记录</Text>
         </View>
-        <View className="header-avatar">
+        <View className="header-avatar" onClick={handleAvatarClick}>
           {userSettings?.avatar ? (
             <Image className="avatar-img" src={userSettings.avatar} mode="aspectFill" />
           ) : (
             <View className="avatar-default" />
           )}
         </View>
+
+        <ProfilePopup
+          visible={showProfilePopup}
+          nickname={displayNickname}
+          avatar={userSettings?.avatar}
+          onClose={handleProfileClose}
+          onSave={handleProfileSave}
+        />
       </View>
 
       <View className="quick-actions">
