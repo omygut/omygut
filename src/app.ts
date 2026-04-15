@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import Taro, { useLaunch } from "@tarojs/taro";
+import { setupErrorReporter } from "./services/error-reporter";
 
 import "./app.css";
 
@@ -13,6 +14,9 @@ function App({ children }: PropsWithChildren<any>) {
         env: process.env.TARO_APP_CLOUD_ENV,
         traceUser: true,
       });
+
+      // 初始化错误上报
+      setupErrorReporter();
     }
   });
 
