@@ -44,5 +44,6 @@ export default defineAppConfig({
       },
     ],
   },
+  // @ts-expect-error WeChat cloud development - not typed in Taro's AppConfig
   cloud: true,
 });
