@@ -108,7 +108,10 @@ export default function History() {
   }, []);
 
   useDidShow(() => {
-    loadData(selectedTypes);
+    // Only load on first visit, not when returning from detail page
+    if (records.length === 0) {
+      loadData(selectedTypes);
+    }
   });
 
   const handleTypeToggle = (type: RecordType) => {

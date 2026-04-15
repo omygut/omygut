@@ -99,7 +99,10 @@ export default function Records() {
   }, []);
 
   useDidShow(() => {
-    loadData(currentDate);
+    // Only load on first visit, not when returning from detail page
+    if (recordGroups.length === 0) {
+      loadData(currentDate);
+    }
   });
 
   const handlePrevDate = () => {
