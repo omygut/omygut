@@ -95,4 +95,6 @@ export interface ExportData {
   symptom_records: SymptomRecord[];
   meal_records: MealRecord[];
   medication_records: MedicationRecord[];
+  labtest_records: LabTestRecord[];
+  exam_records: ExamRecord[];
 }

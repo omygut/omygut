@@ -6,6 +6,8 @@ import type {
   SymptomRecord,
   MealRecord,
   MedicationRecord,
+  LabTestRecord,
+  ExamRecord,
 } from "../types";
 
 async function getAllRecords<T>(collection: string, userId: string): Promise<T[]> {
@@ -17,12 +19,15 @@ async function getAllRecords<T>(collection: string, userId: string): Promise<T[]
 export async function exportAllData(): Promise<ExportData> {
   const userId = await getOpenId();
 
-  const [stoolRecords, symptomRecords, mealRecords, medicationRecords] = await Promise.all([
-    getAllRecords<StoolRecord>("stool_records", userId),
-    getAllRecords<SymptomRecord>("symptom_records", userId),
-    getAllRecords<MealRecord>("meal_records", userId),
-    getAllRecords<MedicationRecord>("medication_records", userId),
-  ]);
+  const [stoolRecords, symptomRecords, mealRecords, medicationRecords, labtestRecords, examRecords] =
+    await Promise.all([
+      getAllRecords<StoolRecord>("stool_records", userId),
+      getAllRecords<SymptomRecord>("symptom_records", userId),
+      getAllRecords<MealRecord>("meal_records", userId),
+      getAllRecords<MedicationRecord>("medication_records", userId),
+      getAllRecords<LabTestRecord>("labtest_records", userId),
+      getAllRecords<ExamRecord>("exam_records", userId),
+    ]);
 
   return {
     exportedAt: new Date().toISOString(),
@@ -30,6 +35,8 @@ export async function exportAllData(): Promise<ExportData> {
     symptom_records: symptomRecords,
     meal_records: mealRecords,
     medication_records: medicationRecords,
+    labtest_records: labtestRecords,
+    exam_records: examRecords,
   };
 }
 
