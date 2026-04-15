@@ -12,22 +12,43 @@ import type {
 
 async function getAllRecords<T>(collection: string, userId: string): Promise<T[]> {
   const db = getDatabase();
-  const res = await db.collection(collection).where({ userId }).get();
-  return res.data as T[];
+  const PAGE_SIZE = 20;
+  const allData: T[] = [];
+
+  while (true) {
+    const res = await db
+      .collection(collection)
+      .where({ userId })
+      .skip(allData.length)
+      .limit(PAGE_SIZE)
+      .get();
+
+    allData.push(...(res.data as T[]));
+
+    if (res.data.length < PAGE_SIZE) break;
+  }
+
+  return allData;
 }
 
 export async function exportAllData(): Promise<ExportData> {
   const userId = await getOpenId();
 
-  const [stoolRecords, symptomRecords, mealRecords, medicationRecords, labtestRecords, examRecords] =
-    await Promise.all([
-      getAllRecords<StoolRecord>("stool_records", userId),
-      getAllRecords<SymptomRecord>("symptom_records", userId),
-      getAllRecords<MealRecord>("meal_records", userId),
-      getAllRecords<MedicationRecord>("medication_records", userId),
-      getAllRecords<LabTestRecord>("labtest_records", userId),
-      getAllRecords<ExamRecord>("exam_records", userId),
-    ]);
+  const [
+    stoolRecords,
+    symptomRecords,
+    mealRecords,
+    medicationRecords,
+    labtestRecords,
+    examRecords,
+  ] = await Promise.all([
+    getAllRecords<StoolRecord>("stool_records", userId),
+    getAllRecords<SymptomRecord>("symptom_records", userId),
+    getAllRecords<MealRecord>("meal_records", userId),
+    getAllRecords<MedicationRecord>("medication_records", userId),
+    getAllRecords<LabTestRecord>("labtest_records", userId),
+    getAllRecords<ExamRecord>("exam_records", userId),
+  ]);
 
   return {
     exportedAt: new Date().toISOString(),

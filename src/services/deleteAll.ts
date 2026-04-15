@@ -5,11 +5,16 @@ const COLLECTIONS = ["stool_records", "symptom_records", "meal_records", "medica
 
 async function deleteCollection(collection: string, userId: string): Promise<void> {
   const db = getDatabase();
-  const res = await db.collection(collection).where({ userId }).get();
-  const ids = res.data.map((doc: { _id: string }) => doc._id);
+  const PAGE_SIZE = 20;
 
-  for (const id of ids) {
-    await db.collection(collection).doc(id).remove();
+  // 分页获取所有记录并删除
+  while (true) {
+    const res = await db.collection(collection).where({ userId }).limit(PAGE_SIZE).get();
+    if (res.data.length === 0) break;
+
+    for (const doc of res.data as { _id: string }[]) {
+      await db.collection(collection).doc(doc._id).remove();
+    }
   }
 }
 
@@ -26,12 +31,12 @@ async function deleteCloudFiles(userId: string): Promise<void> {
   try {
     // List and delete user's cloud files (avatar, exports)
     const fileList = await Taro.cloud.getTempFileURL({
-      fileList: [`cloud://cloud1-8gzx205084c1da0f.636c-cloud1-8gzx205084c1da0f-1255262839/${userId}/avatar.jpg`],
+      fileList: [
+        `cloud://cloud1-8gzx205084c1da0f.636c-cloud1-8gzx205084c1da0f-1255262839/${userId}/avatar.jpg`,
+      ],
     });
 
-    const existingFiles = fileList.fileList
-      .filter((f) => f.status === 0)
-      .map((f) => f.fileID);
+    const existingFiles = fileList.fileList.filter((f) => f.status === 0).map((f) => f.fileID);
 
     if (existingFiles.length > 0) {
       await Taro.cloud.deleteFile({ fileList: existingFiles });

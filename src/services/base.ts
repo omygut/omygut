@@ -18,16 +18,32 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
       const db = getDatabase();
       const userId = await getOpenId();
       const _ = db.command;
-      const res = await db
-        .collection(collection)
-        .where({
-          userId,
-          deletedAt: _.exists(false),
-        })
-        .orderBy("createdAt", "desc")
-        .limit(limit)
-        .get();
-      return res.data as T[];
+
+      // 云数据库单次最多返回20条（小程序端限制），需要分页
+      const PAGE_SIZE = 20;
+      const allData: T[] = [];
+
+      while (allData.length < limit) {
+        const batchLimit = Math.min(PAGE_SIZE, limit - allData.length);
+        const res = await db
+          .collection(collection)
+          .where({
+            userId,
+            deletedAt: _.exists(false),
+          })
+          .orderBy("date", "desc")
+          .orderBy("time", "desc")
+          .skip(allData.length)
+          .limit(batchLimit)
+          .get();
+
+        allData.push(...(res.data as T[]));
+
+        // 如果返回的数据少于请求的，说明没有更多了
+        if (res.data.length < batchLimit) break;
+      }
+
+      return allData;
     },
 
     async delete(id: string): Promise<void> {
@@ -45,16 +61,29 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
       const db = getDatabase();
       const userId = await getOpenId();
       const _ = db.command;
-      const res = await db
-        .collection(collection)
-        .where({
-          userId,
-          date,
-          deletedAt: _.exists(false),
-        })
-        .orderBy("time", "asc")
-        .get();
-      return res.data as T[];
+
+      const PAGE_SIZE = 20;
+      const allData: T[] = [];
+
+      while (true) {
+        const res = await db
+          .collection(collection)
+          .where({
+            userId,
+            date,
+            deletedAt: _.exists(false),
+          })
+          .orderBy("time", "asc")
+          .skip(allData.length)
+          .limit(PAGE_SIZE)
+          .get();
+
+        allData.push(...(res.data as T[]));
+
+        if (res.data.length < PAGE_SIZE) break;
+      }
+
+      return allData;
     },
 
     async getById(id: string): Promise<T | null> {

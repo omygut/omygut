@@ -28,42 +28,42 @@ export default function History() {
       if (types.includes("symptom")) {
         promises.push(
           symptomService
-            .getRecent(50)
+            .getRecent(200)
             .then((data) => data.map((r) => ({ ...r, _type: "symptom" as const }))),
         );
       }
       if (types.includes("medication")) {
         promises.push(
           medicationService
-            .getRecent(50)
+            .getRecent(200)
             .then((data) => data.map((r) => ({ ...r, _type: "medication" as const }))),
         );
       }
       if (types.includes("meal")) {
         promises.push(
           mealService
-            .getRecent(50)
+            .getRecent(200)
             .then((data) => data.map((r) => ({ ...r, _type: "meal" as const }))),
         );
       }
       if (types.includes("stool")) {
         promises.push(
           stoolService
-            .getRecent(50)
+            .getRecent(200)
             .then((data) => data.map((r) => ({ ...r, _type: "stool" as const }))),
         );
       }
       if (types.includes("labtest")) {
         promises.push(
           labTestService
-            .getRecent(50)
+            .getRecent(200)
             .then((data) => data.map((r) => ({ ...r, _type: "labtest" as const }))),
         );
       }
       if (types.includes("exam")) {
         promises.push(
           examService
-            .getRecent(50)
+            .getRecent(200)
             .then((data) => data.map((r) => ({ ...r, _type: "exam" as const }))),
         );
       }
