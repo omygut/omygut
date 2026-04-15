@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { View, Text, Image, Input, Button } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { updateUserSettings, uploadAvatar } from "../../services/user";
+import { showError } from "../../utils/error";
 import { validateNickname } from "../../utils/validation";
 import "./index.css";
 
@@ -93,8 +94,7 @@ export default function ProfilePopup({
 
       Taro.showToast({ title: "保存成功", icon: "success" });
     } catch (error) {
-      console.error("保存失败:", error);
-      Taro.showToast({ title: "保存失败", icon: "none" });
+      showError("保存失败", error);
     } finally {
       setSaving(false);
     }

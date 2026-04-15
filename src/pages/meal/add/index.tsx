@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { mealService } from "../../../services/meal";
 import { FOOD_CATEGORIES, AMOUNT_OPTIONS } from "../../../constants/meal";
 import { formatDate, formatTime } from "../../../utils/date";
+import { showError } from "../../../utils/error";
 import { validateFood } from "../../../utils/validation";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
@@ -77,8 +78,7 @@ export default function MealAdd() {
         setNote(record.note || "");
       }
     } catch (error) {
-      console.error("加载记录失败:", error);
-      Taro.showToast({ title: "加载失败", icon: "none" });
+      showError("加载失败", error);
     } finally {
       setLoading(false);
     }
@@ -156,8 +156,8 @@ export default function MealAdd() {
         setTimeout(() => {
           Taro.navigateBack();
         }, 1500);
-      } catch {
-        Taro.showToast({ title: "删除失败", icon: "none" });
+      } catch (error) {
+        showError("删除失败", error);
       }
     }
   };
@@ -192,8 +192,7 @@ export default function MealAdd() {
         Taro.navigateBack();
       }, 1500);
     } catch (error) {
-      console.error("保存失败:", error);
-      Taro.showToast({ title: "保存失败", icon: "none" });
+      showError("保存失败", error);
     } finally {
       setSubmitting(false);
     }

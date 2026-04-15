@@ -6,6 +6,7 @@ import { recognizeLabTestImage } from "../../../services/ai";
 import { normalizeIndicators, type SpecimenType } from "../../../services/labtest-standards";
 import { chooseImage, uploadImage, deleteCloudFile } from "../../../utils/upload";
 import { formatDate, formatTime } from "../../../utils/date";
+import { showError } from "../../../utils/error";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
 import type { LabTestIndicator } from "../../../types";
@@ -69,8 +70,7 @@ export default function LabTestAdd() {
         setIndicators(normalizeIndicators(record.indicators || [], recordSpecimen));
       }
     } catch (error) {
-      console.error("加载记录失败:", error);
-      Taro.showToast({ title: "加载失败", icon: "none" });
+      showError("加载失败", error);
     } finally {
       setLoading(false);
     }
@@ -120,8 +120,7 @@ export default function LabTestAdd() {
         await deleteCloudFile(fileId);
         setUploadedImages(uploadedImages.filter((_, i) => i !== index));
       } catch (error) {
-        console.error("删除云存储图片失败:", error);
-        Taro.showToast({ title: "删除失败", icon: "none" });
+        showError("删除失败", error);
       }
     }
   };
@@ -162,9 +161,8 @@ export default function LabTestAdd() {
         Taro.showToast({ title: `识别到 ${newIndicators.length} 项指标`, icon: "success" });
       }
     } catch (error) {
-      console.error("识别失败:", error);
       Taro.hideLoading();
-      Taro.showToast({ title: "识别失败", icon: "none" });
+      showError("识别失败", error);
     } finally {
       setRecognizing(false);
     }
@@ -189,8 +187,8 @@ export default function LabTestAdd() {
         setTimeout(() => {
           Taro.navigateBack();
         }, 1500);
-      } catch {
-        Taro.showToast({ title: "删除失败", icon: "none" });
+      } catch (error) {
+        showError("删除失败", error);
       }
     }
   };
@@ -237,9 +235,8 @@ export default function LabTestAdd() {
         Taro.navigateBack();
       }, 1500);
     } catch (error) {
-      console.error("保存失败:", error);
       Taro.hideLoading();
-      Taro.showToast({ title: "保存失败", icon: "none" });
+      showError("保存失败", error);
     } finally {
       setSubmitting(false);
     }

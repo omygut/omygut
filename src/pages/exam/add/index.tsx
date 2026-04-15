@@ -5,6 +5,7 @@ import { examService } from "../../../services/exam";
 import { recognizeExamReport } from "../../../services/ai";
 import { chooseImage, uploadImage, deleteCloudFile } from "../../../utils/upload";
 import { formatDate } from "../../../utils/date";
+import { showError } from "../../../utils/error";
 import { EXAM_TYPES } from "../../../constants/exam";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
@@ -61,8 +62,7 @@ export default function ExamAdd() {
         setUploadedImages(record.imageFileIds || []);
       }
     } catch (error) {
-      console.error("加载记录失败:", error);
-      Taro.showToast({ title: "加载失败", icon: "none" });
+      showError("加载失败", error);
     } finally {
       setLoading(false);
     }
@@ -110,8 +110,7 @@ export default function ExamAdd() {
         await deleteCloudFile(fileId);
         setUploadedImages(uploadedImages.filter((_, i) => i !== index));
       } catch (error) {
-        console.error("删除云存储图片失败:", error);
-        Taro.showToast({ title: "删除失败", icon: "none" });
+        showError("删除失败", error);
       }
     }
   };
@@ -156,9 +155,8 @@ export default function ExamAdd() {
       Taro.hideLoading();
       Taro.showToast({ title: "识别完成", icon: "success" });
     } catch (error) {
-      console.error("识别失败:", error);
       Taro.hideLoading();
-      Taro.showToast({ title: "识别失败", icon: "none" });
+      showError("识别失败", error);
     } finally {
       setRecognizing(false);
     }
@@ -182,8 +180,8 @@ export default function ExamAdd() {
         setTimeout(() => {
           Taro.navigateBack();
         }, 1500);
-      } catch {
-        Taro.showToast({ title: "删除失败", icon: "none" });
+      } catch (error) {
+        showError("删除失败", error);
       }
     }
   };
@@ -231,9 +229,8 @@ export default function ExamAdd() {
         Taro.navigateBack();
       }, 1500);
     } catch (error) {
-      console.error("保存失败:", error);
       Taro.hideLoading();
-      Taro.showToast({ title: "保存失败", icon: "none" });
+      showError("保存失败", error);
     } finally {
       setSubmitting(false);
     }

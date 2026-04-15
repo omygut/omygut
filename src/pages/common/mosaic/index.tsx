@@ -1,6 +1,7 @@
 import { View, Text, Canvas } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useRef, useEffect } from "react";
+import { showError } from "../../../utils/error";
 import "./index.css";
 
 interface Point {
@@ -253,8 +254,7 @@ export default function MosaicEditor() {
 
       Taro.navigateBack();
     } catch (error) {
-      console.error("保存失败:", error);
-      Taro.showToast({ title: "保存失败", icon: "none" });
+      showError("保存失败", error);
     } finally {
       setProcessing(false);
     }
