@@ -7,6 +7,7 @@ import { formatDate, formatTime } from "../../../utils/date";
 import { validateFood } from "../../../utils/validation";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
+import AmountIcon from "../../../components/AmountIcon";
 import "./index.css";
 
 const CUSTOM_FOODS_KEY = "custom_foods";
@@ -323,7 +324,7 @@ export default function MealAdd() {
               className={`amount-item ${amount === option.value ? "active" : ""}`}
               onClick={() => setAmount(option.value as typeof amount)}
             >
-              <Text className="amount-emoji">{option.emoji}</Text>
+              <AmountIcon level={option.value} />
               <Text className="amount-label">{option.label}</Text>
             </View>
           ))}

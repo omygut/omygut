@@ -99,7 +99,7 @@ export const FOOD_CATEGORIES = [
 
 // 进食量选项
 export const AMOUNT_OPTIONS = [
-  { value: 1, label: "少量", emoji: "▰▱▱" },
-  { value: 2, label: "适中", emoji: "▰▰▱" },
-  { value: 3, label: "大量", emoji: "▰▰▰" },
+  { value: 1, label: "少量" },
+  { value: 2, label: "适中" },
+  { value: 3, label: "大量" },
 ] as const;

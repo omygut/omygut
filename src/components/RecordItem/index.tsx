@@ -2,7 +2,7 @@ import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { EXAM_TYPES } from "../../constants/exam";
 import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
-import { AMOUNT_OPTIONS } from "../../constants/meal";
+import AmountIcon from "../AmountIcon";
 import { STOOL_AMOUNTS } from "../../constants/stool";
 import { normalizeIndicators } from "../../services/labtest-standards";
 import BristolIcon from "../BristolIcon";
@@ -45,10 +45,6 @@ const getFeelingEmoji = (value: number): string => {
 const getSeverityInfo = (severity?: 1 | 2 | 3) => {
   if (!severity) return null;
   return SEVERITY_OPTIONS.find((s) => s.value === severity) ?? null;
-};
-
-const getAmountEmoji = (amount: number): string => {
-  return AMOUNT_OPTIONS.find((a) => a.value === amount)?.emoji ?? UNKNOWN;
 };
 
 const getStoolAmountLabel = (amount: number): string => {
@@ -99,7 +95,9 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
       case "meal":
         return (
           <>
-            <Text className="record-feeling">{getAmountEmoji(record.amount)}</Text>
+            <View className="record-feeling">
+              <AmountIcon level={record.amount as 1 | 2 | 3} size={24} />
+            </View>
             <Text className="record-desc">{record.foods.join("、")}</Text>
           </>
         );

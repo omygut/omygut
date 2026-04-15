@@ -2,7 +2,7 @@
 
 ## Design Documentation
 
-Do not create local design/spec files. All design documents should be written directly in the GitHub issue.
+Do not create local design/spec files (e.g., `docs/superpowers/specs/`). All design documents should be written directly in the GitHub issue using `gh issue edit`.
 
 ## Package Manager
 
