@@ -82,6 +82,13 @@ tcb permission get collection -e cloud1-8gzx205084c1da0f
 tcb env list
 ```
 
+## Version Bump
+
+When bumping version in `package.json`, also update `CHANGELOG.md`:
+- Add new version section at the top with current date
+- Keep entries concise: only new features (新增) and changes (变更)
+- Summarize from commit messages since last version
+
 ## Build-time Constants
 
 Use `defineConstants` in `config/index.ts` for environment-specific values. Do not use `process.env` directly in source code — it doesn't exist at runtime in mini programs.
