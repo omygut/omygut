@@ -206,13 +206,12 @@ export default function CalendarPopup({ visible, value, onChange, onClose }: Cal
         </View>
 
         {/* 日期网格 */}
-        <View className="calendar-days">
+        <View className="calendar-days" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           {days.map((dayInfo, index) => (
             <View
               key={index}
               data-index={index}
               className={`calendar-day ${!dayInfo.isCurrentMonth ? "other-month" : ""} ${dayInfo.dateStr === today ? "today" : ""} ${dayInfo.dateStr === value ? "selected" : ""} ${dayInfo.dateStr > today ? "future" : ""}`}
-              onClick={() => handleDayClick(dayInfo)}
             >
               <Text className="day-text">{dayInfo.day}</Text>
             </View>
