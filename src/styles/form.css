@@ -36,8 +36,8 @@
 /* 备注 */
 .note-input {
   width: 100%;
-  min-height: 80px;
-  padding: 12px;
+  min-height: 60px;
+  padding: 10px;
   background-color: #f5f5f5;
   border-radius: 12px;
   font-size: 28px;
