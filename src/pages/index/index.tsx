@@ -1,73 +1,36 @@
 import { View, Text, Image } from "@tarojs/components";
-import Taro, { useDidShow } from "@tarojs/taro";
-import { useState, useCallback } from "react";
-import { getUserSettings, getDefaultNickname } from "../../services/user";
-import ProfilePopup from "../../components/ProfilePopup";
+import logoImg from "../../assets/logo.png";
+import Taro from "@tarojs/taro";
+import { useState, useEffect } from "react";
 import "./index.css";
 
 export default function Index() {
-  const [userSettings, setUserSettings] = useState<{
-    _id: string;
-    nickname?: string;
-    avatar?: string;
-  } | null>(null);
-  const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const [navHeight, setNavHeight] = useState({ statusBarHeight: 0, navBarHeight: 44 });
 
-  const loadUserSettings = useCallback(async () => {
-    try {
-      const settings = await getUserSettings();
-      setUserSettings(settings);
-    } catch (error) {
-      console.error("加载用户设置失败:", error);
-    }
+  useEffect(() => {
+    const systemInfo = Taro.getSystemInfoSync();
+    const menuButton = Taro.getMenuButtonBoundingClientRect();
+    const statusBarHeight = systemInfo.statusBarHeight || 0;
+    // 导航栏高度 = 胶囊按钮高度 + 上下间距
+    const navBarHeight = menuButton.height + (menuButton.top - statusBarHeight) * 2;
+    setNavHeight({ statusBarHeight, navBarHeight });
   }, []);
-
-  useDidShow(() => {
-    loadUserSettings();
-  });
 
   const handleNavigate = (path: string) => {
     Taro.navigateTo({ url: path });
   };
 
-  const handleAvatarClick = () => {
-    setShowProfilePopup(true);
-  };
-
-  const handleProfileClose = () => {
-    setShowProfilePopup(false);
-  };
-
-  const handleProfileSave = (data: { nickname: string; avatar?: string }) => {
-    setUserSettings((prev) => (prev ? { ...prev, ...data } : prev));
-    setShowProfilePopup(false);
-  };
-
-  const displayNickname =
-    userSettings?.nickname || (userSettings?._id ? getDefaultNickname(userSettings._id) : "");
-
   return (
     <View className="home-page">
-      <View className="top-header">
-        <View className="title-section">
-          <Text className="app-title">MyGut</Text>
-          <Text className="app-subtitle">肠道健康记录</Text>
-        </View>
-        <View className="header-avatar" onClick={handleAvatarClick}>
-          {userSettings?.avatar ? (
-            <Image className="avatar-img" src={userSettings.avatar} mode="aspectFill" />
-          ) : (
-            <View className="avatar-default" />
-          )}
-        </View>
-
-        <ProfilePopup
-          visible={showProfilePopup}
-          nickname={displayNickname}
-          avatar={userSettings?.avatar}
-          onClose={handleProfileClose}
-          onSave={handleProfileSave}
-        />
+      <View
+        className="top-header"
+        style={{
+          paddingTop: `${navHeight.statusBarHeight}px`,
+          height: `${navHeight.navBarHeight}px`,
+        }}
+      >
+        <Image className="app-logo" src={logoImg} mode="aspectFit" />
+        <Text className="app-title">MyGut - 肠道健康记录</Text>
       </View>
 
       <View className="quick-actions">

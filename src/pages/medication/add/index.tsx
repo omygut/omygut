@@ -8,6 +8,7 @@ import { showError } from "../../../utils/error";
 import { validateMedication } from "../../../utils/validation";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
+import NavBar from "../../../components/NavBar";
 import "./index.css";
 
 const CUSTOM_MEDICATIONS_KEY = "custom_medications";
@@ -198,6 +199,7 @@ export default function MedicationAdd() {
   if (loading) {
     return (
       <View className="add-page">
+        <NavBar title="添加用药" />
         <View className="loading">加载中...</View>
       </View>
     );
@@ -205,6 +207,7 @@ export default function MedicationAdd() {
 
   return (
     <View className="add-page">
+      <NavBar title="添加用药" />
       {/* 日期时间 */}
       <View className="section">
         <Text className="section-title">时间</Text>
