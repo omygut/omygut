@@ -11,9 +11,14 @@ export interface BarChartData {
 interface BarChartProps {
   data: BarChartData[];
   maxValue?: number;
+  higherIsBetter?: boolean; // true: green for high values, false: green for low values
 }
 
-export default function BarChart({ data, maxValue: propMaxValue }: BarChartProps) {
+export default function BarChart({
+  data,
+  maxValue: propMaxValue,
+  higherIsBetter = false,
+}: BarChartProps) {
   const canvasId = useRef(`bar-chart-${Date.now()}`).current;
 
   useEffect(() => {
@@ -36,9 +41,9 @@ export default function BarChart({ data, maxValue: propMaxValue }: BarChartProps
         canvas.height = height * dpr;
         ctx.scale(dpr, dpr);
 
-        drawChart(ctx, width, height, data, propMaxValue);
+        drawChart(ctx, width, height, data, propMaxValue, higherIsBetter);
       });
-  }, [data, propMaxValue, canvasId]);
+  }, [data, propMaxValue, canvasId, higherIsBetter]);
 
   return <Canvas type="2d" id={canvasId} className="bar-chart-canvas" />;
 }
@@ -67,6 +72,7 @@ function drawChart(
   height: number,
   rawData: BarChartData[],
   propMaxValue?: number,
+  higherIsBetter?: boolean,
 ) {
   const padding = { top: 20, right: 8, bottom: 40, left: 16 };
   const chartWidth = width - padding.left - padding.right;
@@ -141,12 +147,27 @@ function drawChart(
     const x = startX + index * (barWidth + barGap);
     const y = height - padding.bottom - barHeight;
 
-    // Bar color based on value (fewer = better for stool)
-    let color = "#07c160"; // green: 1-2 times
-    if (item.value >= 5) {
-      color = "#fa5151"; // red: 5+ times
-    } else if (item.value >= 3) {
-      color = "#ffc300"; // yellow: 3-4 times
+    // Bar color based on value
+    let color: string;
+    const ratio = item.value / maxValue;
+    if (higherIsBetter) {
+      // Higher is better: green for high, red for low
+      if (ratio >= 0.7) {
+        color = "#07c160"; // green
+      } else if (ratio >= 0.4) {
+        color = "#ffc300"; // yellow
+      } else {
+        color = "#fa5151"; // red
+      }
+    } else {
+      // Lower is better: green for low, red for high
+      if (ratio <= 0.3) {
+        color = "#07c160"; // green
+      } else if (ratio <= 0.6) {
+        color = "#ffc300"; // yellow
+      } else {
+        color = "#fa5151"; // red
+      }
     }
 
     ctx.fillStyle = color;

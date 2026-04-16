@@ -14,7 +14,7 @@ import BarChart from "../../components/BarChart";
 import { RecordType, RECORD_TYPE_OPTIONS } from "../../types";
 import "./index.css";
 
-type ViewMode = "records" | "stats";
+type StoolViewTab = "score" | "count" | "records";
 type DateRangePreset = "7" | "30" | "365" | "custom";
 
 const PAGE_SIZE = 50;
@@ -44,13 +44,14 @@ export default function History() {
   const [hasMore, setHasMore] = useState(true);
 
   // Stats view state
-  const [viewMode, setViewMode] = useState<ViewMode>("records");
+  const [stoolViewTab, setStoolViewTab] = useState<StoolViewTab>("score");
   const [dateRangePreset, setDateRangePreset] = useState<DateRangePreset>("7");
   const [customStartDate, setCustomStartDate] = useState(() => getDateDaysAgo(7));
   const [customEndDate, setCustomEndDate] = useState(() => formatDate());
   const [startCalendarVisible, setStartCalendarVisible] = useState(false);
   const [endCalendarVisible, setEndCalendarVisible] = useState(false);
-  const [statsData, setStatsData] = useState<{ date: string; value: number }[]>([]);
+  const [countData, setCountData] = useState<{ date: string; value: number }[]>([]);
+  const [scoreData, setScoreData] = useState<{ date: string; value: number }[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
 
   const cursorRef = useRef({ date: "9999-12-31", time: "23:59" });
@@ -140,7 +141,7 @@ export default function History() {
     setSelectedType(type);
     Taro.setStorageSync("history_selected_type", type);
     setRecords([]);
-    setViewMode("records");
+    setStoolViewTab("score");
     const { startDate, endDate } = getEffectiveDateRange();
     loadInitial(type, startDate, endDate);
   };
@@ -152,8 +153,13 @@ export default function History() {
         name: "stool-stats",
         data: { startDate, endDate },
       });
-      const result = res.result as { data: { date: string; value: number }[] };
-      setStatsData(result.data || []);
+      const result = res.result as {
+        data: { date: string; count: number; score: number }[];
+      };
+      const rawData = result.data || [];
+
+      setCountData(rawData.map((d) => ({ date: d.date, value: d.count })));
+      setScoreData(rawData.map((d) => ({ date: d.date, value: d.score })));
     } catch (error) {
       console.error("加载统计数据失败:", error);
       Taro.showToast({ title: "加载失败", icon: "none" });
@@ -162,10 +168,10 @@ export default function History() {
     }
   }, []);
 
-  const handleViewModeChange = (mode: ViewMode) => {
-    if (mode === viewMode) return;
-    setViewMode(mode);
-    if (mode === "stats") {
+  const handleStoolViewTabChange = (tab: StoolViewTab) => {
+    if (tab === stoolViewTab) return;
+    setStoolViewTab(tab);
+    if (tab !== "records" && countData.length === 0) {
       const { startDate, endDate } = getEffectiveDateRange();
       loadStatsData(startDate, endDate);
     }
@@ -181,7 +187,7 @@ export default function History() {
       setCustomEndDate(endDate);
       setRecords([]);
       loadInitial(selectedType, startDate, endDate);
-      if (selectedType === "stool" && viewMode === "stats") {
+      if (selectedType === "stool" && stoolViewTab !== "records") {
         loadStatsData(startDate, endDate);
       }
     }
@@ -190,7 +196,7 @@ export default function History() {
   const handleCustomDateChange = (start: string, end: string) => {
     setRecords([]);
     loadInitial(selectedType, start, end);
-    if (selectedType === "stool" && viewMode === "stats") {
+    if (selectedType === "stool" && stoolViewTab !== "records") {
       loadStatsData(start, end);
     }
   };
@@ -208,10 +214,15 @@ export default function History() {
 
   const { startDate: effectiveStartDate, endDate: effectiveEndDate } = getEffectiveDateRange();
 
-  const renderStatsView = () => (
+  const renderChartView = (
+    title: string,
+    data: { date: string; value: number }[],
+    maxValue?: number,
+    higherIsBetter?: boolean,
+  ) => (
     <View className="stats-view">
       <View className="stats-header">
-        <Text className="stats-title">每日排便次数</Text>
+        <Text className="stats-title">{title}</Text>
         <Text className="stats-range">
           {effectiveStartDate} ~ {effectiveEndDate}
         </Text>
@@ -221,12 +232,12 @@ export default function History() {
           <View className="stats-loading">
             <Text>加载中...</Text>
           </View>
-        ) : statsData.length === 0 ? (
+        ) : data.length === 0 ? (
           <View className="stats-empty">
             <Text>暂无数据</Text>
           </View>
         ) : (
-          <BarChart data={statsData} />
+          <BarChart data={data} maxValue={maxValue} higherIsBetter={higherIsBetter} />
         )}
       </View>
     </View>
@@ -317,22 +328,30 @@ export default function History() {
       {selectedType === "stool" && (
         <View className="view-mode-tabs">
           <View
-            className={`view-mode-tab ${viewMode === "records" ? "active" : ""}`}
-            onClick={() => handleViewModeChange("records")}
+            className={`view-mode-tab ${stoolViewTab === "score" ? "active" : ""}`}
+            onClick={() => handleStoolViewTabChange("score")}
           >
-            <Text>记录</Text>
+            <Text>分数统计</Text>
           </View>
           <View
-            className={`view-mode-tab ${viewMode === "stats" ? "active" : ""}`}
-            onClick={() => handleViewModeChange("stats")}
+            className={`view-mode-tab ${stoolViewTab === "count" ? "active" : ""}`}
+            onClick={() => handleStoolViewTabChange("count")}
           >
-            <Text>统计</Text>
+            <Text>次数统计</Text>
+          </View>
+          <View
+            className={`view-mode-tab ${stoolViewTab === "records" ? "active" : ""}`}
+            onClick={() => handleStoolViewTabChange("records")}
+          >
+            <Text>原始数据</Text>
           </View>
         </View>
       )}
 
-      {selectedType === "stool" && viewMode === "stats" ? (
-        renderStatsView()
+      {selectedType === "stool" && stoolViewTab === "score" ? (
+        renderChartView("每日肠道健康得分", scoreData, 10, true)
+      ) : selectedType === "stool" && stoolViewTab === "count" ? (
+        renderChartView("每日排便次数", countData)
       ) : loading ? (
         <View className="loading">加载中...</View>
       ) : records.length === 0 ? (

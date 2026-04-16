@@ -31,7 +31,7 @@ export default defineAppConfig({
       },
       {
         pagePath: "pages/history/index",
-        text: "📋 历史",
+        text: "📊 数据",
       },
       {
         pagePath: "pages/settings/index",
