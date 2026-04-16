@@ -7,8 +7,8 @@ describe("calculateBristolScore", () => {
     expect(calculateBristolScore(2)).toBe(4);
     expect(calculateBristolScore(3)).toBe(5);
     expect(calculateBristolScore(4)).toBe(5);
-    expect(calculateBristolScore(5)).toBe(3);
-    expect(calculateBristolScore(6)).toBe(2);
+    expect(calculateBristolScore(5)).toBe(4);
+    expect(calculateBristolScore(6)).toBe(3);
     expect(calculateBristolScore(7)).toBe(1);
   });
 

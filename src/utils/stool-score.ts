@@ -1,5 +1,5 @@
-// Bristol type to score mapping: 1→3, 2→4, 3→5, 4→5, 5→3, 6→2, 7→1
-const BRISTOL_SCORES = [0, 3, 4, 5, 5, 3, 2, 1]; // index 0 unused
+// Bristol type to score mapping: 1→3, 2→4, 3→5, 4→5, 5→4, 6→3, 7→1
+const BRISTOL_SCORES = [0, 3, 4, 5, 5, 4, 3, 1]; // index 0 unused
 
 export function calculateBristolScore(bristol: number): number {
   if (bristol < 1 || bristol > 7) return 0;
