@@ -8,7 +8,6 @@ import { medicationService } from "../../services/medication";
 import { labTestService } from "../../services/labtest";
 import { examService } from "../../services/exam";
 import { formatDisplayDate, getWeekday, formatDate } from "../../utils/date";
-import { calculateDailyScore } from "../../utils/stool-score";
 import RecordItem, { AnyRecord } from "../../components/RecordItem";
 import CalendarPopup from "../../components/CalendarPopup";
 import BarChart from "../../components/BarChart";
@@ -155,20 +154,12 @@ export default function History() {
         data: { startDate, endDate },
       });
       const result = res.result as {
-        data: { date: string; count: number; records: { bristol: number }[] }[];
+        data: { date: string; count: number; score: number }[];
       };
       const rawData = result.data || [];
 
-      // Calculate count data
       setCountData(rawData.map((d) => ({ date: d.date, value: d.count })));
-
-      // Calculate score data
-      setScoreData(
-        rawData.map((d) => ({
-          date: d.date,
-          value: calculateDailyScore(d.records),
-        })),
-      );
+      setScoreData(rawData.map((d) => ({ date: d.date, value: d.score })));
     } catch (error) {
       console.error("加载统计数据失败:", error);
       Taro.showToast({ title: "加载失败", icon: "none" });
