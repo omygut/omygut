@@ -257,10 +257,11 @@ export default function History() {
         onClose={() => setEndCalendarVisible(false)}
       />
 
-      <View className="type-filter">
+      <ScrollView className="type-filter" scrollX scrollIntoView={`type-${selectedType}`}>
         {RECORD_TYPE_OPTIONS.map((option) => (
           <View
             key={option.value}
+            id={`type-${option.value}`}
             className={`type-option ${selectedType === option.value ? "active" : ""}`}
             onClick={() => handleTypeChange(option.value)}
           >
@@ -268,7 +269,7 @@ export default function History() {
             <Text className="type-label">{option.label}</Text>
           </View>
         ))}
-      </View>
+      </ScrollView>
 
       {selectedType === "stool" && (
         <View className="view-mode-tabs">
