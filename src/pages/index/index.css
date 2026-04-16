@@ -6,46 +6,23 @@
 /* 顶部栏 */
 .top-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 40px 32px;
+  padding: 0 24px;
   background-color: #fff;
+  box-sizing: content-box;
 }
 
-.title-section {
-  display: flex;
-  flex-direction: column;
+.app-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin-right: 16px;
 }
 
 .app-title {
-  font-size: 56px;
-  font-weight: 700;
-  color: #07c160;
-  margin-bottom: 8px;
-}
-
-.app-subtitle {
-  font-size: 28px;
-  color: #666;
-}
-
-.header-avatar {
-  width: 96px;
-  height: 96px;
-  border-radius: 48px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.avatar-img {
-  width: 100%;
-  height: 100%;
-}
-
-.avatar-default {
-  width: 100%;
-  height: 100%;
-  background-color: #e0e0e0;
+  font-size: 32px;
+  font-weight: 500;
+  color: #333;
 }
 
 /* 快速操作 */
