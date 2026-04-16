@@ -7,14 +7,25 @@ import { stoolService } from "../../services/stool";
 import { medicationService } from "../../services/medication";
 import { labTestService } from "../../services/labtest";
 import { examService } from "../../services/exam";
+import { findStandardIndicator } from "../../services/labtest-standards";
 import { formatDisplayDate, getWeekday, formatDate } from "../../utils/date";
 import RecordItem, { AnyRecord } from "../../components/RecordItem";
 import CalendarPopup from "../../components/CalendarPopup";
 import BarChart from "../../components/BarChart";
-import { RecordType, RECORD_TYPE_OPTIONS } from "../../types";
+import LineChart, { LineChartData } from "../../components/LineChart";
+import { RecordType, RECORD_TYPE_OPTIONS, LabTestRecord } from "../../types";
 import "./index.css";
 
+// 粪便钙卫蛋白指标配置
+const FCP_INDICATOR = {
+  nameZh: "粪便钙卫蛋白",
+  abbr: "FCP",
+  unit: "μg/g",
+  refMax: 50,
+};
+
 type StoolViewTab = "score" | "count" | "records";
+type LabtestViewTab = "chart" | "records";
 type DateRangePreset = "7" | "30" | "365" | "custom";
 
 const PAGE_SIZE = 50;
@@ -45,6 +56,7 @@ export default function History() {
 
   // Stats view state
   const [stoolViewTab, setStoolViewTab] = useState<StoolViewTab>("score");
+  const [labtestViewTab, setLabtestViewTab] = useState<LabtestViewTab>("chart");
   const [dateRangePreset, setDateRangePreset] = useState<DateRangePreset>("7");
   const [customStartDate, setCustomStartDate] = useState(() => getDateDaysAgo(7));
   const [customEndDate, setCustomEndDate] = useState(() => formatDate());
@@ -53,6 +65,10 @@ export default function History() {
   const [countData, setCountData] = useState<{ date: string; value: number }[]>([]);
   const [scoreData, setScoreData] = useState<{ date: string; value: number }[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
+
+  // Labtest stats state
+  const [labtestChartData, setLabtestChartData] = useState<LineChartData[]>([]);
+  const [labtestStatsLoading, setLabtestStatsLoading] = useState(false);
 
   const cursorRef = useRef({ date: "9999-12-31", time: "23:59" });
   const dateRangeRef = useRef({ startDate: "", endDate: "" });
@@ -142,6 +158,9 @@ export default function History() {
     Taro.setStorageSync("history_selected_type", type);
     setRecords([]);
     setStoolViewTab("score");
+    setLabtestViewTab("chart");
+    // Reset labtest stats when switching types
+    setLabtestChartData([]);
     const { startDate, endDate } = getEffectiveDateRange();
     loadInitial(type, startDate, endDate);
   };
@@ -168,12 +187,57 @@ export default function History() {
     }
   }, []);
 
+  const loadLabtestStatsData = useCallback(async () => {
+    setLabtestStatsLoading(true);
+    try {
+      // Fetch all labtest records
+      const allRecords = await labTestService.getByDateRangeBefore(
+        "1900-01-01",
+        formatDate(),
+        "9999-12-31",
+        "23:59",
+        1000,
+      );
+
+      // Extract FCP indicator values
+      const chartData: LineChartData[] = [];
+      (allRecords as LabTestRecord[]).forEach((record) => {
+        record.indicators.forEach((ind) => {
+          const matched = findStandardIndicator(ind.name, record.specimen);
+          if (matched && matched.nameZh === FCP_INDICATOR.nameZh) {
+            const numValue = parseFloat(ind.value);
+            if (!isNaN(numValue)) {
+              chartData.push({ date: record.date, value: numValue });
+            }
+          }
+        });
+      });
+
+      // Sort by date ascending
+      chartData.sort((a, b) => a.date.localeCompare(b.date));
+      setLabtestChartData(chartData);
+    } catch (error) {
+      console.error("加载化验统计数据失败:", error);
+      Taro.showToast({ title: "加载失败", icon: "none" });
+    } finally {
+      setLabtestStatsLoading(false);
+    }
+  }, []);
+
   const handleStoolViewTabChange = (tab: StoolViewTab) => {
     if (tab === stoolViewTab) return;
     setStoolViewTab(tab);
     if (tab !== "records" && countData.length === 0) {
       const { startDate, endDate } = getEffectiveDateRange();
       loadStatsData(startDate, endDate);
+    }
+  };
+
+  const handleLabtestViewTabChange = (tab: LabtestViewTab) => {
+    if (tab === labtestViewTab) return;
+    setLabtestViewTab(tab);
+    if (tab === "chart" && labtestChartData.length === 0) {
+      loadLabtestStatsData();
     }
   };
 
@@ -242,6 +306,85 @@ export default function History() {
       </View>
     </View>
   );
+
+  const renderLabtestStatsView = () => (
+    <View className="stats-view">
+      <View className="stats-header">
+        <Text className="stats-title">{FCP_INDICATOR.nameZh}趋势</Text>
+        <Text className="stats-range">
+          参考范围: &lt;{FCP_INDICATOR.refMax} {FCP_INDICATOR.unit}
+        </Text>
+      </View>
+      <View className="stats-chart-container">
+        {labtestStatsLoading ? (
+          <View className="stats-loading">
+            <Text>加载中...</Text>
+          </View>
+        ) : labtestChartData.length === 0 ? (
+          <View className="stats-empty">
+            <Text>暂无数据</Text>
+          </View>
+        ) : (
+          <LineChart
+            data={labtestChartData}
+            unit={FCP_INDICATOR.unit}
+            refMax={FCP_INDICATOR.refMax}
+          />
+        )}
+      </View>
+    </View>
+  );
+
+  const renderRecordsList = () => {
+    if (loading) {
+      return <View className="loading">加载中...</View>;
+    }
+    if (records.length === 0) {
+      return (
+        <View className="empty">
+          <Text className="empty-text">暂无记录</Text>
+        </View>
+      );
+    }
+    return (
+      <ScrollView
+        className="records-scroll"
+        scrollY
+        refresherEnabled
+        refresherTriggered={loading}
+        onRefresherRefresh={handleRefresh}
+        onScrollToLower={handleLoadMore}
+        lowerThreshold={100}
+      >
+        <View className="records-list">
+          {groupedRecords.map((group) => (
+            <View key={group.date} className="date-group">
+              <View className="date-header">
+                <Text className="date-text">
+                  {formatDisplayDate(group.date)} {getWeekday(group.date)}
+                </Text>
+              </View>
+              <View className="date-records">
+                {group.records.map((record) => (
+                  <RecordItem key={record._id} record={record} />
+                ))}
+              </View>
+            </View>
+          ))}
+        </View>
+        {loadingMore && (
+          <View className="loading-more">
+            <Text>加载中...</Text>
+          </View>
+        )}
+        {!hasMore && records.length > 0 && (
+          <View className="no-more">
+            <Text>没有更多了</Text>
+          </View>
+        )}
+      </ScrollView>
+    );
+  };
 
   return (
     <View className="history-page">
@@ -348,53 +491,31 @@ export default function History() {
         </View>
       )}
 
+      {selectedType === "labtest" && (
+        <View className="view-mode-tabs">
+          <View
+            className={`view-mode-tab ${labtestViewTab === "chart" ? "active" : ""}`}
+            onClick={() => handleLabtestViewTabChange("chart")}
+          >
+            <Text>钙卫蛋白趋势</Text>
+          </View>
+          <View
+            className={`view-mode-tab ${labtestViewTab === "records" ? "active" : ""}`}
+            onClick={() => handleLabtestViewTabChange("records")}
+          >
+            <Text>原始数据</Text>
+          </View>
+        </View>
+      )}
+
       {selectedType === "stool" && stoolViewTab === "score" ? (
         renderChartView("每日肠道健康得分", scoreData, 10, true)
       ) : selectedType === "stool" && stoolViewTab === "count" ? (
         renderChartView("每日排便次数", countData)
-      ) : loading ? (
-        <View className="loading">加载中...</View>
-      ) : records.length === 0 ? (
-        <View className="empty">
-          <Text className="empty-text">暂无记录</Text>
-        </View>
+      ) : selectedType === "labtest" && labtestViewTab === "chart" ? (
+        renderLabtestStatsView()
       ) : (
-        <ScrollView
-          className="records-scroll"
-          scrollY
-          refresherEnabled
-          refresherTriggered={loading}
-          onRefresherRefresh={handleRefresh}
-          onScrollToLower={handleLoadMore}
-          lowerThreshold={100}
-        >
-          <View className="records-list">
-            {groupedRecords.map((group) => (
-              <View key={group.date} className="date-group">
-                <View className="date-header">
-                  <Text className="date-text">
-                    {formatDisplayDate(group.date)} {getWeekday(group.date)}
-                  </Text>
-                </View>
-                <View className="date-records">
-                  {group.records.map((record) => (
-                    <RecordItem key={record._id} record={record} />
-                  ))}
-                </View>
-              </View>
-            ))}
-          </View>
-          {loadingMore && (
-            <View className="loading-more">
-              <Text>加载中...</Text>
-            </View>
-          )}
-          {!hasMore && records.length > 0 && (
-            <View className="no-more">
-              <Text>没有更多了</Text>
-            </View>
-          )}
-        </ScrollView>
+        renderRecordsList()
       )}
     </View>
   );
