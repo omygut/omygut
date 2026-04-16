@@ -106,3 +106,99 @@
   color: #999;
   font-size: 26px;
 }
+
+/* 视图模式切换 */
+.view-mode-tabs {
+  display: flex;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.view-mode-tab {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  font-size: 28px;
+  color: #666;
+  border-bottom: 4px solid transparent;
+}
+
+.view-mode-tab.active {
+  color: #07c160;
+  font-weight: 500;
+  border-bottom-color: #07c160;
+}
+
+/* 统计视图 */
+.stats-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+/* 日期范围选择器 */
+.date-range-selector {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.date-range-option {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 0;
+  border-radius: 12px;
+  background-color: #fff;
+  font-size: 26px;
+  color: #666;
+}
+
+.date-range-option.active {
+  background-color: #07c160;
+  color: #fff;
+}
+
+/* 自定义日期范围 */
+.custom-date-range {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.date-picker {
+  padding: 16px 24px;
+  border-radius: 12px;
+  background-color: #fff;
+  font-size: 26px;
+  color: #333;
+}
+
+.date-range-separator {
+  font-size: 26px;
+  color: #999;
+}
+
+/* 图表占位符 */
+.stats-chart-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 16px;
+  min-height: 400px;
+}
+
+.placeholder-text {
+  font-size: 28px;
+  color: #ccc;
+  margin-bottom: 16px;
+}

@@ -7,10 +7,14 @@ import { stoolService } from "../../services/stool";
 import { medicationService } from "../../services/medication";
 import { labTestService } from "../../services/labtest";
 import { examService } from "../../services/exam";
-import { formatDisplayDate, getWeekday } from "../../utils/date";
+import { formatDisplayDate, getWeekday, formatDate } from "../../utils/date";
 import RecordItem, { AnyRecord } from "../../components/RecordItem";
+import CalendarPopup from "../../components/CalendarPopup";
 import { RecordType, RECORD_TYPE_OPTIONS } from "../../types";
 import "./index.css";
+
+type ViewMode = "records" | "stats";
+type DateRangePreset = "7" | "30" | "90" | "custom";
 
 const PAGE_SIZE = 50;
 
@@ -23,6 +27,12 @@ const services = {
   exam: examService,
 } as const;
 
+function getDateDaysAgo(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - days + 1);
+  return formatDate(date);
+}
+
 export default function History() {
   const [selectedType, setSelectedType] = useState<RecordType>(() => {
     return Taro.getStorageSync("history_selected_type") || "meal";
@@ -31,6 +41,14 @@ export default function History() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [records, setRecords] = useState<AnyRecord[]>([]);
   const [hasMore, setHasMore] = useState(true);
+
+  // Stats view state
+  const [viewMode, setViewMode] = useState<ViewMode>("records");
+  const [dateRangePreset, setDateRangePreset] = useState<DateRangePreset>("7");
+  const [customStartDate, setCustomStartDate] = useState(() => getDateDaysAgo(7));
+  const [customEndDate, setCustomEndDate] = useState(() => formatDate());
+  const [startCalendarVisible, setStartCalendarVisible] = useState(false);
+  const [endCalendarVisible, setEndCalendarVisible] = useState(false);
 
   const cursorRef = useRef({ date: "9999-12-31", time: "23:59" });
 
@@ -102,7 +120,30 @@ export default function History() {
     setSelectedType(type);
     Taro.setStorageSync("history_selected_type", type);
     setRecords([]);
+    setViewMode("records"); // Reset to records view when changing type
     loadInitial(type);
+  };
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    if (mode === viewMode) return;
+    setViewMode(mode);
+  };
+
+  const handleDateRangePresetChange = (preset: DateRangePreset) => {
+    setDateRangePreset(preset);
+    if (preset !== "custom") {
+      const days = parseInt(preset, 10);
+      setCustomStartDate(getDateDaysAgo(days));
+      setCustomEndDate(formatDate());
+    }
+  };
+
+  const getEffectiveDateRange = () => {
+    if (dateRangePreset === "custom") {
+      return { startDate: customStartDate, endDate: customEndDate };
+    }
+    const days = parseInt(dateRangePreset, 10);
+    return { startDate: getDateDaysAgo(days), endDate: formatDate() };
   };
 
   // 按日期分组记录
@@ -115,6 +156,81 @@ export default function History() {
     }
     groupedRecords[groupedRecords.length - 1].records.push(record);
   });
+
+  const { startDate: effectiveStartDate, endDate: effectiveEndDate } = getEffectiveDateRange();
+
+  const renderStatsView = () => (
+    <View className="stats-view">
+      <View className="date-range-selector">
+        <View
+          className={`date-range-option ${dateRangePreset === "7" ? "active" : ""}`}
+          onClick={() => handleDateRangePresetChange("7")}
+        >
+          <Text>7天</Text>
+        </View>
+        <View
+          className={`date-range-option ${dateRangePreset === "30" ? "active" : ""}`}
+          onClick={() => handleDateRangePresetChange("30")}
+        >
+          <Text>30天</Text>
+        </View>
+        <View
+          className={`date-range-option ${dateRangePreset === "90" ? "active" : ""}`}
+          onClick={() => handleDateRangePresetChange("90")}
+        >
+          <Text>90天</Text>
+        </View>
+        <View
+          className={`date-range-option ${dateRangePreset === "custom" ? "active" : ""}`}
+          onClick={() => handleDateRangePresetChange("custom")}
+        >
+          <Text>自定义</Text>
+        </View>
+      </View>
+
+      {dateRangePreset === "custom" && (
+        <View className="custom-date-range">
+          <View className="date-picker" onClick={() => setStartCalendarVisible(true)}>
+            <Text>{customStartDate}</Text>
+          </View>
+          <Text className="date-range-separator">至</Text>
+          <View className="date-picker" onClick={() => setEndCalendarVisible(true)}>
+            <Text>{customEndDate}</Text>
+          </View>
+        </View>
+      )}
+
+      <View className="stats-chart-placeholder">
+        <Text className="placeholder-text">
+          {effectiveStartDate} ~ {effectiveEndDate}
+        </Text>
+        <Text className="placeholder-text">图表开发中...</Text>
+      </View>
+
+      <CalendarPopup
+        visible={startCalendarVisible}
+        value={customStartDate}
+        onChange={(date) => {
+          setCustomStartDate(date);
+          if (date > customEndDate) {
+            setCustomEndDate(date);
+          }
+        }}
+        onClose={() => setStartCalendarVisible(false)}
+      />
+      <CalendarPopup
+        visible={endCalendarVisible}
+        value={customEndDate}
+        onChange={(date) => {
+          setCustomEndDate(date);
+          if (date < customStartDate) {
+            setCustomStartDate(date);
+          }
+        }}
+        onClose={() => setEndCalendarVisible(false)}
+      />
+    </View>
+  );
 
   return (
     <View className="history-page">
@@ -131,7 +247,26 @@ export default function History() {
         ))}
       </View>
 
-      {loading ? (
+      {selectedType === "stool" && (
+        <View className="view-mode-tabs">
+          <View
+            className={`view-mode-tab ${viewMode === "records" ? "active" : ""}`}
+            onClick={() => handleViewModeChange("records")}
+          >
+            <Text>记录</Text>
+          </View>
+          <View
+            className={`view-mode-tab ${viewMode === "stats" ? "active" : ""}`}
+            onClick={() => handleViewModeChange("stats")}
+          >
+            <Text>统计</Text>
+          </View>
+        </View>
+      )}
+
+      {selectedType === "stool" && viewMode === "stats" ? (
+        renderStatsView()
+      ) : loading ? (
         <View className="loading">加载中...</View>
       ) : records.length === 0 ? (
         <View className="empty">

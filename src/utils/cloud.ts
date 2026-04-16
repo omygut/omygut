@@ -10,6 +10,25 @@ const memoryStore: Map<string, Record<string, unknown>[]> = new Map();
 
 // 查询命令标记
 const EXISTS_FALSE = Symbol("exists_false");
+const RANGE_QUERY = Symbol("range_query");
+
+interface RangeQuery {
+  __type: typeof RANGE_QUERY;
+  gte?: unknown;
+  lte?: unknown;
+}
+
+function createRangeQuery(initial: Partial<Omit<RangeQuery, "__type">>): RangeQuery & {
+  and: (other: RangeQuery) => RangeQuery;
+} {
+  const query: RangeQuery = { __type: RANGE_QUERY, ...initial };
+  return {
+    ...query,
+    and(other: RangeQuery) {
+      return createRangeQuery({ gte: query.gte, lte: query.lte, ...other });
+    },
+  };
+}
 
 // 内存数据库命令
 const memoryCommand = {
@@ -18,6 +37,12 @@ const memoryCommand = {
       return EXISTS_FALSE;
     }
     return { __exists: value };
+  },
+  gte(value: unknown) {
+    return createRangeQuery({ gte: value });
+  },
+  lte(value: unknown) {
+    return createRangeQuery({ lte: value });
   },
 };
 
@@ -64,6 +89,18 @@ function createMemoryCollection(data: Record<string, unknown>[]) {
           if (value === EXISTS_FALSE) {
             return !(key in item) || item[key] === undefined || item[key] === null;
           }
+          if (
+            value &&
+            typeof value === "object" &&
+            "__type" in value &&
+            value.__type === RANGE_QUERY
+          ) {
+            const rangeQuery = value as RangeQuery;
+            const itemValue = item[key];
+            if (rangeQuery.gte !== undefined && itemValue < rangeQuery.gte) return false;
+            if (rangeQuery.lte !== undefined && itemValue > rangeQuery.lte) return false;
+            return true;
+          }
           return item[key] === value;
         });
       });
@@ -100,6 +137,18 @@ function createMemoryCollection(data: Record<string, unknown>[]) {
         return Object.entries(filters).every(([key, value]) => {
           if (value === EXISTS_FALSE) {
             return !(key in item) || item[key] === undefined || item[key] === null;
+          }
+          if (
+            value &&
+            typeof value === "object" &&
+            "__type" in value &&
+            value.__type === RANGE_QUERY
+          ) {
+            const rangeQuery = value as RangeQuery;
+            const itemValue = item[key];
+            if (rangeQuery.gte !== undefined && itemValue < rangeQuery.gte) return false;
+            if (rangeQuery.lte !== undefined && itemValue > rangeQuery.lte) return false;
+            return true;
           }
           return item[key] === value;
         });

@@ -138,5 +138,35 @@ export function createRecordService<T extends BaseRecord>(collection: string) {
 
       return allData.slice(0, limit);
     },
+
+    async getByDateRange(startDate: string, endDate: string): Promise<T[]> {
+      const db = getDatabase();
+      const userId = await getOpenId();
+      const _ = db.command;
+
+      const PAGE_SIZE = 20;
+      const allData: T[] = [];
+
+      while (true) {
+        const res = await db
+          .collection(collection)
+          .where({
+            userId,
+            deletedAt: _.exists(false),
+            date: _.gte(startDate).and(_.lte(endDate)),
+          })
+          .orderBy("date", "desc")
+          .orderBy("time", "desc")
+          .skip(allData.length)
+          .limit(PAGE_SIZE)
+          .get();
+
+        allData.push(...(res.data as T[]));
+
+        if (res.data.length < PAGE_SIZE) break;
+      }
+
+      return allData;
+    },
   };
 }
