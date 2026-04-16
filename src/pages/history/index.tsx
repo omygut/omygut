@@ -148,16 +148,12 @@ export default function History() {
   const loadStatsData = useCallback(async (startDate: string, endDate: string) => {
     setStatsLoading(true);
     try {
-      const data = await stoolService.getByDateRange(startDate, endDate);
-      // 按日期统计次数
-      const counts = new Map<string, number>();
-      data.forEach((record) => {
-        counts.set(record.date, (counts.get(record.date) || 0) + 1);
+      const res = await Taro.cloud.callFunction({
+        name: "stool-stats",
+        data: { startDate, endDate },
       });
-      const result = Array.from(counts.entries())
-        .map(([date, value]) => ({ date, value }))
-        .sort((a, b) => a.date.localeCompare(b.date));
-      setStatsData(result);
+      const result = res.result as { data: { date: string; value: number }[] };
+      setStatsData(result.data || []);
     } catch (error) {
       console.error("加载统计数据失败:", error);
       Taro.showToast({ title: "加载失败", icon: "none" });
