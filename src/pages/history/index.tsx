@@ -343,7 +343,7 @@ export default function History() {
             className={`view-mode-tab ${stoolViewTab === "records" ? "active" : ""}`}
             onClick={() => handleStoolViewTabChange("records")}
           >
-            <Text>记录</Text>
+            <Text>原始数据</Text>
           </View>
         </View>
       )}
