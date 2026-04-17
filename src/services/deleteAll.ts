@@ -27,33 +27,47 @@ export async function deleteAllUserData(): Promise<void> {
 
 export async function confirmAndDeleteAllData(): Promise<void> {
   return new Promise((resolve) => {
+    // First confirmation: remind to export
     Taro.showModal({
-      title: "确认删除",
-      content: "将从服务器上删除所有健康记录，此操作无法撤销",
-      confirmText: "继续",
+      title: "删除前请先导出",
+      content: "建议先导出数据备份，删除后将无法恢复",
+      confirmText: "继续删除",
       confirmColor: "#ff4d4f",
       success: (res) => {
         if (res.confirm) {
           // Second confirmation
           Taro.showModal({
-            title: "最后确认",
-            content: "确定要删除全部数据吗？",
-            confirmText: "删除",
+            title: "确认删除",
+            content: "将从服务器上删除所有健康记录，此操作无法撤销",
+            confirmText: "继续",
             confirmColor: "#ff4d4f",
-            success: async (res2) => {
+            success: (res2) => {
               if (res2.confirm) {
-                Taro.showLoading({ title: "正在删除...", mask: true });
-                try {
-                  await deleteAllUserData();
-                  Taro.hideLoading();
-                  Taro.showToast({ title: "数据已删除", icon: "success" });
-                } catch (error) {
-                  Taro.hideLoading();
-                  console.error("删除失败:", error);
-                  Taro.showToast({ title: "删除失败，请重试", icon: "none" });
-                }
+                // Third confirmation
+                Taro.showModal({
+                  title: "最后确认",
+                  content: "确定要删除全部数据吗？",
+                  confirmText: "删除",
+                  confirmColor: "#ff4d4f",
+                  success: async (res3) => {
+                    if (res3.confirm) {
+                      Taro.showLoading({ title: "正在删除...", mask: true });
+                      try {
+                        await deleteAllUserData();
+                        Taro.hideLoading();
+                        Taro.showToast({ title: "数据已删除", icon: "success" });
+                      } catch (error) {
+                        Taro.hideLoading();
+                        console.error("删除失败:", error);
+                        Taro.showToast({ title: "删除失败，请重试", icon: "none" });
+                      }
+                    }
+                    resolve();
+                  },
+                });
+              } else {
+                resolve();
               }
-              resolve();
             },
           });
         } else {
