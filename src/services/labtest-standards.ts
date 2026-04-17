@@ -96,21 +96,3 @@ export function normalizeIndicator(
 export function normalizeIndicators(indicators: LabTestIndicator[], specimen?: SpecimenType) {
   return indicators.map((ind) => normalizeIndicator(ind, specimen));
 }
-
-/**
- * 搜索标准指标（模糊匹配名称、缩写、别名）
- * @param query 搜索关键字
- * @param limit 最大返回数量
- */
-export function searchIndicators(query: string, limit = 20): StandardIndicator[] {
-  if (!query.trim()) return [];
-
-  const q = query.trim().toLowerCase();
-
-  return STANDARD_INDICATORS.filter((ind) => {
-    if (ind.nameZh.toLowerCase().includes(q)) return true;
-    if (ind.abbr.toLowerCase().includes(q)) return true;
-    if (ind.aliases?.some((alias) => alias.toLowerCase().includes(q))) return true;
-    return false;
-  }).slice(0, limit);
-}
