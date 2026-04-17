@@ -26,7 +26,7 @@ const FCP_INDICATOR = {
 
 type StoolViewTab = "score" | "count" | "records";
 type LabtestViewTab = "chart" | "records";
-type DateRangePreset = "7" | "30" | "365" | "1095" | "custom";
+type DateRangePreset = "7" | "30" | "365" | "all" | "custom";
 
 const PAGE_SIZE = 50;
 
@@ -137,6 +137,9 @@ export default function History() {
   const getEffectiveDateRange = useCallback(() => {
     if (dateRangePreset === "custom") {
       return { startDate: customStartDate, endDate: customEndDate };
+    }
+    if (dateRangePreset === "all") {
+      return { startDate: "1900-01-01", endDate: formatDate() };
     }
     const days = parseInt(dateRangePreset, 10);
     return { startDate: getDateDaysAgo(days), endDate: formatDate() };
@@ -435,10 +438,10 @@ export default function History() {
           <Text>一年</Text>
         </View>
         <View
-          className={`date-range-option ${dateRangePreset === "1095" ? "active" : ""}`}
-          onClick={() => handleDateRangePresetChange("1095")}
+          className={`date-range-option ${dateRangePreset === "all" ? "active" : ""}`}
+          onClick={() => handleDateRangePresetChange("all")}
         >
-          <Text>三年</Text>
+          <Text>所有</Text>
         </View>
         <View
           className={`date-range-option ${dateRangePreset === "custom" ? "active" : ""}`}
