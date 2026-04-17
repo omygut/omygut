@@ -105,26 +105,40 @@ function shareFile(): void {
 }
 
 export async function saveExportToFile(): Promise<void> {
-  Taro.showLoading({ title: "正在准备数据...", mask: true });
-
-  try {
-    await prepareExportFile();
-    Taro.hideLoading();
-
-    // Show modal, user tap triggers shareFileMessage
+  return new Promise((resolve) => {
     Taro.showModal({
-      title: "数据已准备好",
-      content: "点击确定将文件发送到聊天，可转发给「文件传输助手」保存",
-      confirmText: "发送",
-      success: (res) => {
+      title: "导出数据",
+      content: "将导出所有历史记录为 JSON 文件",
+      confirmText: "导出",
+      success: async (res) => {
         if (res.confirm) {
-          shareFile();
+          Taro.showLoading({ title: "正在准备数据...", mask: true });
+
+          try {
+            await prepareExportFile();
+            Taro.hideLoading();
+
+            Taro.showModal({
+              title: "数据已准备好",
+              content: "点击确定将文件发送到聊天，可转发给「文件传输助手」保存",
+              confirmText: "发送",
+              success: (res2) => {
+                if (res2.confirm) {
+                  shareFile();
+                }
+                resolve();
+              },
+            });
+          } catch (error) {
+            Taro.hideLoading();
+            console.error("导出失败:", error);
+            Taro.showToast({ title: "导出失败，请重试", icon: "none" });
+            resolve();
+          }
+        } else {
+          resolve();
         }
       },
     });
-  } catch (error) {
-    Taro.hideLoading();
-    console.error("导出失败:", error);
-    Taro.showToast({ title: "导出失败，请重试", icon: "none" });
-  }
+  });
 }
