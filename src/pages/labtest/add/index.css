@@ -97,15 +97,26 @@
   margin-bottom: 0;
 }
 
-.recognize-btn {
-  padding: 12px 24px;
-  background-color: #1890ff;
-  color: #fff;
-  border-radius: 8px;
-  font-size: 28px;
+/* 指标操作按钮 */
+.indicator-actions {
+  display: flex;
+  gap: 16px;
 }
 
-.recognize-btn.disabled {
+.action-btn {
+  padding: 12px 24px;
+  background-color: #f5f5f5;
+  color: #333;
+  border-radius: 8px;
+  font-size: 26px;
+}
+
+.action-btn.primary {
+  background-color: #1890ff;
+  color: #fff;
+}
+
+.action-btn.disabled {
   opacity: 0.5;
 }
 
@@ -143,6 +154,14 @@
   display: flex;
   padding: 12px 16px;
   border-bottom: 1px solid #e8e8e8;
+}
+
+.indicator-table-row.clickable {
+  cursor: pointer;
+}
+
+.indicator-table-row.clickable:active {
+  background-color: #e8e8e8;
 }
 
 .indicator-table-row:last-child {
@@ -200,4 +219,79 @@
   color: #999;
   text-align: center;
   padding: 32px;
+}
+
+/* 编辑指标弹窗 */
+.indicator-modal-mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.indicator-modal {
+  width: 80%;
+  max-width: 600px;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.indicator-modal-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 32px;
+  display: block;
+}
+
+.indicator-modal-field {
+  margin-bottom: 24px;
+}
+
+.indicator-modal-label {
+  font-size: 26px;
+  color: #666;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.indicator-modal-input {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 28px;
+  box-sizing: border-box;
+}
+
+.indicator-modal-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.indicator-modal-btn {
+  flex: 1;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 28px;
+  text-align: center;
+}
+
+.indicator-modal-btn.primary {
+  background-color: #07c160;
+  color: #fff;
+}
+
+.indicator-modal-delete {
+  margin-top: 24px;
+  padding: 16px;
+  text-align: center;
+  font-size: 28px;
+  color: #f5222d;
 }

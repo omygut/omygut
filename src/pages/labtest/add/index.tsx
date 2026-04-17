@@ -1,4 +1,4 @@
-import { View, Text, Image } from "@tarojs/components";
+import { View, Text, Image, Input } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect, useRef } from "react";
 import { labTestService } from "../../../services/labtest";
@@ -12,6 +12,12 @@ import TimePicker from "../../../components/TimePicker";
 import NavBar from "../../../components/NavBar";
 import type { LabTestIndicator } from "../../../types";
 import "./index.css";
+
+interface EditingIndicator {
+  index: number | null; // null 表示新增
+  name: string;
+  value: string;
+}
 
 const SPECIMEN_OPTIONS: { value: SpecimenType; label: string }[] = [
   { value: "血液", label: "血液" },
@@ -37,6 +43,7 @@ export default function LabTestAdd() {
   const [indicators, setIndicators] = useState<LabTestIndicator[]>([]);
   const [loading, setLoading] = useState(isEdit);
   const [calendarVisible, setCalendarVisible] = useState(false);
+  const [editingIndicator, setEditingIndicator] = useState<EditingIndicator | null>(null);
 
   const localImagesRef = useRef(localImages);
   localImagesRef.current = localImages;
@@ -169,6 +176,48 @@ export default function LabTestAdd() {
     }
   };
 
+  const handleAddIndicator = () => {
+    setEditingIndicator({ index: null, name: "", value: "" });
+  };
+
+  const handleEditIndicator = (index: number) => {
+    const ind = indicators[index];
+    setEditingIndicator({ index, name: ind.name, value: ind.value });
+  };
+
+  const handleSaveIndicator = () => {
+    if (!editingIndicator) return;
+    const { index, name, value } = editingIndicator;
+
+    if (!name.trim() || !value.trim()) {
+      Taro.showToast({ title: "请填写指标名称和结果", icon: "none" });
+      return;
+    }
+
+    const newIndicator: LabTestIndicator = { name: name.trim(), value: value.trim() };
+    // 归一化单个指标以获取单位和参考范围
+    const [normalized] = normalizeIndicators([newIndicator], specimen);
+
+    if (index === null) {
+      // 新增
+      setIndicators([...indicators, normalized || newIndicator]);
+    } else {
+      // 编辑
+      const updated = [...indicators];
+      updated[index] = normalized || newIndicator;
+      setIndicators(updated);
+    }
+    setEditingIndicator(null);
+  };
+
+  const handleDeleteIndicator = () => {
+    if (!editingIndicator || editingIndicator.index === null) return;
+
+    const updated = indicators.filter((_, i) => i !== editingIndicator.index);
+    setIndicators(updated);
+    setEditingIndicator(null);
+  };
+
   const handleDeleteRecord = async () => {
     if (!editId) return;
 
@@ -198,8 +247,8 @@ export default function LabTestAdd() {
     if (submitting) return;
 
     const totalImages = localImages.length + uploadedImages.length;
-    if (totalImages === 0) {
-      Taro.showToast({ title: "请上传化验单图片", icon: "none" });
+    if (totalImages === 0 && indicators.length === 0) {
+      Taro.showToast({ title: "请上传图片或添加指标", icon: "none" });
       return;
     }
 
@@ -332,110 +381,154 @@ export default function LabTestAdd() {
         </View>
       </View>
 
-      {/* AI 识别 */}
-      {totalImages > 0 && (
-        <View className="section">
-          <View className="section-header">
-            <Text className="section-title">识别结果</Text>
-            <View
-              className={`recognize-btn ${recognizing ? "disabled" : ""}`}
-              onClick={handleRecognize}
-            >
-              {recognizing ? "识别中..." : "AI 识别"}
+      {/* 化验指标 */}
+      <View className="section">
+        <View className="section-header">
+          <Text className="section-title">化验指标</Text>
+          <View className="indicator-actions">
+            <View className="action-btn" onClick={handleAddIndicator}>
+              手动添加
             </View>
+            {totalImages > 0 && (
+              <View
+                className={`action-btn primary ${recognizing ? "disabled" : ""}`}
+                onClick={handleRecognize}
+              >
+                {recognizing ? "识别中..." : "AI 识别"}
+              </View>
+            )}
           </View>
-          {indicators.length > 0 ? (
-            <View className="indicators-list">
-              {(() => {
-                // 按类别分组
-                const groups = indicators.reduce(
-                  (acc, ind) => {
-                    const cat = ind.category || "其他";
-                    if (!acc[cat]) acc[cat] = [];
-                    acc[cat].push(ind);
-                    return acc;
-                  },
-                  {} as Record<string, typeof indicators>,
-                );
+        </View>
+        {indicators.length > 0 ? (
+          <View className="indicators-list">
+            {(() => {
+              // 按类别分组
+              const groups = indicators.reduce(
+                (acc, ind, originalIndex) => {
+                  const cat = ind.category || "其他";
+                  if (!acc[cat]) acc[cat] = [];
+                  acc[cat].push({ ...ind, originalIndex });
+                  return acc;
+                },
+                {} as Record<string, ((typeof indicators)[0] & { originalIndex: number })[]>,
+              );
 
-                const getRefText = (ind: (typeof indicators)[0]) =>
-                  ind.refValue ||
-                  (ind.refMin !== undefined && ind.refMax !== undefined
-                    ? `${ind.refMin}-${ind.refMax}`
-                    : ind.refMin !== undefined
-                      ? `≥${ind.refMin}`
-                      : ind.refMax !== undefined
-                        ? `≤${ind.refMax}`
-                        : "-");
+              const getRefText = (ind: (typeof indicators)[0]) =>
+                ind.refValue ||
+                (ind.refMin !== undefined && ind.refMax !== undefined
+                  ? `${ind.refMin}-${ind.refMax}`
+                  : ind.refMin !== undefined
+                    ? `≥${ind.refMin}`
+                    : ind.refMax !== undefined
+                      ? `≤${ind.refMax}`
+                      : "-");
 
-                // 判断值是否超出参考范围
-                const isNegativeValue = (value: string) => {
-                  const v = value.toLowerCase().trim();
-                  return (
-                    v === "negative" || v === "neg" || v === "阴性" || v === "(-)" || v === "-"
-                  );
-                };
+              // 判断值是否超出参考范围
+              const isNegativeValue = (value: string) => {
+                const v = value.toLowerCase().trim();
+                return v === "negative" || v === "neg" || v === "阴性" || v === "(-)" || v === "-";
+              };
 
-                const isPositiveValue = (value: string) => {
-                  const v = value.toLowerCase().trim();
-                  return (
-                    v === "positive" || v === "pos" || v === "阳性" || v === "(+)" || v === "+"
-                  );
-                };
+              const isPositiveValue = (value: string) => {
+                const v = value.toLowerCase().trim();
+                return v === "positive" || v === "pos" || v === "阳性" || v === "(+)" || v === "+";
+              };
 
-                const getAbnormalFlag = (ind: (typeof indicators)[0]) => {
-                  // 定性结果：refValue=negative 时，阴性正常，阳性异常
-                  if (ind.refValue === "negative") {
-                    if (isNegativeValue(ind.value)) return "";
-                    if (isPositiveValue(ind.value)) return "↑";
-                  }
+              const getAbnormalFlag = (ind: (typeof indicators)[0]) => {
+                // 定性结果：refValue=negative 时，阴性正常，阳性异常
+                if (ind.refValue === "negative") {
+                  if (isNegativeValue(ind.value)) return "";
+                  if (isPositiveValue(ind.value)) return "↑";
+                }
 
-                  // 定量结果
-                  const numValue = parseFloat(ind.value);
-                  if (isNaN(numValue)) return "";
-                  if (ind.refMin !== undefined && numValue < ind.refMin) return "↓";
-                  if (ind.refMax !== undefined && numValue > ind.refMax) return "↑";
-                  return "";
-                };
+                // 定量结果
+                const numValue = parseFloat(ind.value);
+                if (isNaN(numValue)) return "";
+                if (ind.refMin !== undefined && numValue < ind.refMin) return "↓";
+                if (ind.refMax !== undefined && numValue > ind.refMax) return "↑";
+                return "";
+              };
 
-                return Object.entries(groups).map(([category, items]) => (
-                  <View key={category} className="indicator-group">
-                    <Text className="indicator-group-title">{category}</Text>
-                    <View className="indicator-table">
-                      <View className="indicator-table-header">
-                        <Text className="indicator-col-name">指标</Text>
-                        <Text className="indicator-col-value">结果</Text>
-                        <Text className="indicator-col-ref">参考</Text>
-                        <Text className="indicator-col-unit">单位</Text>
-                      </View>
-                      {items.map((ind, idx) => {
-                        const abnormalFlag = getAbnormalFlag(ind);
-                        return (
-                          <View key={idx} className="indicator-table-row">
-                            <Text className="indicator-col-name">{ind.name}</Text>
-                            <Text className="indicator-col-value">
-                              {ind.value}
-                              {abnormalFlag && (
-                                <Text
-                                  className={`abnormal-flag ${abnormalFlag === "↑" ? "high" : "low"}`}
-                                >
-                                  {abnormalFlag}
-                                </Text>
-                              )}
-                            </Text>
-                            <Text className="indicator-col-ref">{getRefText(ind)}</Text>
-                            <Text className="indicator-col-unit">{ind.unit || "-"}</Text>
-                          </View>
-                        );
-                      })}
+              return Object.entries(groups).map(([category, items]) => (
+                <View key={category} className="indicator-group">
+                  <Text className="indicator-group-title">{category}</Text>
+                  <View className="indicator-table">
+                    <View className="indicator-table-header">
+                      <Text className="indicator-col-name">指标</Text>
+                      <Text className="indicator-col-value">结果</Text>
+                      <Text className="indicator-col-ref">参考</Text>
+                      <Text className="indicator-col-unit">单位</Text>
                     </View>
+                    {items.map((ind) => {
+                      const abnormalFlag = getAbnormalFlag(ind);
+                      return (
+                        <View
+                          key={ind.originalIndex}
+                          className="indicator-table-row clickable"
+                          onClick={() => handleEditIndicator(ind.originalIndex)}
+                        >
+                          <Text className="indicator-col-name">{ind.name}</Text>
+                          <Text className="indicator-col-value">
+                            {ind.value}
+                            {abnormalFlag && (
+                              <Text
+                                className={`abnormal-flag ${abnormalFlag === "↑" ? "high" : "low"}`}
+                              >
+                                {abnormalFlag}
+                              </Text>
+                            )}
+                          </Text>
+                          <Text className="indicator-col-ref">{getRefText(ind)}</Text>
+                          <Text className="indicator-col-unit">{ind.unit || "-"}</Text>
+                        </View>
+                      );
+                    })}
                   </View>
-                ));
-              })()}
+                </View>
+              ));
+            })()}
+          </View>
+        ) : (
+          <Text className="no-indicators">点击"手动添加"或上传图片后"AI 识别"</Text>
+        )}
+      </View>
+
+      {/* 编辑指标弹窗 */}
+      {editingIndicator && (
+        <View className="indicator-modal-mask" onClick={() => setEditingIndicator(null)}>
+          <View className="indicator-modal" onClick={(e) => e.stopPropagation()}>
+            <Text className="indicator-modal-title">
+              {editingIndicator.index === null ? "添加指标" : "编辑指标"}
+            </Text>
+            <View className="indicator-modal-field">
+              <Text className="indicator-modal-label">指标名称</Text>
+              <Input
+                className="indicator-modal-input"
+                placeholder="如：白细胞计数"
+                value={editingIndicator.name}
+                onInput={(e) => setEditingIndicator({ ...editingIndicator, name: e.detail.value })}
+              />
             </View>
-          ) : (
-            <Text className="no-indicators">点击"AI 识别"按钮识别化验指标</Text>
-          )}
+            <View className="indicator-modal-field">
+              <Text className="indicator-modal-label">结果值</Text>
+              <Input
+                className="indicator-modal-input"
+                placeholder="如：5.2"
+                value={editingIndicator.value}
+                onInput={(e) => setEditingIndicator({ ...editingIndicator, value: e.detail.value })}
+              />
+            </View>
+            <View className="indicator-modal-actions">
+              <View className="indicator-modal-btn primary" onClick={handleSaveIndicator}>
+                保存
+              </View>
+            </View>
+            {editingIndicator.index !== null && (
+              <View className="indicator-modal-delete" onClick={handleDeleteIndicator}>
+                删除此指标
+              </View>
+            )}
+          </View>
         </View>
       )}
 
