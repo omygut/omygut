@@ -8,7 +8,6 @@ import { showError } from "../../../utils/error";
 import { validateSymptom } from "../../../utils/validation";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
-import NavBar from "../../../components/NavBar";
 import type { SymptomRecord } from "../../../types";
 import "./index.css";
 
@@ -180,7 +179,6 @@ export default function SymptomAdd() {
   if (loading) {
     return (
       <View className="add-page">
-        <NavBar title="记录体感" />
         <View className="loading">加载中...</View>
       </View>
     );
@@ -188,7 +186,6 @@ export default function SymptomAdd() {
 
   return (
     <View className="add-page">
-      <NavBar title="记录体感" />
       {/* 日期时间 */}
       <View className="section">
         <Text className="section-title">时间</Text>

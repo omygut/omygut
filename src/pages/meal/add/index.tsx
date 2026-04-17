@@ -9,7 +9,6 @@ import { validateFood } from "../../../utils/validation";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
 import AmountIcon from "../../../components/AmountIcon";
-import NavBar from "../../../components/NavBar";
 import "./index.css";
 
 const CUSTOM_FOODS_KEY = "custom_foods";
@@ -213,7 +212,6 @@ export default function MealAdd() {
   if (loading) {
     return (
       <View className="add-page">
-        <NavBar title="添加饮食" />
         <View className="loading">加载中...</View>
       </View>
     );
@@ -221,7 +219,6 @@ export default function MealAdd() {
 
   return (
     <View className="add-page">
-      <NavBar title="添加饮食" />
       {/* 日期时间 */}
       <View className="section">
         <Text className="section-title">时间</Text>

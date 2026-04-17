@@ -35,7 +35,7 @@
 
 .type-option.active {
   background-color: #e8f7ee;
-  border-color: #07c160;
+  border-color: #5fcf9a;
 }
 
 .type-icon {
@@ -48,7 +48,7 @@
 }
 
 .type-option.active .type-label {
-  color: #07c160;
+  color: #5fcf9a;
   font-weight: 500;
 }
 
@@ -130,9 +130,9 @@
 }
 
 .view-mode-tab.active {
-  color: #07c160;
+  color: #5fcf9a;
   font-weight: 500;
-  border-bottom-color: #07c160;
+  border-bottom-color: #5fcf9a;
 }
 
 /* 统计视图 */
@@ -164,7 +164,7 @@
 }
 
 .date-range-option.active {
-  background-color: #07c160;
+  background-color: #5fcf9a;
   color: #fff;
 }
 
@@ -274,7 +274,7 @@
 
 .stats-data-value {
   font-size: 28px;
-  color: #07c160;
+  color: #5fcf9a;
   font-weight: 500;
 }
 

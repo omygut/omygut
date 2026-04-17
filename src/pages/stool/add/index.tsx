@@ -8,7 +8,6 @@ import { showError } from "../../../utils/error";
 import BristolIcon from "../../../components/BristolIcon";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
-import NavBar from "../../../components/NavBar";
 import type { StoolRecord } from "../../../types";
 import "./index.css";
 
@@ -106,7 +105,6 @@ export default function StoolAdd() {
   if (loading) {
     return (
       <View className="add-page">
-        <NavBar title="添加排便记录" />
         <View className="loading">加载中...</View>
       </View>
     );
@@ -114,7 +112,6 @@ export default function StoolAdd() {
 
   return (
     <View className="add-page">
-      <NavBar title="添加排便记录" />
       {/* 日期时间 */}
       <View className="section">
         <Text className="section-title">时间</Text>

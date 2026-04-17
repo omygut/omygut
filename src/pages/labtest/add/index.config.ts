@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationStyle: "custom",
+  navigationBarTitleText: "添加化验",
 });

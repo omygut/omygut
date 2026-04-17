@@ -12,7 +12,7 @@ import RecordItem, { AnyRecord } from "../../components/RecordItem";
 import CalendarPopup from "../../components/CalendarPopup";
 import type { RecordType } from "../../types";
 import { RECORD_TYPE_OPTIONS } from "../../types";
-import logoImg from "../../assets/logo.png";
+import logoImg from "../../assets/logo.jpg";
 import "./index.css";
 
 interface RecordGroup {

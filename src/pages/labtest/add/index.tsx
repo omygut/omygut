@@ -9,7 +9,6 @@ import { formatDate, formatTime } from "../../../utils/date";
 import { showError } from "../../../utils/error";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
-import NavBar from "../../../components/NavBar";
 import type { LabTestIndicator } from "../../../types";
 import "./index.css";
 
@@ -297,7 +296,6 @@ export default function LabTestAdd() {
   if (loading) {
     return (
       <View className="add-page">
-        <NavBar title="添加化验" />
         <View className="loading">加载中...</View>
       </View>
     );
@@ -307,7 +305,6 @@ export default function LabTestAdd() {
 
   return (
     <View className="add-page">
-      <NavBar title="添加化验" />
       {/* 日期时间 */}
       <View className="section">
         <Text className="section-title">时间</Text>

@@ -9,7 +9,6 @@ import { showError } from "../../../utils/error";
 import { EXAM_TYPES } from "../../../constants/exam";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
-import NavBar from "../../../components/NavBar";
 import "./index.css";
 
 export default function ExamAdd() {
@@ -242,7 +241,6 @@ export default function ExamAdd() {
   if (loading) {
     return (
       <View className="add-page">
-        <NavBar title="添加检查" />
         <View className="loading">加载中...</View>
       </View>
     );
@@ -252,7 +250,6 @@ export default function ExamAdd() {
 
   return (
     <View className="add-page">
-      <NavBar title="添加检查" />
       {/* 时间 */}
       <View className="section">
         <Text className="section-title">时间</Text>

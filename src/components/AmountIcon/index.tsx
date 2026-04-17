@@ -1,7 +1,7 @@
 import { Image } from "@tarojs/components";
 
 function generateAmountSvg(level: 1 | 2 | 3): string {
-  const filled = "#07C160";
+  const filled = "#5FCF9A";
   const empty = "#E5E5E5";
   const colors = [
     level >= 1 ? filled : empty,

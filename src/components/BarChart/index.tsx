@@ -238,7 +238,7 @@ function drawChart(
     const x = startX + index * (barWidth + barGap);
     const y = height - padding.bottom - barHeight;
 
-    ctx.fillStyle = "#07c160";
+    ctx.fillStyle = "#5fcf9a";
     ctx.fillRect(x, y, barWidth, barHeight);
   });
 

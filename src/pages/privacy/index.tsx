@@ -1,11 +1,9 @@
 import { View, Text } from "@tarojs/components";
-import NavBar from "../../components/NavBar";
 import "./index.css";
 
 export default function Privacy() {
   return (
     <View className="privacy-page">
-      <NavBar title="隐私政策" />
       <View className="section">
         <Text className="section-title">数据收集</Text>
         <Text className="section-content">

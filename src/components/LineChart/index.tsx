@@ -244,7 +244,7 @@ function drawChart(
   ctx.setLineDash([]);
 
   // Draw line
-  ctx.strokeStyle = "#07c160";
+  ctx.strokeStyle = "#5fcf9a";
   ctx.lineWidth = 2;
   ctx.beginPath();
   data.forEach((point, i) => {
@@ -270,7 +270,7 @@ function drawChart(
 
     ctx.beginPath();
     ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fillStyle = isOutOfRange ? "#fa5151" : "#07c160";
+    ctx.fillStyle = isOutOfRange ? "#fa5151" : "#5fcf9a";
     ctx.fill();
 
     // White border

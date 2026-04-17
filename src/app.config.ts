@@ -21,21 +21,27 @@ export default defineAppConfig({
   },
   tabBar: {
     color: "#999",
-    selectedColor: "#07c160",
+    selectedColor: "#5fcf9a",
     backgroundColor: "#fff",
     borderStyle: "black",
     list: [
       {
         pagePath: "pages/index/index",
-        text: "🏠 首页",
+        text: "首页",
+        iconPath: "assets/tabbar/home.png",
+        selectedIconPath: "assets/tabbar/home-active.png",
       },
       {
         pagePath: "pages/history/index",
-        text: "📊 数据",
+        text: "数据",
+        iconPath: "assets/tabbar/data.png",
+        selectedIconPath: "assets/tabbar/data-active.png",
       },
       {
         pagePath: "pages/settings/index",
-        text: "⚙️ 设置",
+        text: "设置",
+        iconPath: "assets/tabbar/settings.png",
+        selectedIconPath: "assets/tabbar/settings-active.png",
       },
     ],
   },

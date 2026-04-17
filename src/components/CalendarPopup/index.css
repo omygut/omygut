@@ -30,7 +30,7 @@
 }
 
 .calendar-btn.confirm {
-  color: #07c160;
+  color: #5fcf9a;
 }
 
 .calendar-header {
@@ -42,7 +42,7 @@
 
 .calendar-nav {
   font-size: 32px;
-  color: #07c160;
+  color: #5fcf9a;
   padding: 16px;
 }
 
@@ -97,12 +97,12 @@
 }
 
 .calendar-day.today .day-text {
-  color: #07c160;
+  color: #5fcf9a;
   font-weight: 600;
 }
 
 .calendar-day.selected .day-text {
-  background-color: #07c160;
+  background-color: #5fcf9a;
   color: #fff;
 }
 
