@@ -78,7 +78,7 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
         const severity = getSeverityInfo(record.severity);
         return (
           <>
-            <Text className="record-feeling">{getFeelingEmoji(record.overallFeeling)}</Text>
+            <View className="record-feeling">{getFeelingEmoji(record.overallFeeling)}</View>
             {severity && (
               <Text className="record-severity" style={{ backgroundColor: severity.color }}>
                 {severity.label}
