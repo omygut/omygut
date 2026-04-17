@@ -154,6 +154,7 @@ export default function MealAdd() {
       try {
         await mealService.delete(editId);
         Taro.showToast({ title: "已删除", icon: "success" });
+        Taro.eventCenter.trigger("recordChange");
         setTimeout(() => {
           Taro.navigateBack();
         }, 1500);
@@ -189,6 +190,7 @@ export default function MealAdd() {
         Taro.showToast({ title: "记录成功", icon: "success" });
       }
 
+      Taro.eventCenter.trigger("recordChange");
       setTimeout(() => {
         Taro.navigateBack();
       }, 1500);
