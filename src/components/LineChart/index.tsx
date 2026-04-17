@@ -6,6 +6,7 @@ import "./index.css";
 export interface LineChartData {
   date: string;
   value: number;
+  displayValue?: string; // Original display value (e.g., ">1800")
 }
 
 interface LineChartProps {
