@@ -8,8 +8,8 @@ describe("calculateBristolScore", () => {
     expect(calculateBristolScore(3)).toBe(5);
     expect(calculateBristolScore(4)).toBe(5);
     expect(calculateBristolScore(5)).toBe(4);
-    expect(calculateBristolScore(6)).toBe(3);
-    expect(calculateBristolScore(7)).toBe(1);
+    expect(calculateBristolScore(6)).toBe(2);
+    expect(calculateBristolScore(7)).toBe(0);
   });
 
   it("returns 0 for invalid Bristol types", () => {
@@ -54,10 +54,10 @@ describe("calculateDailyScore", () => {
   });
 
   it("calculates score for multiple records with different Bristol types", () => {
-    // Bristol 1 = 3, Bristol 7 = 1, avg = 2
+    // Bristol 1 = 3, Bristol 7 = 0, avg = 1.5
     // count 2 = 4
-    // total = 6
-    expect(calculateDailyScore([{ bristol: 1 }, { bristol: 7 }])).toBe(6);
+    // total = 5.5
+    expect(calculateDailyScore([{ bristol: 1 }, { bristol: 7 }])).toBe(5.5);
   });
 
   it("handles 6+ records with 0 count score", () => {
