@@ -47,11 +47,13 @@
 
 .event-form-input {
   width: 100%;
-  padding: 20px 24px;
+  height: 80px;
+  padding: 0 24px;
   background-color: #f5f5f5;
   border-radius: 12px;
   font-size: 28px;
   color: #333;
+  box-sizing: border-box;
 }
 
 .event-form-actions {

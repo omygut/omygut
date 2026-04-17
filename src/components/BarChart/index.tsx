@@ -260,17 +260,34 @@ function drawChart(
     labelInterval = 30; // Monthly
   }
 
-  // Find the second-to-last interval label index
+  // Find the second-to-last interval label index and check if it would overlap with last label
   const secondToLastIntervalIndex = Math.floor((data.length - 2) / labelInterval) * labelInterval;
+  const lastIndex = data.length - 1;
+
+  // Calculate minimum spacing needed (label width ~50px for YY-MM-DD)
+  const labelWidth = 50;
+  const secondToLastX = startX + secondToLastIntervalIndex * (barWidth + barGap) + barWidth / 2;
+  const lastX = startX + lastIndex * (barWidth + barGap) + barWidth / 2;
+  const wouldOverlap = secondToLastIntervalIndex !== 0 && lastX - secondToLastX < labelWidth;
 
   data.forEach((item, index) => {
-    // Skip second-to-last interval label to avoid overlap with last label
-    if (index === secondToLastIntervalIndex && index !== 0) return;
+    // Skip second-to-last interval label only if it would overlap with last label
+    if (index === secondToLastIntervalIndex && wouldOverlap) return;
 
     // Show first, last, and interval labels
     if (index === 0 || index === data.length - 1 || index % labelInterval === 0) {
       const x = startX + index * (barWidth + barGap) + barWidth / 2;
-      const dateLabel = item.date.slice(5); // MM-DD
+      // Format: YY-MM-DD
+      const dateLabel = item.date.slice(2);
+
+      // Align first label left, last label right, others center
+      if (index === 0) {
+        ctx.textAlign = "left";
+      } else if (index === data.length - 1) {
+        ctx.textAlign = "right";
+      } else {
+        ctx.textAlign = "center";
+      }
       ctx.fillText(dateLabel, x, height - padding.bottom + 8);
     }
   });

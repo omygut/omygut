@@ -121,7 +121,7 @@ export default function BristolIcon({ type, size = 48 }: BristolIconProps) {
   return (
     <Image
       src={svgToDataUri(BRISTOL_SVGS[type])}
-      style={{ width: size, height: size }}
+      style={{ width: `${size}px`, height: `${size}px` }}
       mode="aspectFit"
     />
   );

@@ -105,7 +105,7 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
         return (
           <>
             <View className="record-feeling">
-              <BristolIcon type={record.type} size={24} />
+              <BristolIcon type={record.type} size={18} />
             </View>
             <Text className="record-desc">
               {getStoolAmountLabel(record.amount)}

@@ -105,9 +105,13 @@ function drawChart(
   if (refMin !== undefined) minValue = Math.min(minValue, refMin);
   if (refMax !== undefined) maxValue = Math.max(maxValue, refMax);
 
-  // Add 10% padding to value range
+  // Start from 0 unless there are negative values
+  if (minValue >= 0) {
+    minValue = 0;
+  }
+
+  // Add 10% padding to top
   const valueRange = maxValue - minValue || 1;
-  minValue = minValue - valueRange * 0.1;
   maxValue = maxValue + valueRange * 0.1;
 
   // Helper to convert value to Y coordinate
@@ -192,13 +196,13 @@ function drawChart(
     ctx.stroke();
   }
 
-  // Draw unit label
+  // Draw unit label above Y axis
   if (unit) {
     ctx.fillStyle = "#999";
     ctx.font = "10px sans-serif";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    ctx.fillText(unit, padding.left, 4);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(unit, padding.left - 8, padding.top - 12);
   }
 
   // Draw event lines and collect positions

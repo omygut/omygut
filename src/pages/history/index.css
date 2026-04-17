@@ -10,46 +10,28 @@
   height: 0;
 }
 
-/* 类型筛选 */
-.type-filter {
+/* 类型标签页 */
+.type-tabs {
   display: flex;
-  white-space: nowrap;
-  padding: 24px;
   background-color: #fff;
+  border-bottom: 1px solid #eee;
 }
 
-.type-option {
-  display: inline-flex;
+.type-tab {
+  flex: 1;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-radius: 20px;
-  background-color: #f5f5f5;
-  border: 2px solid transparent;
-  margin-right: 16px;
+  justify-content: center;
+  padding: 16px 0;
+  border-bottom: 4px solid transparent;
 }
 
-.type-option:last-child {
-  margin-right: 0;
+.type-tab.active {
+  border-bottom-color: #5fcf9a;
 }
 
-.type-option.active {
-  background-color: #e8f7ee;
-  border-color: #5fcf9a;
-}
-
-.type-icon {
-  font-size: 28px;
-}
-
-.type-label {
-  font-size: 26px;
-  color: #666;
-}
-
-.type-option.active .type-label {
-  color: #5fcf9a;
-  font-weight: 500;
+.type-tab-icon {
+  font-size: 40px;
 }
 
 /* 加载状态 */
@@ -143,51 +125,52 @@
   padding: 24px;
 }
 
-/* 日期范围选择器 */
-.date-range-selector {
+/* 图表内日期范围选择器 */
+.chart-date-range {
   display: flex;
-  gap: 16px;
-  padding: 24px;
-  background-color: #fff;
-}
-
-.date-range-option {
-  flex: 1;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 16px 0;
-  border-radius: 12px;
-  background-color: #fff;
-  font-size: 26px;
-  color: #666;
+  gap: 12px;
+  margin-top: 8px;
 }
 
-.date-range-option.active {
-  background-color: #5fcf9a;
-  color: #fff;
+.date-range-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+  font-size: 24px;
+  color: #333;
+}
+
+.date-range-arrow {
+  font-size: 18px;
+  color: #999;
+}
+
+.date-range-display {
+  font-size: 24px;
+  color: #999;
 }
 
 /* 自定义日期范围 */
 .custom-date-range {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 0 24px 24px;
-  background-color: #fff;
+  gap: 8px;
 }
 
 .date-picker {
-  padding: 16px 24px;
-  border-radius: 12px;
-  background-color: #fff;
-  font-size: 26px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+  font-size: 24px;
   color: #333;
 }
 
 .date-range-separator {
-  font-size: 26px;
+  font-size: 24px;
   color: #999;
 }
 
@@ -203,10 +186,32 @@
   margin-bottom: 8px;
 }
 
+.stats-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .stats-title {
   font-size: 32px;
   font-weight: 600;
   color: #333;
+}
+
+.stats-help-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #666;
+}
+
+.stats-help-btn:active {
+  background-color: #ddd;
 }
 
 .add-event-btn {
@@ -221,7 +226,8 @@
   background-color: #e8e8e8;
 }
 
-.stats-range {
+.stats-range,
+.stats-ref-range {
   font-size: 24px;
   color: #999;
 }
@@ -268,12 +274,12 @@
 }
 
 .stats-data-date {
-  font-size: 28px;
+  font-size: 24px;
   color: #666;
 }
 
 .stats-data-value {
-  font-size: 28px;
+  font-size: 24px;
   color: #5fcf9a;
   font-weight: 500;
 }
@@ -292,4 +298,61 @@
 .indicator-selector-arrow {
   font-size: 20px;
   color: #999;
+}
+
+/* 帮助弹窗 */
+.help-popup-mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.help-popup {
+  width: 80%;
+  max-width: 560px;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.help-popup-title {
+  display: block;
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.help-popup-section {
+  margin-bottom: 16px;
+}
+
+.help-popup-subtitle {
+  display: block;
+  font-size: 26px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.help-popup-item {
+  display: block;
+  font-size: 24px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.help-popup-btn {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #5fcf9a;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 28px;
+  color: #fff;
 }

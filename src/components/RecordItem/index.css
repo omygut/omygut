@@ -24,6 +24,8 @@
 .record-feeling {
   font-size: 28px;
   margin-right: 8px;
+  display: flex;
+  align-items: center;
 }
 
 .record-severity {

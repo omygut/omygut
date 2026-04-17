@@ -37,10 +37,12 @@ exports.main = async (event) => {
     hasMore = data.length === MAX_LIMIT;
   }
 
-  // Bristol type to score: 1→3, 2→4, 3→5, 4→5, 5→4, 6→3, 7→1
-  const BRISTOL_SCORES = [0, 3, 4, 5, 5, 4, 3, 1];
+  // Bristol type to score: 1→2, 2→4, 3→6, 4→6, 5→4, 6→2, 7→0
+  const BRISTOL_SCORES = [0, 2, 4, 6, 6, 4, 2, 0];
   const getBristolScore = (bristol) => BRISTOL_SCORES[bristol] || 0;
-  const getCountScore = (count) => Math.max(0, 6 - count);
+  // Count score: 1-2→4, 3→3, 4→2, 5→1, 6+→0
+  const COUNT_SCORES = [0, 4, 4, 3, 2, 1, 0];
+  const getCountScore = (count) => COUNT_SCORES[Math.min(count, 6)] || 0;
 
   // 按日期聚合统计
   const dailyData = {};

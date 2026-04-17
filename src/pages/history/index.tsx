@@ -50,6 +50,19 @@ function getDateDaysAgo(days: number): string {
   return formatDate(date);
 }
 
+const DATE_RANGE_LABELS: Record<DateRangePreset, string> = {
+  "30": "近一月",
+  "90": "近三月",
+  "365": "近一年",
+  "1095": "近三年",
+  all: "所有",
+  custom: "自定义",
+};
+
+function getTypeLabel(type: RecordType): string {
+  return RECORD_TYPE_OPTIONS.find((opt) => opt.value === type)?.label || "";
+}
+
 export default function History() {
   const [selectedType, setSelectedType] = useState<RecordType>(() => {
     return Taro.getStorageSync("history_selected_type") || "meal";
@@ -236,6 +249,9 @@ export default function History() {
   }, []);
 
   useDidShow(() => {
+    // Update navigation bar title
+    Taro.setNavigationBarTitle({ title: `${getTypeLabel(selectedType)}数据` });
+
     // Load events (lightweight, always refresh)
     setEvents(eventService.getAll());
 
@@ -262,6 +278,7 @@ export default function History() {
     if (type === selectedType) return;
     setSelectedType(type);
     Taro.setStorageSync("history_selected_type", type);
+    Taro.setNavigationBarTitle({ title: `${getTypeLabel(type)}数据` });
     setRecords([]);
     setStoolViewTab("score");
     setLabtestViewTab("chart");
@@ -326,6 +343,16 @@ export default function History() {
         loadLabtestStatsData(startDate, endDate, selectedIndicator);
       }
     }
+  };
+
+  const showDateRangePicker = () => {
+    const presets: DateRangePreset[] = ["30", "90", "365", "1095", "all", "custom"];
+    const labels = presets.map((p) => DATE_RANGE_LABELS[p]);
+    Taro.showActionSheet({ itemList: labels })
+      .then((res) => {
+        handleDateRangePresetChange(presets[res.tapIndex]);
+      })
+      .catch(() => {});
   };
 
   const handleCustomDateChange = (start: string, end: string) => {
@@ -398,22 +425,55 @@ export default function History() {
 
   const { startDate: effectiveStartDate, endDate: effectiveEndDate } = getEffectiveDateRange();
 
+  const renderDateRangeSelector = () => (
+    <View className="chart-date-range">
+      <View className="date-range-btn" onClick={showDateRangePicker}>
+        <Text>{DATE_RANGE_LABELS[dateRangePreset]}</Text>
+        <Text className="date-range-arrow">▼</Text>
+      </View>
+      {dateRangePreset === "custom" && (
+        <View className="custom-date-range">
+          <View className="date-picker" onClick={() => setStartCalendarVisible(true)}>
+            <Text>{customStartDate}</Text>
+          </View>
+          <Text className="date-range-separator">~</Text>
+          <View className="date-picker" onClick={() => setEndCalendarVisible(true)}>
+            <Text>{customEndDate}</Text>
+          </View>
+        </View>
+      )}
+      {dateRangePreset !== "custom" && (
+        <Text className="date-range-display">
+          {effectiveStartDate} ~ {effectiveEndDate}
+        </Text>
+      )}
+    </View>
+  );
+
+  const [scoreHelpVisible, setScoreHelpVisible] = useState(false);
+
   const renderChartView = (
     title: string,
     data: { date: string; value: number }[],
     maxValue?: number,
+    showHelp?: boolean,
   ) => (
     <View className="stats-view">
       <View className="stats-header">
         <View className="stats-header-row">
-          <Text className="stats-title">{title}</Text>
+          <View className="stats-title-row">
+            <Text className="stats-title">{title}</Text>
+            {showHelp && (
+              <View className="stats-help-btn" onClick={() => setScoreHelpVisible(true)}>
+                <Text>?</Text>
+              </View>
+            )}
+          </View>
           <View className="add-event-btn" onClick={handleAddEvent}>
             <Text>+ 事件</Text>
           </View>
         </View>
-        <Text className="stats-range">
-          {effectiveStartDate} ~ {effectiveEndDate}
-        </Text>
+        {renderDateRangeSelector()}
       </View>
       <View className="stats-chart-container">
         {statsLoading ? (
@@ -432,15 +492,6 @@ export default function History() {
   );
 
   const renderLabtestStatsView = () => {
-    const refRange =
-      selectedIndicator.refMin !== undefined && selectedIndicator.refMax !== undefined
-        ? `${selectedIndicator.refMin}-${selectedIndicator.refMax}`
-        : selectedIndicator.refMax !== undefined
-          ? `<${selectedIndicator.refMax}`
-          : selectedIndicator.refMin !== undefined
-            ? `>${selectedIndicator.refMin}`
-            : "";
-
     const isOutOfRange = (value: number) => {
       if (selectedIndicator.refMin !== undefined && value < selectedIndicator.refMin) return true;
       if (selectedIndicator.refMax !== undefined && value > selectedIndicator.refMax) return true;
@@ -464,11 +515,7 @@ export default function History() {
               <Text>+ 事件</Text>
             </View>
           </View>
-          {refRange && (
-            <Text className="stats-range">
-              参考范围: {refRange} {selectedIndicator.unit}
-            </Text>
-          )}
+          {renderDateRangeSelector()}
         </View>
         <View className="stats-chart-container">
           {labtestStatsLoading ? (
@@ -567,57 +614,6 @@ export default function History() {
 
   return (
     <View className="history-page">
-      <View className="date-range-selector">
-        <View
-          className={`date-range-option ${dateRangePreset === "30" ? "active" : ""}`}
-          onClick={() => handleDateRangePresetChange("30")}
-        >
-          <Text>一月</Text>
-        </View>
-        <View
-          className={`date-range-option ${dateRangePreset === "90" ? "active" : ""}`}
-          onClick={() => handleDateRangePresetChange("90")}
-        >
-          <Text>三月</Text>
-        </View>
-        <View
-          className={`date-range-option ${dateRangePreset === "365" ? "active" : ""}`}
-          onClick={() => handleDateRangePresetChange("365")}
-        >
-          <Text>一年</Text>
-        </View>
-        <View
-          className={`date-range-option ${dateRangePreset === "1095" ? "active" : ""}`}
-          onClick={() => handleDateRangePresetChange("1095")}
-        >
-          <Text>三年</Text>
-        </View>
-        <View
-          className={`date-range-option ${dateRangePreset === "all" ? "active" : ""}`}
-          onClick={() => handleDateRangePresetChange("all")}
-        >
-          <Text>所有</Text>
-        </View>
-        <View
-          className={`date-range-option ${dateRangePreset === "custom" ? "active" : ""}`}
-          onClick={() => handleDateRangePresetChange("custom")}
-        >
-          <Text>自定义</Text>
-        </View>
-      </View>
-
-      {dateRangePreset === "custom" && (
-        <View className="custom-date-range">
-          <View className="date-picker" onClick={() => setStartCalendarVisible(true)}>
-            <Text>{customStartDate}</Text>
-          </View>
-          <Text className="date-range-separator">至</Text>
-          <View className="date-picker" onClick={() => setEndCalendarVisible(true)}>
-            <Text>{customEndDate}</Text>
-          </View>
-        </View>
-      )}
-
       <CalendarPopup
         visible={startCalendarVisible}
         value={customStartDate}
@@ -645,19 +641,17 @@ export default function History() {
         onClose={() => setEndCalendarVisible(false)}
       />
 
-      <ScrollView className="type-filter" scrollX>
+      <View className="type-tabs">
         {RECORD_TYPE_OPTIONS.map((option) => (
           <View
             key={option.value}
-            id={`type-${option.value}`}
-            className={`type-option ${selectedType === option.value ? "active" : ""}`}
+            className={`type-tab ${selectedType === option.value ? "active" : ""}`}
             onClick={() => handleTypeChange(option.value)}
           >
-            <Text className="type-icon">{option.icon}</Text>
-            <Text className="type-label">{option.label}</Text>
+            <Text className="type-tab-icon">{option.icon}</Text>
           </View>
         ))}
-      </ScrollView>
+      </View>
 
       {selectedType === "stool" && (
         <View className="view-mode-tabs">
@@ -688,7 +682,7 @@ export default function History() {
             className={`view-mode-tab ${labtestViewTab === "chart" ? "active" : ""}`}
             onClick={() => handleLabtestViewTabChange("chart")}
           >
-            <Text>钙卫蛋白趋势</Text>
+            <Text>指标趋势</Text>
           </View>
           <View
             className={`view-mode-tab ${labtestViewTab === "records" ? "active" : ""}`}
@@ -700,7 +694,7 @@ export default function History() {
       )}
 
       {selectedType === "stool" && stoolViewTab === "score"
-        ? renderChartView("每日排便得分", scoreData, 10)
+        ? renderChartView("每日排便得分", scoreData, 10, true)
         : selectedType === "stool" && stoolViewTab === "count"
           ? renderChartView("每日排便次数", countData)
           : selectedType === "labtest" && labtestViewTab === "chart"
@@ -713,6 +707,34 @@ export default function History() {
         onConfirm={handleEventFormConfirm}
         onClose={handleEventFormClose}
       />
+
+      {scoreHelpVisible && (
+        <View className="help-popup-mask" onClick={() => setScoreHelpVisible(false)}>
+          <View className="help-popup" onClick={(e) => e.stopPropagation()}>
+            <Text className="help-popup-title">排便得分计算规则</Text>
+            <View className="help-popup-section">
+              <Text className="help-popup-subtitle">Bristol 分型得分：</Text>
+              <Text className="help-popup-item">3-4型（正常）：6分</Text>
+              <Text className="help-popup-item">2型或5型：4分</Text>
+              <Text className="help-popup-item">1型或6型：2分</Text>
+              <Text className="help-popup-item">7型（水样）：0分</Text>
+            </View>
+            <View className="help-popup-section">
+              <Text className="help-popup-subtitle">次数得分：</Text>
+              <Text className="help-popup-item">
+                1-2次：4分；3次：3分；4次：2分；5次：1分；6+次：0分
+              </Text>
+            </View>
+            <View className="help-popup-section">
+              <Text className="help-popup-item">每日得分 = 平均分型得分 + 次数得分</Text>
+              <Text className="help-popup-item">得分越高越好，满分 10 分</Text>
+            </View>
+            <View className="help-popup-btn" onClick={() => setScoreHelpVisible(false)}>
+              <Text>知道了</Text>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
