@@ -7,14 +7,16 @@ import { stoolService } from "../../services/stool";
 import { medicationService } from "../../services/medication";
 import { labTestService } from "../../services/labtest";
 import { examService } from "../../services/exam";
+import { eventService } from "../../services/event";
 import { findStandardIndicator, StandardIndicator } from "../../services/labtest-standards";
 import { formatDisplayDate, getWeekday, formatDate } from "../../utils/date";
 import IndicatorPicker from "../../components/IndicatorPicker";
 import RecordItem, { AnyRecord } from "../../components/RecordItem";
 import CalendarPopup from "../../components/CalendarPopup";
+import EventFormPopup from "../../components/EventFormPopup";
 import BarChart from "../../components/BarChart";
 import LineChart, { LineChartData } from "../../components/LineChart";
-import { RecordType, RECORD_TYPE_OPTIONS, LabTestRecord } from "../../types";
+import { RecordType, RECORD_TYPE_OPTIONS, LabTestRecord, ChartEvent } from "../../types";
 import "./index.css";
 
 // 默认指标：粪便钙卫蛋白
@@ -79,6 +81,11 @@ export default function History() {
     return saved ? JSON.parse(saved) : DEFAULT_INDICATOR;
   });
   const [indicatorPickerVisible, setIndicatorPickerVisible] = useState(false);
+
+  // Event state
+  const [events, setEvents] = useState<ChartEvent[]>([]);
+  const [eventFormVisible, setEventFormVisible] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<ChartEvent | undefined>(undefined);
 
   const cursorRef = useRef({ date: "9999-12-31", time: "23:59" });
   const dateRangeRef = useRef({ startDate: "", endDate: "" });
@@ -214,6 +221,9 @@ export default function History() {
   );
 
   useDidShow(() => {
+    // Load events
+    setEvents(eventService.getAll());
+
     const { startDate, endDate } = getEffectiveDateRange();
     loadInitial(selectedType, startDate, endDate);
     // Load chart data for stool and labtest
@@ -310,6 +320,52 @@ export default function History() {
     }
   };
 
+  const handleAddEvent = () => {
+    setEditingEvent(undefined);
+    setEventFormVisible(true);
+  };
+
+  const handleEventTap = (event: ChartEvent) => {
+    Taro.showActionSheet({
+      itemList: ["编辑", "删除"],
+    })
+      .then((res) => {
+        if (res.tapIndex === 0) {
+          setEditingEvent(event);
+          setEventFormVisible(true);
+        } else if (res.tapIndex === 1) {
+          Taro.showModal({
+            title: "确认删除",
+            content: `确定要删除事件"${event.description}"吗？`,
+          }).then((modalRes) => {
+            if (modalRes.confirm) {
+              eventService.remove(event.id);
+              setEvents(eventService.getAll());
+            }
+          });
+        }
+      })
+      .catch(() => {
+        // User cancelled action sheet
+      });
+  };
+
+  const handleEventFormConfirm = (date: string, description: string) => {
+    if (editingEvent) {
+      eventService.update(editingEvent.id, date, description);
+    } else {
+      eventService.add(date, description);
+    }
+    setEvents(eventService.getAll());
+    setEventFormVisible(false);
+    setEditingEvent(undefined);
+  };
+
+  const handleEventFormClose = () => {
+    setEventFormVisible(false);
+    setEditingEvent(undefined);
+  };
+
   // 按日期分组记录
   const groupedRecords: { date: string; records: AnyRecord[] }[] = [];
   let currentDate = "";
@@ -331,7 +387,12 @@ export default function History() {
   ) => (
     <View className="stats-view">
       <View className="stats-header">
-        <Text className="stats-title">{title}</Text>
+        <View className="stats-header-row">
+          <Text className="stats-title">{title}</Text>
+          <View className="add-event-btn" onClick={handleAddEvent}>
+            <Text>+ 事件</Text>
+          </View>
+        </View>
         <Text className="stats-range">
           {effectiveStartDate} ~ {effectiveEndDate}
         </Text>
@@ -346,7 +407,13 @@ export default function History() {
             <Text>暂无数据</Text>
           </View>
         ) : (
-          <BarChart data={data} maxValue={maxValue} higherIsBetter={higherIsBetter} />
+          <BarChart
+            data={data}
+            maxValue={maxValue}
+            higherIsBetter={higherIsBetter}
+            events={events}
+            onEventTap={handleEventTap}
+          />
         )}
       </View>
     </View>
@@ -371,14 +438,19 @@ export default function History() {
     return (
       <View className="stats-view">
         <View className="stats-header">
-          <View
-            className="stats-title indicator-selector"
-            onClick={() => setIndicatorPickerVisible(true)}
-          >
-            <Text>
-              {selectedIndicator.nameZh} ({selectedIndicator.abbr})
-            </Text>
-            <Text className="indicator-selector-arrow">▼</Text>
+          <View className="stats-header-row">
+            <View
+              className="stats-title indicator-selector"
+              onClick={() => setIndicatorPickerVisible(true)}
+            >
+              <Text>
+                {selectedIndicator.nameZh} ({selectedIndicator.abbr})
+              </Text>
+              <Text className="indicator-selector-arrow">▼</Text>
+            </View>
+            <View className="add-event-btn" onClick={handleAddEvent}>
+              <Text>+ 事件</Text>
+            </View>
           </View>
           {refRange && (
             <Text className="stats-range">
@@ -401,6 +473,8 @@ export default function History() {
               unit={selectedIndicator.unit}
               refMin={selectedIndicator.refMin}
               refMax={selectedIndicator.refMax}
+              events={events}
+              onEventTap={handleEventTap}
             />
           )}
         </View>
@@ -409,7 +483,9 @@ export default function History() {
             {[...labtestChartData].reverse().map((item, index) => (
               <View key={index} className="stats-data-item">
                 <Text className="stats-data-date">{item.date}</Text>
-                <Text className={`stats-data-value ${isOutOfRange(item.value) ? "out-of-range" : ""}`}>
+                <Text
+                  className={`stats-data-value ${isOutOfRange(item.value) ? "out-of-range" : ""}`}
+                >
                   {item.displayValue || item.value} {selectedIndicator.unit}
                 </Text>
               </View>
@@ -605,15 +681,20 @@ export default function History() {
         </View>
       )}
 
-      {selectedType === "stool" && stoolViewTab === "score" ? (
-        renderChartView("每日肠道健康得分", scoreData, 10, true)
-      ) : selectedType === "stool" && stoolViewTab === "count" ? (
-        renderChartView("每日排便次数", countData)
-      ) : selectedType === "labtest" && labtestViewTab === "chart" ? (
-        renderLabtestStatsView()
-      ) : (
-        renderRecordsList()
-      )}
+      {selectedType === "stool" && stoolViewTab === "score"
+        ? renderChartView("每日排便得分", scoreData, 10, true)
+        : selectedType === "stool" && stoolViewTab === "count"
+          ? renderChartView("每日排便次数", countData)
+          : selectedType === "labtest" && labtestViewTab === "chart"
+            ? renderLabtestStatsView()
+            : renderRecordsList()}
+
+      <EventFormPopup
+        visible={eventFormVisible}
+        event={editingEvent}
+        onConfirm={handleEventFormConfirm}
+        onClose={handleEventFormClose}
+      />
     </View>
   );
 }

@@ -98,3 +98,10 @@ export interface ExportData {
   labtest_records: LabTestRecord[];
   exam_records: ExamRecord[];
 }
+
+// 图表事件标注
+export interface ChartEvent {
+  id: string; // unique identifier (timestamp-based)
+  date: string; // "2026-03-15"
+  description: string; // "开始服用益生菌"
+}

@@ -1,6 +1,7 @@
 import { Canvas } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
+import type { ChartEvent } from "../../types";
 import "./index.css";
 
 export interface BarChartData {
@@ -12,14 +13,36 @@ interface BarChartProps {
   data: BarChartData[];
   maxValue?: number;
   higherIsBetter?: boolean; // true: green for high values, false: green for low values
+  events?: ChartEvent[];
+  onEventTap?: (event: ChartEvent) => void;
 }
 
 export default function BarChart({
   data,
   maxValue: propMaxValue,
   higherIsBetter = false,
+  events = [],
+  onEventTap,
 }: BarChartProps) {
   const canvasId = useRef(`bar-chart-${Date.now()}`).current;
+  const eventPositionsRef = useRef<{ event: ChartEvent; x: number }[]>([]);
+
+  const handleTouchEnd = useCallback(
+    (e: { changedTouches: { x: number }[] }) => {
+      if (!onEventTap || eventPositionsRef.current.length === 0) return;
+
+      const touchX = e.changedTouches[0].x;
+      const hitThreshold = 20;
+
+      for (const { event, x } of eventPositionsRef.current) {
+        if (Math.abs(touchX - x) < hitThreshold) {
+          onEventTap(event);
+          break;
+        }
+      }
+    },
+    [onEventTap],
+  );
 
   useEffect(() => {
     if (data.length === 0) return;
@@ -41,11 +64,14 @@ export default function BarChart({
         canvas.height = height * dpr;
         ctx.scale(dpr, dpr);
 
-        drawChart(ctx, width, height, data, propMaxValue, higherIsBetter);
+        const positions = drawChart(ctx, width, height, data, propMaxValue, higherIsBetter, events);
+        eventPositionsRef.current = positions;
       });
-  }, [data, propMaxValue, canvasId, higherIsBetter]);
+  }, [data, propMaxValue, canvasId, higherIsBetter, events]);
 
-  return <Canvas type="2d" id={canvasId} className="bar-chart-canvas" />;
+  return (
+    <Canvas type="2d" id={canvasId} className="bar-chart-canvas" onTouchEnd={handleTouchEnd} />
+  );
 }
 
 // Aggregate data to ensure bar count doesn't exceed maxBars
@@ -73,7 +99,8 @@ function drawChart(
   rawData: BarChartData[],
   propMaxValue?: number,
   higherIsBetter?: boolean,
-) {
+  events: ChartEvent[] = [],
+): { event: ChartEvent; x: number }[] {
   const padding = { top: 20, right: 8, bottom: 40, left: 16 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
@@ -81,7 +108,7 @@ function drawChart(
   // Clear canvas
   ctx.clearRect(0, 0, width, height);
 
-  if (rawData.length === 0) return;
+  if (rawData.length === 0) return [];
 
   // Aggregate data if too many bars
   const data = aggregateData(rawData, 60);
@@ -140,6 +167,73 @@ function drawChart(
   // Position bars - center if extra space, otherwise start at left edge
   const totalWidth = barWidth * data.length + barGap * (data.length - 1);
   const startX = padding.left + Math.max(0, (chartWidth - totalWidth) / 2);
+
+  // Helper to convert date to X coordinate
+  const dateToX = (date: string): number | null => {
+    const index = data.findIndex((d) => d.date === date);
+    if (index !== -1) {
+      return startX + index * (barWidth + barGap) + barWidth / 2;
+    }
+
+    const startDate = data[0].date;
+    const endDate = data[data.length - 1].date;
+    if (date < startDate || date > endDate) return null;
+
+    for (let i = 0; i < data.length - 1; i++) {
+      if (data[i].date <= date && date <= data[i + 1].date) {
+        const x1 = startX + i * (barWidth + barGap) + barWidth / 2;
+        const x2 = startX + (i + 1) * (barWidth + barGap) + barWidth / 2;
+        const d1 = new Date(data[i].date).getTime();
+        const d2 = new Date(data[i + 1].date).getTime();
+        const d = new Date(date).getTime();
+        const ratio = (d - d1) / (d2 - d1);
+        return x1 + (x2 - x1) * ratio;
+      }
+    }
+    return null;
+  };
+
+  // Draw event lines and collect positions
+  const eventPositions: { event: ChartEvent; x: number }[] = [];
+  const drawnEvents = events.filter((e) => dateToX(e.date) !== null);
+
+  const eventsByX = new Map<number, ChartEvent[]>();
+  for (const event of drawnEvents) {
+    const x = dateToX(event.date)!;
+    const roundedX = Math.round(x);
+    if (!eventsByX.has(roundedX)) {
+      eventsByX.set(roundedX, []);
+    }
+    eventsByX.get(roundedX)!.push(event);
+  }
+
+  ctx.strokeStyle = "#999";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.fillStyle = "#666";
+  ctx.font = "10px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+
+  for (const [x, eventGroup] of eventsByX) {
+    // Draw vertical line
+    ctx.beginPath();
+    ctx.moveTo(x, padding.top);
+    ctx.lineTo(x, height - padding.bottom);
+    ctx.stroke();
+
+    // Draw two-line label: date on top, description below
+    const date = eventGroup[0].date.slice(5); // MM-DD
+    const label = eventGroup.map((e) => e.description).join(" / ");
+    ctx.fillText(date, x, 2);
+    ctx.fillText(label, x, 14);
+
+    for (const event of eventGroup) {
+      eventPositions.push({ event, x });
+    }
+  }
+
+  ctx.setLineDash([]);
 
   // Draw bars
   data.forEach((item, index) => {
@@ -206,4 +300,6 @@ function drawChart(
       ctx.fillText(dateLabel, x, height - padding.bottom + 8);
     }
   });
+
+  return eventPositions;
 }
