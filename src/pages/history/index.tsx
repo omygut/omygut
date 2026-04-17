@@ -181,9 +181,11 @@ export default function History() {
         record.indicators.forEach((ind) => {
           const matched = findStandardIndicator(ind.name, record.specimen);
           if (matched && matched.nameZh === FCP_INDICATOR.nameZh) {
-            const numValue = parseFloat(ind.value);
+            // Parse value, handling comparison symbols like >1800 or <10
+            const valueStr = ind.value.trim();
+            const numValue = parseFloat(valueStr.replace(/^[<>]/, ""));
             if (!isNaN(numValue)) {
-              chartData.push({ date: record.date, value: numValue });
+              chartData.push({ date: record.date, value: numValue, displayValue: valueStr });
             }
           }
         });
@@ -364,7 +366,7 @@ export default function History() {
               <Text
                 className={`stats-data-value ${FCP_INDICATOR.refMax !== undefined && item.value > FCP_INDICATOR.refMax ? "out-of-range" : ""}`}
               >
-                {item.value} {FCP_INDICATOR.unit}
+                {item.displayValue || item.value} {FCP_INDICATOR.unit}
               </Text>
             </View>
           ))}

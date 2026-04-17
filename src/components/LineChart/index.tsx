@@ -6,6 +6,7 @@ import "./index.css";
 export interface LineChartData {
   date: string;
   value: number;
+  displayValue?: string; // Original display value (e.g., ">1800")
 }
 
 interface LineChartProps {
@@ -191,7 +192,9 @@ function drawChart(
   const labelIndices = getLabelIndices(data.length);
   labelIndices.forEach((i) => {
     const x = indexToX(i);
-    const dateLabel = data[i].date.slice(5); // MM-DD
+    const date = data[i].date;
+    // Format: YY/MM/DD
+    const dateLabel = `${date.slice(2, 4)}/${date.slice(5, 7)}/${date.slice(8, 10)}`;
     ctx.fillText(dateLabel, x, height - padding.bottom + 8);
   });
 }
