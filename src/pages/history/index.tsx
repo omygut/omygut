@@ -145,41 +145,6 @@ export default function History() {
     return { startDate: getDateDaysAgo(days), endDate: formatDate() };
   }, [dateRangePreset, customStartDate, customEndDate]);
 
-  useDidShow(() => {
-    const { startDate, endDate } = getEffectiveDateRange();
-    loadInitial(selectedType, startDate, endDate);
-    // Load chart data for stool and labtest
-    if (selectedType === "stool") {
-      loadStatsData(startDate, endDate);
-    } else if (selectedType === "labtest") {
-      loadLabtestStatsData(startDate, endDate);
-    }
-  });
-
-  const handleRefresh = useCallback(async () => {
-    const { startDate, endDate } = getEffectiveDateRange();
-    await loadInitial(selectedType, startDate, endDate);
-  }, [loadInitial, selectedType, getEffectiveDateRange]);
-
-  const handleTypeChange = (type: RecordType) => {
-    if (type === selectedType) return;
-    setSelectedType(type);
-    Taro.setStorageSync("history_selected_type", type);
-    setRecords([]);
-    setStoolViewTab("score");
-    setLabtestViewTab("chart");
-    // Reset labtest stats when switching types
-    setLabtestChartData([]);
-    const { startDate, endDate } = getEffectiveDateRange();
-    loadInitial(type, startDate, endDate);
-    // Load chart data for stool and labtest
-    if (type === "stool") {
-      loadStatsData(startDate, endDate);
-    } else if (type === "labtest") {
-      loadLabtestStatsData(startDate, endDate);
-    }
-  };
-
   const loadStatsData = useCallback(async (startDate: string, endDate: string) => {
     setStatsLoading(true);
     try {
@@ -232,6 +197,41 @@ export default function History() {
       setLabtestStatsLoading(false);
     }
   }, []);
+
+  useDidShow(() => {
+    const { startDate, endDate } = getEffectiveDateRange();
+    loadInitial(selectedType, startDate, endDate);
+    // Load chart data for stool and labtest
+    if (selectedType === "stool") {
+      loadStatsData(startDate, endDate);
+    } else if (selectedType === "labtest") {
+      loadLabtestStatsData(startDate, endDate);
+    }
+  });
+
+  const handleRefresh = useCallback(async () => {
+    const { startDate, endDate } = getEffectiveDateRange();
+    await loadInitial(selectedType, startDate, endDate);
+  }, [loadInitial, selectedType, getEffectiveDateRange]);
+
+  const handleTypeChange = (type: RecordType) => {
+    if (type === selectedType) return;
+    setSelectedType(type);
+    Taro.setStorageSync("history_selected_type", type);
+    setRecords([]);
+    setStoolViewTab("score");
+    setLabtestViewTab("chart");
+    // Reset labtest stats when switching types
+    setLabtestChartData([]);
+    const { startDate, endDate } = getEffectiveDateRange();
+    loadInitial(type, startDate, endDate);
+    // Load chart data for stool and labtest
+    if (type === "stool") {
+      loadStatsData(startDate, endDate);
+    } else if (type === "labtest") {
+      loadLabtestStatsData(startDate, endDate);
+    }
+  };
 
   const handleStoolViewTabChange = (tab: StoolViewTab) => {
     if (tab === stoolViewTab) return;
