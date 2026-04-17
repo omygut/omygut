@@ -229,3 +229,38 @@
   color: #999;
   font-size: 28px;
 }
+
+/* 数据列表 */
+.stats-data-list {
+  margin-top: 24px;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 8px 24px;
+}
+
+.stats-data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.stats-data-item:last-child {
+  border-bottom: none;
+}
+
+.stats-data-date {
+  font-size: 28px;
+  color: #666;
+}
+
+.stats-data-value {
+  font-size: 28px;
+  color: #07c160;
+  font-weight: 500;
+}
+
+.stats-data-value.out-of-range {
+  color: #fa5151;
+}
