@@ -230,9 +230,11 @@ function drawChart(
     ctx.lineTo(x, height - padding.bottom);
     ctx.stroke();
 
-    // Draw horizontal label at top (same line as unit)
+    // Draw two-line label: date on top, description below
+    const date = eventGroup[0].date.slice(5); // MM-DD
     const label = eventGroup.map((e) => e.description).join(" / ");
-    ctx.fillText(label, x, 4);
+    ctx.fillText(date, x, 2);
+    ctx.fillText(label, x, 14);
 
     for (const event of eventGroup) {
       eventPositions.push({ event, x });
