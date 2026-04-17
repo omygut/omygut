@@ -149,7 +149,7 @@ export default function History() {
     if (selectedType === "stool") {
       loadStatsData(startDate, endDate);
     } else if (selectedType === "labtest") {
-      loadLabtestStatsData();
+      loadLabtestStatsData(startDate, endDate);
     }
   });
 
@@ -173,7 +173,7 @@ export default function History() {
     if (type === "stool") {
       loadStatsData(startDate, endDate);
     } else if (type === "labtest") {
-      loadLabtestStatsData();
+      loadLabtestStatsData(startDate, endDate);
     }
   };
 
@@ -199,11 +199,11 @@ export default function History() {
     }
   }, []);
 
-  const loadLabtestStatsData = useCallback(async () => {
+  const loadLabtestStatsData = useCallback(async (startDate: string, endDate: string) => {
     setLabtestStatsLoading(true);
     try {
-      // Fetch all labtest records
-      const allRecords = await labTestService.getByDateRange("1900-01-01", formatDate());
+      // Fetch labtest records in date range
+      const allRecords = await labTestService.getByDateRange(startDate, endDate);
 
       // Extract FCP indicator values
       const chartData: LineChartData[] = [];
@@ -243,7 +243,8 @@ export default function History() {
     if (tab === labtestViewTab) return;
     setLabtestViewTab(tab);
     if (tab === "chart" && labtestChartData.length === 0) {
-      loadLabtestStatsData();
+      const { startDate, endDate } = getEffectiveDateRange();
+      loadLabtestStatsData(startDate, endDate);
     }
   };
 
@@ -260,6 +261,9 @@ export default function History() {
       if (selectedType === "stool" && stoolViewTab !== "records") {
         loadStatsData(startDate, endDate);
       }
+      if (selectedType === "labtest" && labtestViewTab === "chart") {
+        loadLabtestStatsData(startDate, endDate);
+      }
     }
   };
 
@@ -268,6 +272,9 @@ export default function History() {
     loadInitial(selectedType, start, end);
     if (selectedType === "stool" && stoolViewTab !== "records") {
       loadStatsData(start, end);
+    }
+    if (selectedType === "labtest" && labtestViewTab === "chart") {
+      loadLabtestStatsData(start, end);
     }
   };
 
