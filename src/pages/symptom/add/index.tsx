@@ -7,6 +7,7 @@ import { formatDate, formatTime } from "../../../utils/date";
 import { showError } from "../../../utils/error";
 import { validateSymptom } from "../../../utils/validation";
 import { getSymptomItems } from "../../../utils/symptom";
+import { getDatabase } from "../../../utils/cloud";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
 import FeelingIcon from "../../../components/FeelingIcon";
@@ -172,20 +173,36 @@ export default function SymptomAdd() {
     setSubmitting(true);
     try {
       const parsedWeight = weight.trim() ? parseFloat(weight) : undefined;
+      const db = getDatabase();
+      const _ = db.command;
+
+      // 使用 _.remove() 显式删除空字段，否则 update 不会清除旧数据
       const data = {
         date,
         time,
-        symptomItems: symptomItems.length > 0 ? symptomItems : undefined,
-        overallFeeling,
-        weight: parsedWeight && !isNaN(parsedWeight) ? parsedWeight : undefined,
-        note: note.trim() || undefined,
+        symptomItems: symptomItems.length > 0 ? symptomItems : _.remove(),
+        // 清除旧格式字段
+        symptoms: _.remove(),
+        severity: _.remove(),
+        overallFeeling: overallFeeling ?? _.remove(),
+        weight: parsedWeight && !isNaN(parsedWeight) ? parsedWeight : _.remove(),
+        note: note.trim() || _.remove(),
       };
 
       if (isEdit && editId) {
         await symptomService.update(editId, data);
         Taro.showToast({ title: "更新成功", icon: "success" });
       } else {
-        await symptomService.add(data);
+        // 新增时不需要 _.remove()，只传有值的字段
+        const addData = {
+          date,
+          time,
+          ...(symptomItems.length > 0 && { symptomItems }),
+          ...(overallFeeling && { overallFeeling }),
+          ...(parsedWeight && !isNaN(parsedWeight) && { weight: parsedWeight }),
+          ...(note.trim() && { note: note.trim() }),
+        };
+        await symptomService.add(addData);
         Taro.showToast({ title: "记录成功", icon: "success" });
       }
 
