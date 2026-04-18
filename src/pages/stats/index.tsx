@@ -47,8 +47,6 @@ type StoolViewTab = "score" | "count" | "records";
 type LabtestViewTab = "chart" | "records";
 type SymptomViewTab = "feeling" | "weight" | "symptom" | "records";
 type DateRangePreset = "30" | "90" | "365" | "1095" | "all" | "custom";
-type ExamTypeFilter = "all" | (typeof EXAM_TYPES)[number]["value"];
-type AssessmentTypeFilter = "all" | (typeof ASSESSMENT_TYPES)[number]["value"];
 
 // 化验类别列表
 const LABTEST_CATEGORIES = [
@@ -63,7 +61,6 @@ const LABTEST_CATEGORIES = [
   "尿常规",
   "便常规",
 ] as const;
-type LabtestCategoryFilter = "all" | (typeof LABTEST_CATEGORIES)[number];
 
 const PAGE_SIZE = 50;
 
@@ -131,14 +128,14 @@ export default function Stats() {
   const [weightChartData, setWeightChartData] = useState<LineChartData[]>([]);
   const [weightStatsLoading, setWeightStatsLoading] = useState(false);
 
-  // Exam filter state
-  const [examTypeFilter, setExamTypeFilter] = useState<ExamTypeFilter>("all");
+  // Exam filter state (multi-select, empty = all)
+  const [examTypeFilters, setExamTypeFilters] = useState<Set<string>>(new Set());
 
-  // Assessment filter state
-  const [assessmentTypeFilter, setAssessmentTypeFilter] = useState<AssessmentTypeFilter>("all");
+  // Assessment filter state (multi-select, empty = all)
+  const [assessmentTypeFilters, setAssessmentTypeFilters] = useState<Set<string>>(new Set());
 
-  // Labtest category filter state
-  const [labtestCategoryFilter, setLabtestCategoryFilter] = useState<LabtestCategoryFilter>("all");
+  // Labtest category filter state (multi-select, empty = all)
+  const [labtestCategoryFilters, setLabtestCategoryFilters] = useState<Set<string>>(new Set());
 
   // Feeling stats state
   const [feelingData, setFeelingData] = useState<{ date: string; value: number }[]>([]);
@@ -363,25 +360,25 @@ export default function Stats() {
 
   const needsRefreshRef = useRef(true);
 
-  // 根据筛选条件过滤记录
+  // 根据筛选条件过滤记录（多选，空集合表示全部）
   const filteredRecords = useMemo(() => {
-    if (selectedType === "exam" && examTypeFilter !== "all") {
+    if (selectedType === "exam" && examTypeFilters.size > 0) {
       return records.filter(
         (r) =>
-          r._type === "exam" && (r as ExamRecord & { _type: "exam" }).examType === examTypeFilter,
+          r._type === "exam" && examTypeFilters.has((r as ExamRecord & { _type: "exam" }).examType),
       );
     }
-    if (selectedType === "assessment" && assessmentTypeFilter !== "all") {
+    if (selectedType === "assessment" && assessmentTypeFilters.size > 0) {
       return records.filter(
         (r) =>
           r._type === "assessment" &&
-          (r as AssessmentRecord & { _type: "assessment" }).type === assessmentTypeFilter,
+          assessmentTypeFilters.has((r as AssessmentRecord & { _type: "assessment" }).type),
       );
     }
     if (
       selectedType === "labtest" &&
       labtestViewTab === "records" &&
-      labtestCategoryFilter !== "all"
+      labtestCategoryFilters.size > 0
     ) {
       return records.filter((r) => {
         if (r._type !== "labtest") return false;
@@ -389,7 +386,7 @@ export default function Stats() {
         // 检查是否有任何指标属于选中的类别
         return labtestRecord.indicators.some((ind) => {
           const matched = findStandardIndicator(ind.name, labtestRecord.specimen);
-          return matched && matched.category === labtestCategoryFilter;
+          return matched && labtestCategoryFilters.has(matched.category);
         });
       });
     }
@@ -397,9 +394,9 @@ export default function Stats() {
   }, [
     records,
     selectedType,
-    examTypeFilter,
-    assessmentTypeFilter,
-    labtestCategoryFilter,
+    examTypeFilters,
+    assessmentTypeFilters,
+    labtestCategoryFilters,
     labtestViewTab,
   ]);
 
@@ -788,17 +785,21 @@ export default function Stats() {
 
       {selectedType === "exam" && (
         <View className="filter-tabs">
-          <View
-            className={`filter-tab ${examTypeFilter === "all" ? "active" : ""}`}
-            onClick={() => setExamTypeFilter("all")}
-          >
-            <Text>全部</Text>
-          </View>
           {EXAM_TYPES.map((type) => (
             <View
               key={type.value}
-              className={`filter-tab ${examTypeFilter === type.value ? "active" : ""}`}
-              onClick={() => setExamTypeFilter(type.value)}
+              className={`filter-tab ${examTypeFilters.has(type.value) ? "active" : ""}`}
+              onClick={() => {
+                setExamTypeFilters((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(type.value)) {
+                    next.delete(type.value);
+                  } else {
+                    next.add(type.value);
+                  }
+                  return next;
+                });
+              }}
             >
               <Text>{type.label}</Text>
             </View>
@@ -808,17 +809,21 @@ export default function Stats() {
 
       {selectedType === "assessment" && (
         <View className="filter-tabs">
-          <View
-            className={`filter-tab ${assessmentTypeFilter === "all" ? "active" : ""}`}
-            onClick={() => setAssessmentTypeFilter("all")}
-          >
-            <Text>全部</Text>
-          </View>
           {ASSESSMENT_TYPES.map((type) => (
             <View
               key={type.value}
-              className={`filter-tab ${assessmentTypeFilter === type.value ? "active" : ""}`}
-              onClick={() => setAssessmentTypeFilter(type.value)}
+              className={`filter-tab ${assessmentTypeFilters.has(type.value) ? "active" : ""}`}
+              onClick={() => {
+                setAssessmentTypeFilters((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(type.value)) {
+                    next.delete(type.value);
+                  } else {
+                    next.add(type.value);
+                  }
+                  return next;
+                });
+              }}
             >
               <Text>{type.label}</Text>
             </View>
@@ -828,17 +833,21 @@ export default function Stats() {
 
       {selectedType === "labtest" && labtestViewTab === "records" && (
         <View className="filter-tabs">
-          <View
-            className={`filter-tab ${labtestCategoryFilter === "all" ? "active" : ""}`}
-            onClick={() => setLabtestCategoryFilter("all")}
-          >
-            <Text>全部</Text>
-          </View>
           {LABTEST_CATEGORIES.map((category) => (
             <View
               key={category}
-              className={`filter-tab ${labtestCategoryFilter === category ? "active" : ""}`}
-              onClick={() => setLabtestCategoryFilter(category)}
+              className={`filter-tab ${labtestCategoryFilters.has(category) ? "active" : ""}`}
+              onClick={() => {
+                setLabtestCategoryFilters((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(category)) {
+                    next.delete(category);
+                  } else {
+                    next.add(category);
+                  }
+                  return next;
+                });
+              }}
             >
               <Text>{category}</Text>
             </View>
