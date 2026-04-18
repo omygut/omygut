@@ -1,0 +1,232 @@
+@import url("../../../styles/form.css");
+
+/* 评估类型选择 */
+.type-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.type-item {
+  padding: 32px;
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  border: 2px solid transparent;
+}
+
+.type-item:active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+}
+
+.type-label {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.type-desc {
+  font-size: 28px;
+  color: #666;
+}
+
+/* section header with change button */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.change-type {
+  font-size: 28px;
+  color: #1890ff;
+}
+
+.section-desc {
+  font-size: 24px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+/* 选项列表 */
+.options-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.option-item {
+  padding: 16px 24px;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  font-size: 28px;
+  color: #333;
+}
+
+.option-item.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+/* 数字输入 */
+.number-input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.number-input {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  font-size: 28px;
+}
+
+.field-hint {
+  font-size: 24px;
+  color: #999;
+  margin-top: 12px;
+}
+
+.field-hint.has-data {
+  color: #52c41a;
+}
+
+.field-hint.no-data {
+  color: #999;
+}
+
+/* 多选列表 */
+.multi-select-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.multi-select-item {
+  padding: 12px 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-size: 26px;
+  color: #333;
+}
+
+.multi-select-item.active {
+  background-color: #fff1f0;
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+/* 计算按钮 */
+.calculate-btn {
+  padding: 24px;
+  background-color: #1890ff;
+  color: #fff;
+  font-size: 32px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+/* 结果展示 */
+.result-section {
+  background-color: #fafafa;
+}
+
+.result-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px;
+  background-color: #fff;
+  border-radius: 16px;
+  border: 2px solid;
+  margin-bottom: 24px;
+}
+
+.result-score {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.score-value {
+  font-size: 64px;
+  font-weight: bold;
+  color: #333;
+}
+
+.score-unit {
+  font-size: 28px;
+  color: #666;
+}
+
+.result-level {
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 28px;
+  color: #fff;
+}
+
+/* 明细 */
+.result-details {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.result-details:last-child {
+  margin-bottom: 0;
+}
+
+.details-title {
+  font-size: 26px;
+  color: #999;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 28px;
+  color: #666;
+}
+
+.detail-value {
+  font-size: 28px;
+  color: #333;
+  font-weight: 500;
+}
+
+.detail-row.total-row {
+  border-top: 2px solid #f0f0f0;
+  margin-top: 8px;
+  padding-top: 16px;
+}
+
+.detail-row.total-row .detail-label,
+.detail-row.total-row .detail-value {
+  font-weight: bold;
+}
+
+.detail-row.highlight {
+  background-color: #f6ffed;
+  margin: 0 -16px;
+  padding: 16px;
+  border-radius: 8px;
+}

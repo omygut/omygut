@@ -8,6 +8,7 @@ import type {
   MedicationRecord,
   LabTestRecord,
   ExamRecord,
+  AssessmentRecord,
 } from "../types";
 
 async function getAllRecords<T>(collection: string, userId: string): Promise<T[]> {
@@ -41,6 +42,7 @@ export async function exportAllData(): Promise<ExportData> {
     medicationRecords,
     labtestRecords,
     examRecords,
+    assessmentRecords,
   ] = await Promise.all([
     getAllRecords<StoolRecord>("stool_records", userId),
     getAllRecords<SymptomRecord>("symptom_records", userId),
@@ -48,6 +50,7 @@ export async function exportAllData(): Promise<ExportData> {
     getAllRecords<MedicationRecord>("medication_records", userId),
     getAllRecords<LabTestRecord>("labtest_records", userId),
     getAllRecords<ExamRecord>("exam_records", userId),
+    getAllRecords<AssessmentRecord>("assessment_records", userId),
   ]);
 
   return {
@@ -58,6 +61,7 @@ export async function exportAllData(): Promise<ExportData> {
     medication_records: medicationRecords,
     labtest_records: labtestRecords,
     exam_records: examRecords,
+    assessment_records: assessmentRecords,
   };
 }
 

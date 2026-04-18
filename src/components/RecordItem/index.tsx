@@ -15,8 +15,10 @@ import type {
   LabTestRecord,
   LabTestIndicator,
   ExamRecord,
+  AssessmentRecord,
   RecordType,
 } from "../../types";
+import { ASSESSMENT_LEVELS } from "../../constants/assessment";
 import { RECORD_TYPE_OPTIONS } from "../../types";
 import "./index.css";
 
@@ -26,7 +28,8 @@ export type AnyRecord =
   | (StoolRecord & { _type: "stool" })
   | (MedicationRecord & { _type: "medication" })
   | (LabTestRecord & { _type: "labtest" })
-  | (ExamRecord & { _type: "exam" });
+  | (ExamRecord & { _type: "exam" })
+  | (AssessmentRecord & { _type: "assessment" });
 
 interface RecordItemProps {
   record: AnyRecord;
@@ -143,6 +146,22 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
             {record.examName || examTypeInfo.label}
             {record.imageFileIds.length > 0 && ` · ${record.imageFileIds.length}张图片`}
           </Text>
+        );
+      }
+      case "assessment": {
+        const levelInfo = ASSESSMENT_LEVELS[record.level];
+        return (
+          <>
+            <Text className="record-desc">
+              {record.type.toUpperCase()} {record.score}分
+            </Text>
+            <Text
+              className="record-level"
+              style={{ backgroundColor: levelInfo.color, color: "#fff" }}
+            >
+              {levelInfo.label}
+            </Text>
+          </>
         );
       }
     }

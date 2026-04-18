@@ -7,6 +7,7 @@ import { stoolService } from "../../services/stool";
 import { medicationService } from "../../services/medication";
 import { labTestService } from "../../services/labtest";
 import { examService } from "../../services/exam";
+import { assessmentService } from "../../services/assessment";
 import { formatDate, getPrevDate, getNextDate, getWeekday } from "../../utils/date";
 import RecordItem, { AnyRecord } from "../../components/RecordItem";
 import CalendarPopup from "../../components/CalendarPopup";
@@ -54,14 +55,16 @@ export default function Index() {
   const loadData = useCallback(async (date: string) => {
     setLoading(true);
     try {
-      const [symptoms, medications, meals, stools, labTests, exams] = await Promise.all([
-        symptomService.getByDate(date),
-        medicationService.getByDate(date),
-        mealService.getByDate(date),
-        stoolService.getByDate(date),
-        labTestService.getByDate(date),
-        examService.getByDate(date),
-      ]);
+      const [symptoms, medications, meals, stools, labTests, exams, assessments] =
+        await Promise.all([
+          symptomService.getByDate(date),
+          medicationService.getByDate(date),
+          mealService.getByDate(date),
+          stoolService.getByDate(date),
+          labTestService.getByDate(date),
+          examService.getByDate(date),
+          assessmentService.getByDate(date),
+        ]);
 
       const recordsMap: Record<RecordType, AnyRecord[]> = {
         symptom: symptoms.map((r) => ({ ...r, _type: "symptom" as const })),
@@ -70,6 +73,7 @@ export default function Index() {
         stool: stools.map((r) => ({ ...r, _type: "stool" as const })),
         labtest: labTests.map((r) => ({ ...r, _type: "labtest" as const })),
         exam: exams.map((r) => ({ ...r, _type: "exam" as const })),
+        assessment: assessments.map((r) => ({ ...r, _type: "assessment" as const })),
       };
 
       const groups = RECORD_TYPE_OPTIONS.map((opt) => ({

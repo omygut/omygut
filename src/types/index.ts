@@ -1,5 +1,13 @@
 // 记录类型
-export const RECORD_TYPES = ["symptom", "medication", "meal", "stool", "labtest", "exam"] as const;
+export const RECORD_TYPES = [
+  "symptom",
+  "medication",
+  "meal",
+  "stool",
+  "labtest",
+  "exam",
+  "assessment",
+] as const;
 export type RecordType = (typeof RECORD_TYPES)[number];
 
 export interface RecordTypeOption {
@@ -16,6 +24,7 @@ export const RECORD_TYPE_OPTIONS: RecordTypeOption[] = [
   { value: "stool", label: "排便", icon: "💩", addPath: "/pages/stool/add/index" },
   { value: "labtest", label: "化验", icon: "🧪", addPath: "/pages/labtest/add/index" },
   { value: "exam", label: "检查", icon: "🩺", addPath: "/pages/exam/add/index" },
+  { value: "assessment", label: "评估", icon: "📋", addPath: "/pages/assessment/add/index" },
 ];
 
 // 用户信息
@@ -109,6 +118,23 @@ export interface ExportData {
   medication_records: MedicationRecord[];
   labtest_records: LabTestRecord[];
   exam_records: ExamRecord[];
+  assessment_records: AssessmentRecord[];
+}
+
+// 病情评估记录
+export type AssessmentType = "hbi" | "cdai";
+export type AssessmentLevel = "remission" | "mild" | "moderate" | "severe";
+
+export interface AssessmentRecord extends BaseRecord {
+  type: AssessmentType;
+  score: number;
+  level: AssessmentLevel;
+  answers: Record<string, number>; // 各项答案
+  autoFilled?: {
+    stoolCount?: { from: string; to: string }; // 腹泻次数的日期范围
+    hct?: string; // labtest record id
+  };
+  note?: string;
 }
 
 // 图表事件标注

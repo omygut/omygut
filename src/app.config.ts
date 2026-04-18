@@ -11,6 +11,7 @@ export default defineAppConfig({
     "pages/labtest/add/index",
     "pages/common/mosaic/index",
     "pages/exam/add/index",
+    "pages/assessment/add/index",
     "pages/privacy/index",
   ],
   window: {
