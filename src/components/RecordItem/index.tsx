@@ -44,7 +44,7 @@ const getFeelingEmoji = (value: number): string => {
 };
 
 const getSeverityColor = (severity: 1 | 2 | 3): string => {
-  return SEVERITY_OPTIONS.find((s) => s.value === severity)?.color ?? "#52c41a";
+  return SEVERITY_OPTIONS.find((s) => s.value === severity)?.color ?? "#faad14";
 };
 
 const getStoolAmountLabel = (amount: number): string => {
