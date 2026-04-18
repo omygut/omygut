@@ -21,9 +21,9 @@
 }
 
 .exam-type-item.active {
-  background-color: var(--color-selected-bg);
-  border-color: var(--color-selected);
-  color: var(--color-selected);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 /* 图片网格 */

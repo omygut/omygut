@@ -45,7 +45,7 @@ export default function SymptomAdd() {
   const [symptomItems, setSymptomItems] = useState<SymptomItem[]>([]);
   const [customSymptom, setCustomSymptom] = useState("");
   const [savedCustomSymptoms, setSavedCustomSymptoms] = useState<string[]>([]);
-  const [overallFeeling, setOverallFeeling] = useState<1 | 2 | 3 | 4 | 5 | undefined>(undefined);
+  const [overallFeeling, setOverallFeeling] = useState<1 | 2 | 3 | 4 | 5 | undefined>(4);
   const [weight, setWeight] = useState("");
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
