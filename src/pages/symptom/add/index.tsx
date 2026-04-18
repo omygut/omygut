@@ -293,6 +293,31 @@ export default function SymptomAdd() {
               </View>
             );
           })}
+          {/* 显示记录中存在但不在预设/自定义列表里的症状 */}
+          {symptomItems
+            .filter(
+              (item) =>
+                !SYMPTOM_SHORTCUTS.includes(item.name as (typeof SYMPTOM_SHORTCUTS)[number]) &&
+                !savedCustomSymptoms.includes(item.name),
+            )
+            .map((item) => {
+              const severityInfo = SEVERITY_OPTIONS.find((s) => s.value === item.severity)!;
+              return (
+                <View
+                  key={item.name}
+                  className="symptom-tag custom"
+                  style={{
+                    borderColor: severityInfo.color,
+                    backgroundColor: `${severityInfo.color}15`,
+                    color: severityInfo.color,
+                  }}
+                  onClick={() => handleCycleSeverity(item.name)}
+                  onLongPress={() => handleToggleSymptom(item.name)}
+                >
+                  {item.name}
+                </View>
+              );
+            })}
         </View>
         <View className="custom-symptom-row">
           <Input
