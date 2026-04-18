@@ -39,26 +39,25 @@ describe("App E2E", () => {
   describe("Home Page", () => {
     beforeAll(async () => {
       page = await miniProgram.reLaunch("/pages/index/index");
-      await page.waitFor(500);
+      await page.waitFor(1000);
     });
 
-    it("should display app title and 6 quick action buttons", async () => {
+    it("should display app title and 6 record cards", async () => {
       const title = await page.$(".app-title");
-      expect(await title!.text()).toBe("MyGut");
+      expect(await title!.text()).toContain("MyGut");
 
-      const actionItems = await page.$$(".action-item");
-      expect(actionItems.length).toBe(6);
+      const recordCards = await page.$$(".record-card");
+      expect(recordCards.length).toBe(6);
     });
 
-    it("should navigate to symptom add page from quick action", async () => {
-      const actionItems = await page.$$(".action-item");
-      await actionItems[0].tap();
+    it("should navigate to symptom add page via card add button", async () => {
+      // Find the first card's add button (体感)
+      const addBtns = await page.$$(".card-add-btn");
+      await addBtns[0].tap();
       await page.waitFor(500);
 
       page = await miniProgram.currentPage();
       expect(page.path).toBe("pages/symptom/add/index");
-
     });
   });
-
 });

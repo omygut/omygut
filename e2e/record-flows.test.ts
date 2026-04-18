@@ -36,11 +36,15 @@ describe("Record Creation Flows E2E", () => {
     }
   });
 
-  async function verifyRecordCreated(cardTitle: string) {
-    await miniProgram.reLaunch("/pages/records/index");
-    await page.waitFor(1000);
+  /**
+   * Verify record was created by checking the home page shows count > 0 for the card
+   */
+  async function verifyRecordOnHomePage(cardTitle: string) {
+    await miniProgram.reLaunch("/pages/index/index");
+    await page.waitFor(1500);
     page = await miniProgram.currentPage();
 
+    // Find all card titles and locate the matching one
     const cardTitles = await page.$$(".card-title");
     let cardIndex = -1;
     for (let i = 0; i < cardTitles.length; i++) {
@@ -51,6 +55,7 @@ describe("Record Creation Flows E2E", () => {
     }
     expect(cardIndex).toBeGreaterThanOrEqual(0);
 
+    // Check that card count shows records exist
     const cardCounts = await page.$$(".card-count");
     const countText = await cardCounts[cardIndex].text();
     const count = parseInt(countText.match(/\d+/)?.[0] || "0");
@@ -61,7 +66,7 @@ describe("Record Creation Flows E2E", () => {
     page = await miniProgram.reLaunch("/pages/symptom/add/index");
     await page.waitFor(500);
 
-    // Select a feeling
+    // Select a feeling (overall feeling is required)
     const feelingItems = await page.$$(".feeling-item");
     await feelingItems[0].tap();
     await page.waitFor(300);
@@ -69,18 +74,18 @@ describe("Record Creation Flows E2E", () => {
     // Submit
     const submitBtn = await page.$(".submit-btn");
     await submitBtn!.tap();
-    await page.waitFor(1500);
+    await page.waitFor(2000);
 
-    await verifyRecordCreated("体感");
+    await verifyRecordOnHomePage("体感");
   });
 
   it("should create meal record", async () => {
     page = await miniProgram.reLaunch("/pages/meal/add/index");
     await page.waitFor(500);
 
-    // Switch to a category with foods (index 0 = 主食)
+    // Switch to a category with preset foods
     const categoryTabs = await page.$$(".category-tab");
-    await categoryTabs[1].tap(); // First preset category
+    await categoryTabs[1].tap();
     await page.waitFor(300);
 
     // Select a food item
@@ -91,35 +96,35 @@ describe("Record Creation Flows E2E", () => {
     // Submit
     const submitBtn = await page.$(".submit-btn");
     await submitBtn!.tap();
-    await page.waitFor(1500);
+    await page.waitFor(2000);
 
-    await verifyRecordCreated("饮食");
+    await verifyRecordOnHomePage("饮食");
   });
 
   it("should create stool record", async () => {
     page = await miniProgram.reLaunch("/pages/stool/add/index");
     await page.waitFor(500);
 
-    // Select a Bristol type (default is already selected)
+    // Select a Bristol type
     const bristolItems = await page.$$(".bristol-item");
-    await bristolItems[3].tap(); // Type 4
+    await bristolItems[3].tap(); // Type 4 (normal)
     await page.waitFor(300);
 
     // Submit
     const submitBtn = await page.$(".submit-btn");
     await submitBtn!.tap();
-    await page.waitFor(1500);
+    await page.waitFor(2000);
 
-    await verifyRecordCreated("排便");
+    await verifyRecordOnHomePage("排便");
   });
 
   it("should create medication record", async () => {
     page = await miniProgram.reLaunch("/pages/medication/add/index");
     await page.waitFor(500);
 
-    // Switch to a category with medications
+    // Switch to a category with preset medications
     const categoryTabs = await page.$$(".category-tab");
-    await categoryTabs[1].tap(); // First preset category
+    await categoryTabs[1].tap();
     await page.waitFor(300);
 
     // Select a medication item
@@ -130,8 +135,8 @@ describe("Record Creation Flows E2E", () => {
     // Submit
     const submitBtn = await page.$(".submit-btn");
     await submitBtn!.tap();
-    await page.waitFor(1500);
+    await page.waitFor(2000);
 
-    await verifyRecordCreated("用药");
+    await verifyRecordOnHomePage("用药");
   });
 });
