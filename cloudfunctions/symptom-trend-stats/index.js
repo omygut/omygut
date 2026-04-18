@@ -17,8 +17,14 @@ exports.main = async (event) => {
 
   const collection = db.collection("symptom_records");
   const MAX_LIMIT = 1000;
-  const allData = [];
 
+  // Query both old format (symptoms array) and new format (symptomItems array)
+  // Old format: symptoms contains the symptom name, severity is shared
+  // New format: symptomItems contains {name, severity} objects
+  const oldFormatData = [];
+  const newFormatData = [];
+
+  // Query old format records
   let hasMore = true;
   while (hasMore) {
     const { data } = await collection
@@ -30,22 +36,55 @@ exports.main = async (event) => {
         severity: _.exists(true),
       })
       .orderBy("date", "asc")
-      .skip(allData.length)
+      .skip(oldFormatData.length)
       .limit(MAX_LIMIT)
       .get();
 
-    allData.push(...data);
+    oldFormatData.push(...data);
+    hasMore = data.length === MAX_LIMIT;
+  }
+
+  // Query new format records
+  hasMore = true;
+  while (hasMore) {
+    const { data } = await collection
+      .where({
+        userId: OPENID,
+        deletedAt: _.exists(false),
+        date: _.gte(startDate).and(_.lte(endDate)),
+        "symptomItems.name": symptom,
+      })
+      .orderBy("date", "asc")
+      .skip(newFormatData.length)
+      .limit(MAX_LIMIT)
+      .get();
+
+    newFormatData.push(...data);
     hasMore = data.length === MAX_LIMIT;
   }
 
   // 按日期聚合，取平均值
   const dailyData = {};
-  allData.forEach((record) => {
+
+  // Process old format records
+  oldFormatData.forEach((record) => {
     if (!dailyData[record.date]) {
       dailyData[record.date] = { sum: 0, count: 0 };
     }
     dailyData[record.date].sum += record.severity;
     dailyData[record.date].count += 1;
+  });
+
+  // Process new format records
+  newFormatData.forEach((record) => {
+    const item = record.symptomItems.find((s) => s.name === symptom);
+    if (item) {
+      if (!dailyData[record.date]) {
+        dailyData[record.date] = { sum: 0, count: 0 };
+      }
+      dailyData[record.date].sum += item.severity;
+      dailyData[record.date].count += 1;
+    }
   });
 
   // 只返回有数据的日期

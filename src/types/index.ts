@@ -36,10 +36,21 @@ export interface BaseRecord {
   deletedAt?: Date;
 }
 
+// 症状项（带独立严重程度）
+export interface SymptomItem {
+  name: string;
+  severity: 1 | 2 | 3; // 1轻度 2中度 3重度
+}
+
 // 状态记录（原症状记录）
 export interface SymptomRecord extends BaseRecord {
-  symptoms: string[]; // 症状列表
-  severity?: 1 | 2 | 3; // 整体严重程度：轻度、中度、重度
+  // 旧字段（只读，兼容旧数据）
+  symptoms?: string[];
+  severity?: 1 | 2 | 3;
+
+  // 新字段
+  symptomItems?: SymptomItem[];
+
   overallFeeling?: 1 | 2 | 3 | 4 | 5; // 整体感受 1很差 - 5很好
   weight?: number; // 体重（kg），支持一位小数
   note?: string;
