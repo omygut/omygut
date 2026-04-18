@@ -17,9 +17,9 @@
 }
 
 .specimen-item.active {
-  background-color: var(--color-purple-bg);
-  border-color: var(--color-purple);
-  color: var(--color-purple);
+  background-color: var(--color-blue-bg);
+  border-color: var(--color-blue);
+  color: var(--color-blue);
 }
 
 /* 图片网格 */
@@ -112,7 +112,7 @@
 }
 
 .action-btn.primary {
-  background-color: var(--color-purple);
+  background-color: var(--color-blue);
   color: var(--color-white);
 }
 
@@ -177,7 +177,7 @@
 .indicator-col-value {
   flex: 1.5;
   font-size: 22px;
-  color: var(--color-purple);
+  color: var(--color-blue);
 }
 
 .abnormal-flag {
