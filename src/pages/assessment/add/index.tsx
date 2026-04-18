@@ -26,22 +26,9 @@ import TimePicker from "../../../components/TimePicker";
 import type { AssessmentType, AssessmentLevel } from "../../../types";
 import "./index.css";
 
-// 选项值对应的边框颜色：0绿 1蓝 2黄 3橙 4红
+// 选项值对应的边框颜色：0正常绿色，其他不正常橙色
 const getOptionBorderColor = (value: number): string => {
-  switch (value) {
-    case 0:
-      return COLORS.primary;
-    case 1:
-      return COLORS.lightBlue;
-    case 2:
-      return COLORS.yellow;
-    case 3:
-      return COLORS.orange;
-    case 4:
-      return COLORS.red;
-    default:
-      return COLORS.primary;
-  }
+  return value === 0 ? COLORS.primary : COLORS.orange;
 };
 
 export default function AssessmentAdd() {
