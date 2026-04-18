@@ -117,6 +117,29 @@
   border-bottom-color: var(--color-primary);
 }
 
+/* 筛选标签 */
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 24px;
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg);
+}
+
+.filter-tab.active {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
 /* 统计视图 */
 .stats-view {
   flex: 1;

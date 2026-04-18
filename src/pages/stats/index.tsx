@@ -1,6 +1,6 @@
 import { View, Text } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { symptomService } from "../../services/symptom";
 import { mealService } from "../../services/meal";
 import { stoolService } from "../../services/stool";
@@ -15,7 +15,16 @@ import { AnyRecord } from "../../components/RecordItem";
 import CalendarPopup from "../../components/CalendarPopup";
 import EventFormPopup from "../../components/EventFormPopup";
 import { LineChartData } from "../../components/LineChart";
-import { RecordType, RECORD_TYPE_OPTIONS, LabTestRecord, ChartEvent } from "../../types";
+import {
+  RecordType,
+  RECORD_TYPE_OPTIONS,
+  LabTestRecord,
+  ExamRecord,
+  AssessmentRecord,
+  ChartEvent,
+} from "../../types";
+import { EXAM_TYPES } from "../../constants/exam";
+import { ASSESSMENT_TYPES } from "../../constants/assessment";
 import StoolChartView from "./components/StoolChartView";
 import LabtestChartView from "./components/LabtestChartView";
 import WeightChartView from "./components/WeightChartView";
@@ -38,6 +47,20 @@ type StoolViewTab = "score" | "count" | "records";
 type LabtestViewTab = "chart" | "records";
 type SymptomViewTab = "feeling" | "weight" | "symptom" | "records";
 type DateRangePreset = "30" | "90" | "365" | "1095" | "all" | "custom";
+
+// 化验类别列表
+const LABTEST_CATEGORIES = [
+  "血常规",
+  "炎症指标",
+  "肝肾功能",
+  "电解质",
+  "血糖",
+  "心肌标志物",
+  "凝血功能",
+  "血脂",
+  "尿常规",
+  "便常规",
+] as const;
 
 const PAGE_SIZE = 50;
 
@@ -104,6 +127,15 @@ export default function Stats() {
   // Weight stats state
   const [weightChartData, setWeightChartData] = useState<LineChartData[]>([]);
   const [weightStatsLoading, setWeightStatsLoading] = useState(false);
+
+  // Exam filter state (multi-select, empty = all)
+  const [examTypeFilters, setExamTypeFilters] = useState<Set<string>>(new Set());
+
+  // Assessment filter state (multi-select, empty = all)
+  const [assessmentTypeFilters, setAssessmentTypeFilters] = useState<Set<string>>(new Set());
+
+  // Labtest category filter state (multi-select, empty = all)
+  const [labtestCategoryFilters, setLabtestCategoryFilters] = useState<Set<string>>(new Set());
 
   // Feeling stats state
   const [feelingData, setFeelingData] = useState<{ date: string; value: number }[]>([]);
@@ -327,6 +359,46 @@ export default function Stats() {
   );
 
   const needsRefreshRef = useRef(true);
+
+  // 根据筛选条件过滤记录（多选，空集合表示全部）
+  const filteredRecords = useMemo(() => {
+    if (selectedType === "exam" && examTypeFilters.size > 0) {
+      return records.filter(
+        (r) =>
+          r._type === "exam" && examTypeFilters.has((r as ExamRecord & { _type: "exam" }).examType),
+      );
+    }
+    if (selectedType === "assessment" && assessmentTypeFilters.size > 0) {
+      return records.filter(
+        (r) =>
+          r._type === "assessment" &&
+          assessmentTypeFilters.has((r as AssessmentRecord & { _type: "assessment" }).type),
+      );
+    }
+    if (
+      selectedType === "labtest" &&
+      labtestViewTab === "records" &&
+      labtestCategoryFilters.size > 0
+    ) {
+      return records.filter((r) => {
+        if (r._type !== "labtest") return false;
+        const labtestRecord = r as LabTestRecord & { _type: "labtest" };
+        // 检查是否有任何指标属于选中的类别
+        return labtestRecord.indicators.some((ind) => {
+          const matched = findStandardIndicator(ind.name, labtestRecord.specimen);
+          return matched && labtestCategoryFilters.has(matched.category);
+        });
+      });
+    }
+    return records;
+  }, [
+    records,
+    selectedType,
+    examTypeFilters,
+    assessmentTypeFilters,
+    labtestCategoryFilters,
+    labtestViewTab,
+  ]);
 
   useEffect(() => {
     const handleRecordChange = () => {
@@ -711,6 +783,78 @@ export default function Stats() {
         </View>
       )}
 
+      {selectedType === "exam" && (
+        <View className="filter-tabs">
+          {EXAM_TYPES.map((type) => (
+            <View
+              key={type.value}
+              className={`filter-tab ${examTypeFilters.has(type.value) ? "active" : ""}`}
+              onClick={() => {
+                setExamTypeFilters((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(type.value)) {
+                    next.delete(type.value);
+                  } else {
+                    next.add(type.value);
+                  }
+                  return next;
+                });
+              }}
+            >
+              <Text>{type.label}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {selectedType === "assessment" && (
+        <View className="filter-tabs">
+          {ASSESSMENT_TYPES.map((type) => (
+            <View
+              key={type.value}
+              className={`filter-tab ${assessmentTypeFilters.has(type.value) ? "active" : ""}`}
+              onClick={() => {
+                setAssessmentTypeFilters((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(type.value)) {
+                    next.delete(type.value);
+                  } else {
+                    next.add(type.value);
+                  }
+                  return next;
+                });
+              }}
+            >
+              <Text>{type.label}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {selectedType === "labtest" && labtestViewTab === "records" && (
+        <View className="filter-tabs">
+          {LABTEST_CATEGORIES.map((category) => (
+            <View
+              key={category}
+              className={`filter-tab ${labtestCategoryFilters.has(category) ? "active" : ""}`}
+              onClick={() => {
+                setLabtestCategoryFilters((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(category)) {
+                    next.delete(category);
+                  } else {
+                    next.add(category);
+                  }
+                  return next;
+                });
+              }}
+            >
+              <Text>{category}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
       {selectedType === "stool" && stoolViewTab === "score" ? (
         <StoolChartView
           title="每日排便得分"
@@ -782,7 +926,7 @@ export default function Stats() {
         />
       ) : (
         <RecordsList
-          records={records}
+          records={filteredRecords}
           loading={loading}
           loadingMore={loadingMore}
           hasMore={hasMore}
