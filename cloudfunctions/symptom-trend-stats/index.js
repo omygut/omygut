@@ -48,12 +48,22 @@ exports.main = async (event) => {
     dailyData[record.date].count += 1;
   });
 
-  const result = Object.entries(dailyData)
-    .map(([date, data]) => ({
-      date,
-      value: Math.round((data.sum / data.count) * 10) / 10,
-    }))
-    .sort((a, b) => a.date.localeCompare(b.date));
+  // 生成日期范围内所有日期，没有症状的天数填0
+  const result = [];
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const dateStr = d.toISOString().slice(0, 10);
+    if (dailyData[dateStr]) {
+      const data = dailyData[dateStr];
+      result.push({
+        date: dateStr,
+        value: Math.round((data.sum / data.count) * 10) / 10,
+      });
+    } else {
+      result.push({ date: dateStr, value: 0 });
+    }
+  }
 
   return { data: result };
 };
