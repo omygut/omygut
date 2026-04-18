@@ -61,7 +61,7 @@
 }
 
 .image-item-local {
-  border: 2px dashed #5fcf9a;
+  border: 2px dashed var(--color-primary);
   border-radius: 10px;
 }
 

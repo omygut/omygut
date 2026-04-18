@@ -78,7 +78,7 @@
 }
 
 .event-form-btn.confirm {
-  background-color: #5fcf9a;
+  background-color: var(--color-primary);
   color: #fff;
 }
 

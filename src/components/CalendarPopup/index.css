@@ -27,7 +27,7 @@
 
 .calendar-nav {
   font-size: 32px;
-  color: #5fcf9a;
+  color: var(--color-primary);
   padding: 16px;
 }
 
@@ -81,12 +81,12 @@
 }
 
 .calendar-day.today .day-text {
-  color: #5fcf9a;
+  color: var(--color-primary);
   font-weight: 600;
 }
 
 .calendar-day.selected .day-text {
-  background-color: #5fcf9a;
+  background-color: var(--color-primary);
   color: #fff;
 }
 

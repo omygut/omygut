@@ -27,7 +27,7 @@
 }
 
 .type-tab.active {
-  border-bottom-color: #5fcf9a;
+  border-bottom-color: var(--color-primary);
 }
 
 .type-tab-icon {
@@ -112,9 +112,9 @@
 }
 
 .view-mode-tab.active {
-  color: #5fcf9a;
+  color: var(--color-primary);
   font-weight: 500;
-  border-bottom-color: #5fcf9a;
+  border-bottom-color: var(--color-primary);
 }
 
 /* 统计视图 */
@@ -280,7 +280,7 @@
 
 .stats-data-value {
   font-size: 24px;
-  color: #5fcf9a;
+  color: var(--color-primary);
   font-weight: 500;
 }
 
@@ -350,7 +350,7 @@
 .help-popup-btn {
   margin-top: 24px;
   padding: 16px;
-  background-color: #5fcf9a;
+  background-color: var(--color-primary);
   border-radius: 8px;
   text-align: center;
   font-size: 28px;
