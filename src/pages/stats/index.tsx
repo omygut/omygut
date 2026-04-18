@@ -303,7 +303,17 @@ export default function Stats() {
           data: { startDate, endDate, symptom },
         });
         const result = res.result as { data: { date: string; value: number }[] };
-        setSymptomTrendData(result.data || []);
+        const dataMap = new Map((result.data || []).map((d) => [d.date, d.value]));
+
+        // Fill in all dates in range, 0 for days without symptom
+        const filled: { date: string; value: number }[] = [];
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+          const dateStr = d.toISOString().slice(0, 10);
+          filled.push({ date: dateStr, value: dataMap.get(dateStr) ?? 0 });
+        }
+        setSymptomTrendData(filled);
       } catch (error) {
         console.error("加载症状趋势数据失败:", error);
         Taro.showToast({ title: "加载失败", icon: "none" });

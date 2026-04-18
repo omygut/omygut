@@ -48,27 +48,13 @@ exports.main = async (event) => {
     dailyData[record.date].count += 1;
   });
 
-  // 生成日期范围内所有日期，没有症状的天数填0
-  const result = [];
-  const start = new Date(startDate + "T00:00:00");
-  const end = new Date(endDate + "T00:00:00");
-  const current = new Date(start);
-  while (current <= end) {
-    const year = current.getFullYear();
-    const month = String(current.getMonth() + 1).padStart(2, "0");
-    const day = String(current.getDate()).padStart(2, "0");
-    const dateStr = `${year}-${month}-${day}`;
-    if (dailyData[dateStr]) {
-      const data = dailyData[dateStr];
-      result.push({
-        date: dateStr,
-        value: data.sum / data.count,
-      });
-    } else {
-      result.push({ date: dateStr, value: 0 });
-    }
-    current.setDate(current.getDate() + 1);
-  }
+  // 只返回有数据的日期
+  const result = Object.entries(dailyData)
+    .map(([date, data]) => ({
+      date,
+      value: data.sum / data.count,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 
   return { data: result };
 };
