@@ -1,7 +1,15 @@
 import Taro from "@tarojs/taro";
 import { getDatabase, getOpenId } from "../utils/cloud";
 
-const COLLECTIONS = ["stool_records", "symptom_records", "meal_records", "medication_records"];
+const COLLECTIONS = [
+  "stool_records",
+  "symptom_records",
+  "meal_records",
+  "medication_records",
+  "labtest_records",
+  "exam_records",
+  "assessment_records",
+];
 
 async function deleteCollection(collection: string, userId: string): Promise<void> {
   const db = getDatabase();
