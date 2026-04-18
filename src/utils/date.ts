@@ -13,15 +13,10 @@ export function formatTime(date: Date = new Date()): string {
   return `${hours}:${minutes}`;
 }
 
-// 格式化显示日期 (4月10日，非今年显示年份：2025年4月10日)
+// 格式化显示日期 (2025年4月10日)
 export function formatDisplayDate(dateStr: string): string {
   const date = new Date(dateStr);
-  const currentYear = new Date().getFullYear();
-  const year = date.getFullYear();
-  if (year !== currentYear) {
-    return `${year}年${date.getMonth() + 1}月${date.getDate()}日`;
-  }
-  return `${date.getMonth() + 1}月${date.getDate()}日`;
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
 }
 
 // 获取星期几

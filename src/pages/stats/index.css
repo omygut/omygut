@@ -234,11 +234,10 @@
 
 /* 图表容器 */
 .stats-chart-container {
-  flex: 1;
   background-color: var(--color-white);
   border-radius: 16px;
   padding: 24px;
-  min-height: 400px;
+  height: 400px;
   display: flex;
   flex-direction: column;
 }

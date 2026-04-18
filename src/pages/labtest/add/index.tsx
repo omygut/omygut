@@ -327,6 +327,7 @@ export default function LabTestAdd() {
       {/* 标本类型 */}
       <View className="section">
         <Text className="section-title">标本类型</Text>
+        <Text className="section-desc">上传的化验单指标须属于同一标本类型</Text>
         <View className="specimen-options">
           {SPECIMEN_OPTIONS.map((opt) => (
             <View

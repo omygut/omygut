@@ -132,10 +132,12 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
         );
       case "labtest": {
         const categoryText = getLabTestCategories(record.indicators);
+        const specimenText = record.specimen || "血液";
         return (
-          <Text className="record-desc">
-            {categoryText || `${record.imageFileIds.length}张图片`}
-          </Text>
+          <>
+            <Text className="specimen-tag">{specimenText}</Text>
+            {categoryText && <Text className="record-desc">{categoryText}</Text>}
+          </>
         );
       }
       case "exam": {

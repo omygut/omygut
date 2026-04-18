@@ -350,7 +350,8 @@ export default function Stats() {
     needsRefreshRef.current = false;
 
     const { startDate, endDate } = getEffectiveDateRange();
-    loadInitial(selectedType, startDate, endDate);
+    // 原始数据加载全部，图表数据按日期范围
+    loadInitial(selectedType, "2000-01-01", formatDate());
     // Load chart data for stool, labtest, and symptom
     if (selectedType === "stool") {
       loadStatsData(startDate, endDate);
@@ -363,9 +364,9 @@ export default function Stats() {
   });
 
   const handleRefresh = useCallback(async () => {
-    const { startDate, endDate } = getEffectiveDateRange();
-    await loadInitial(selectedType, startDate, endDate);
-  }, [loadInitial, selectedType, getEffectiveDateRange]);
+    // 原始数据刷新时加载全部数据
+    await loadInitial(selectedType, "2000-01-01", formatDate());
+  }, [loadInitial, selectedType]);
 
   const handleTypeChange = (type: RecordType) => {
     if (type === selectedType) return;
@@ -382,8 +383,7 @@ export default function Stats() {
     setFeelingData([]);
     setSymptomTrendData([]);
     const { startDate, endDate } = getEffectiveDateRange();
-    loadInitial(type, startDate, endDate);
-    // Load chart data for stool, labtest, and symptom
+    // Load chart data for stool, labtest, and symptom (not records, records are loaded on demand)
     if (type === "stool") {
       loadStatsData(startDate, endDate);
     } else if (type === "labtest") {
@@ -394,13 +394,19 @@ export default function Stats() {
       if (selectedSymptom) {
         loadSymptomTrendData(startDate, endDate, selectedSymptom);
       }
+    } else {
+      // meal, medication, exam, assessment 只有原始数据 tab，加载全部数据
+      loadInitial(type, "2000-01-01", formatDate());
     }
   };
 
   const handleStoolViewTabChange = (tab: StoolViewTab) => {
     if (tab === stoolViewTab) return;
     setStoolViewTab(tab);
-    if (tab !== "records" && countData.length === 0) {
+    if (tab === "records") {
+      // 原始数据tab加载全部数据
+      loadInitial(selectedType, "2000-01-01", formatDate());
+    } else if (countData.length === 0) {
       const { startDate, endDate } = getEffectiveDateRange();
       loadStatsData(startDate, endDate);
     }
@@ -409,7 +415,10 @@ export default function Stats() {
   const handleLabtestViewTabChange = (tab: LabtestViewTab) => {
     if (tab === labtestViewTab) return;
     setLabtestViewTab(tab);
-    if (tab === "chart" && labtestChartData.length === 0) {
+    if (tab === "records") {
+      // 原始数据tab加载全部数据
+      loadInitial(selectedType, "2000-01-01", formatDate());
+    } else if (labtestChartData.length === 0) {
       const { startDate, endDate } = getEffectiveDateRange();
       loadLabtestStatsData(startDate, endDate, selectedIndicator);
     }
@@ -418,13 +427,18 @@ export default function Stats() {
   const handleSymptomViewTabChange = (tab: SymptomViewTab) => {
     if (tab === symptomViewTab) return;
     setSymptomViewTab(tab);
-    const { startDate, endDate } = getEffectiveDateRange();
-    if (tab === "feeling" && feelingData.length === 0) {
-      loadFeelingStatsData(startDate, endDate);
-    } else if (tab === "weight" && weightChartData.length === 0) {
-      loadWeightStatsData(startDate, endDate);
-    } else if (tab === "symptom" && symptomTrendData.length === 0 && selectedSymptom) {
-      loadSymptomTrendData(startDate, endDate, selectedSymptom);
+    if (tab === "records") {
+      // 原始数据tab加载全部数据
+      loadInitial(selectedType, "2000-01-01", formatDate());
+    } else {
+      const { startDate, endDate } = getEffectiveDateRange();
+      if (tab === "feeling" && feelingData.length === 0) {
+        loadFeelingStatsData(startDate, endDate);
+      } else if (tab === "weight" && weightChartData.length === 0) {
+        loadWeightStatsData(startDate, endDate);
+      } else if (tab === "symptom" && symptomTrendData.length === 0 && selectedSymptom) {
+        loadSymptomTrendData(startDate, endDate, selectedSymptom);
+      }
     }
   };
 
@@ -458,15 +472,14 @@ export default function Stats() {
       }
       setCustomStartDate(startDate);
       setCustomEndDate(endDate);
-      setRecords([]);
-      loadInitial(selectedType, startDate, endDate);
+      // 日期范围变化只影响图表，不影响原始数据
       if (selectedType === "stool" && stoolViewTab !== "records") {
         loadStatsData(startDate, endDate);
       }
       if (selectedType === "labtest" && labtestViewTab === "chart") {
         loadLabtestStatsData(startDate, endDate, selectedIndicator);
       }
-      if (selectedType === "symptom") {
+      if (selectedType === "symptom" && symptomViewTab !== "records") {
         // Clear non-active tabs so they reload when switched to
         setFeelingData([]);
         setWeightChartData([]);
@@ -493,15 +506,14 @@ export default function Stats() {
   };
 
   const handleCustomDateChange = (start: string, end: string) => {
-    setRecords([]);
-    loadInitial(selectedType, start, end);
+    // 日期范围变化只影响图表，不影响原始数据
     if (selectedType === "stool" && stoolViewTab !== "records") {
       loadStatsData(start, end);
     }
     if (selectedType === "labtest" && labtestViewTab === "chart") {
       loadLabtestStatsData(start, end, selectedIndicator);
     }
-    if (selectedType === "symptom") {
+    if (selectedType === "symptom" && symptomViewTab !== "records") {
       // Clear non-active tabs so they reload when switched to
       setFeelingData([]);
       setWeightChartData([]);
@@ -705,7 +717,7 @@ export default function Stats() {
           data={scoreData}
           maxValue={10}
           loading={statsLoading}
-          showHelp
+          mode="score"
           events={events}
           onEventTap={handleEventTap}
           onAddEvent={handleAddEvent}
@@ -716,6 +728,7 @@ export default function Stats() {
           title="每日排便次数"
           data={countData}
           loading={statsLoading}
+          mode="count"
           events={events}
           onEventTap={handleEventTap}
           onAddEvent={handleAddEvent}

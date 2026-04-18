@@ -56,3 +56,12 @@
   border-radius: 16px;
   flex-shrink: 0;
 }
+
+.specimen-tag {
+  font-size: var(--font-size-sm);
+  padding: 4px 12px;
+  border-radius: 8px;
+  background-color: #e6f4ff;
+  color: #69c0ff;
+  flex-shrink: 0;
+}

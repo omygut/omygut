@@ -1,6 +1,12 @@
 @import url("../../../styles/form.css");
 
 /* 标本类型选择 */
+.section-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: 16px;
+}
+
 .specimen-options {
   display: flex;
   flex-wrap: wrap;

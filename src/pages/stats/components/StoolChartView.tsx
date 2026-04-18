@@ -1,14 +1,29 @@
 import { View, Text } from "@tarojs/components";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import BarChart from "../../../components/BarChart";
+import { COLORS } from "../../../constants/colors";
 import type { ChartEvent } from "../../../types";
+
+// 排便得分颜色：好(7-10)绿、中(4-6)黄、差(0-3)红
+const getScoreColor = (score: number): string => {
+  if (score >= 7) return COLORS.primary;
+  if (score >= 4) return COLORS.yellow;
+  return COLORS.red;
+};
+
+// 排便次数颜色：好(1-2)绿、中(0或3-4)黄、差(5+)红
+const getCountColor = (count: number): string => {
+  if (count >= 1 && count <= 2) return COLORS.primary;
+  if (count >= 5) return COLORS.red;
+  return COLORS.yellow;
+};
 
 interface StoolChartViewProps {
   title: string;
   data: { date: string; value: number }[];
   maxValue?: number;
   loading: boolean;
-  showHelp?: boolean;
+  mode: "score" | "count";
   events: ChartEvent[];
   onEventTap: (event: ChartEvent) => void;
   onAddEvent: () => void;
@@ -20,13 +35,17 @@ export default function StoolChartView({
   data,
   maxValue,
   loading,
-  showHelp,
+  mode,
   events,
   onEventTap,
   onAddEvent,
   dateRangeSelector,
 }: StoolChartViewProps) {
   const [scoreHelpVisible, setScoreHelpVisible] = useState(false);
+  const getBarColor = useCallback(
+    (value: number) => (mode === "score" ? getScoreColor(value) : getCountColor(value)),
+    [mode],
+  );
 
   return (
     <View className="stats-view">
@@ -34,7 +53,7 @@ export default function StoolChartView({
         <View className="stats-header-row">
           <View className="stats-title-row">
             <Text className="stats-title">{title}</Text>
-            {showHelp && (
+            {mode === "score" && (
               <View className="stats-help-btn" onClick={() => setScoreHelpVisible(true)}>
                 <Text>?</Text>
               </View>
@@ -56,7 +75,13 @@ export default function StoolChartView({
             <Text>暂无数据</Text>
           </View>
         ) : (
-          <BarChart data={data} maxValue={maxValue} events={events} onEventTap={onEventTap} />
+          <BarChart
+            data={data}
+            maxValue={maxValue}
+            events={events}
+            onEventTap={onEventTap}
+            getBarColor={getBarColor}
+          />
         )}
       </View>
 
