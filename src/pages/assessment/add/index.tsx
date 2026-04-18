@@ -139,7 +139,7 @@ export default function AssessmentAdd() {
           const painItem = items.find((i) => i.name === "腹痛");
           if (painItem) {
             newAnswers.abdominalPain = painItem.severity;
-            hints.abdominalPain = `从症状记录获取 (${record.date})`;
+            hints.abdominalPain = `从身体状态记录获取 (${record.date})`;
             painFound = true;
             break;
           }
@@ -174,21 +174,21 @@ export default function AssessmentAdd() {
         }
         if (complications.length > 0) {
           newAnswers.complications = complications;
-          hints.complications = `从症状记录获取: ${foundSymptoms.join("、")}`;
+          hints.complications = `从身体状态记录获取: ${foundSymptoms.join("、")}`;
         } else {
           hints.complications = "近一周无相关并发症记录";
         }
       } else {
         hints.generalWellbeing = "暂无近一周身体状态记录";
-        hints.abdominalPain = "暂无近一周症状记录";
+        hints.abdominalPain = "暂无近一周身体状态记录";
         hints.abdominalMass = "需手动填写";
-        hints.complications = "暂无近一周症状记录";
+        hints.complications = "暂无近一周身体状态记录";
       }
     } catch {
-      hints.generalWellbeing = "获取症状记录失败";
-      hints.abdominalPain = "获取症状记录失败";
+      hints.generalWellbeing = "获取身体状态记录失败";
+      hints.abdominalPain = "获取身体状态记录失败";
       hints.abdominalMass = "需手动填写";
-      hints.complications = "获取症状记录失败";
+      hints.complications = "获取身体状态记录失败";
     }
 
     // CDAI 额外字段
@@ -411,15 +411,6 @@ export default function AssessmentAdd() {
             </View>
           )}
 
-          {/* 数据来源提示 */}
-          {fieldHints[key] && (
-            <Text
-              className={`field-hint ${fieldHints[key].includes("获取") ? "has-data" : "no-data"}`}
-            >
-              {fieldHints[key]}
-            </Text>
-          )}
-
           {"type" in question && question.type === "multiSelect" && "options" in question && (
             <View className="multi-select-list">
               {question.options.map((opt) => {
@@ -442,6 +433,15 @@ export default function AssessmentAdd() {
                 );
               })}
             </View>
+          )}
+
+          {/* 数据来源提示 */}
+          {fieldHints[key] && (
+            <Text
+              className={`field-hint ${fieldHints[key].includes("获取") ? "has-data" : "no-data"}`}
+            >
+              {fieldHints[key]}
+            </Text>
           )}
         </View>
       ))}
