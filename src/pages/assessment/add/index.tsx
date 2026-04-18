@@ -110,17 +110,36 @@ export default function AssessmentAdd() {
     try {
       const symptomRecords = await symptomService.getByDateRange(fromDate, toDate);
       if (symptomRecords.length > 0) {
-        // 找到第一条有 overallFeeling 的记录
-        const recordWithFeeling = symptomRecords.find((r) => r.overallFeeling !== undefined);
+        // 一般状况：从 overallFeeling (1-5) 映射到 generalWellbeing
+        // HBI: 取最近一条记录的值 (0-4)
+        // CDAI: 计算过去7天每天的总和 (0-28)
+        const feelingMap: Record<number, number> = { 5: 0, 4: 0, 3: 1, 2: 2, 1: 3 };
 
-        // 一般状况：从 overallFeeling (1-5) 映射到 generalWellbeing (0-3)
-        // 5/4(良好/很好) → 0, 3(一般) → 1, 2(较差) → 2, 1(很差) → 3
-        if (recordWithFeeling?.overallFeeling) {
-          const feelingMap: Record<number, number> = { 5: 0, 4: 0, 3: 1, 2: 2, 1: 3 };
-          newAnswers.generalWellbeing = feelingMap[recordWithFeeling.overallFeeling] ?? 0;
-          hints.generalWellbeing = `从身体状态记录获取 (${recordWithFeeling.date})`;
+        if (type === "hbi") {
+          // HBI: 找到第一条有 overallFeeling 的记录
+          const recordWithFeeling = symptomRecords.find((r) => r.overallFeeling !== undefined);
+          if (recordWithFeeling?.overallFeeling) {
+            newAnswers.generalWellbeing = feelingMap[recordWithFeeling.overallFeeling] ?? 0;
+            hints.generalWellbeing = `从身体状态记录获取 (${recordWithFeeling.date})`;
+          } else {
+            hints.generalWellbeing = "近一周记录无整体感受数据";
+          }
         } else {
-          hints.generalWellbeing = "近一周记录无整体感受数据";
+          // CDAI: 计算过去7天的总和
+          let totalWellbeing = 0;
+          let daysWithData = 0;
+          for (const record of symptomRecords) {
+            if (record.overallFeeling !== undefined) {
+              totalWellbeing += feelingMap[record.overallFeeling] ?? 0;
+              daysWithData++;
+            }
+          }
+          if (daysWithData > 0) {
+            newAnswers.generalWellbeing = totalWellbeing;
+            hints.generalWellbeing = `从身体状态记录获取 (${dateRangeHint}，${daysWithData}天，总分${totalWellbeing})`;
+          } else {
+            hints.generalWellbeing = "近一周记录无整体感受数据";
+          }
         }
 
         // 收集所有症状

@@ -104,7 +104,7 @@ export const CDAI_QUESTIONS = {
       { value: "erythemaNodosum", label: "结节性红斑" },
       { value: "pyodermaGangrenosum", label: "坏疽性脓皮病" },
       { value: "apthousStomatitis", label: "口腔溃疡" },
-      { value: "analFissure", label: "肛裂/瘘管/脓肿" },
+      { value: "analFissure", label: "肛裂/肛瘘/肛周脓肿" },
       { value: "fever", label: "发热 >37.8°C" },
     ],
   },
