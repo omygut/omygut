@@ -1,6 +1,7 @@
 import { Canvas } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useRef, useCallback } from "react";
+import { COLORS } from "../../constants/colors";
 import type { ChartEvent } from "../../types";
 import "./index.css";
 
@@ -178,7 +179,7 @@ function drawChart(
   }
 
   // Draw Y axis grid lines and labels
-  ctx.strokeStyle = "#e8e8e8";
+  ctx.strokeStyle = COLORS.border;
   ctx.lineWidth = 1;
   ctx.fillStyle = "#999";
   ctx.font = "10px sans-serif";
@@ -252,7 +253,7 @@ function drawChart(
   ctx.setLineDash([]);
 
   // Draw line
-  ctx.strokeStyle = "#5fcf9a";
+  ctx.strokeStyle = COLORS.primary;
   ctx.lineWidth = 2;
   ctx.beginPath();
   data.forEach((point, i) => {
@@ -278,7 +279,7 @@ function drawChart(
 
     ctx.beginPath();
     ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fillStyle = isOutOfRange ? "#fa5151" : "#5fcf9a";
+    ctx.fillStyle = isOutOfRange ? COLORS.red : COLORS.primary;
     ctx.fill();
 
     // White border

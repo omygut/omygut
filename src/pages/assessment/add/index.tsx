@@ -576,7 +576,6 @@ export default function AssessmentAdd() {
               (threshold, index, arr) => {
                 const prevMax = index === 0 ? -1 : arr[index - 1].max;
                 const levelInfo = ASSESSMENT_LEVELS[threshold.level];
-                const isCurrentLevel = threshold.level === result.level;
                 const rangeText =
                   threshold.max === Infinity
                     ? `>${prevMax}`
@@ -584,10 +583,7 @@ export default function AssessmentAdd() {
                       ? `≤${threshold.max}`
                       : `${prevMax + 1}-${threshold.max}`;
                 return (
-                  <View
-                    key={threshold.level}
-                    className={`detail-row ${isCurrentLevel ? "highlight" : ""}`}
-                  >
+                  <View key={threshold.level} className="detail-row">
                     <Text className="detail-label">{rangeText} 分</Text>
                     <Text className="detail-value" style={{ color: levelInfo.color }}>
                       {levelInfo.label}

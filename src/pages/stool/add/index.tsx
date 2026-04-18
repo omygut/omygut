@@ -139,7 +139,7 @@ export default function StoolAdd() {
               className={`bristol-item ${bristolType === option.value ? "active" : ""}`}
               onClick={() => setBristolType(option.value as StoolRecord["type"])}
             >
-              <BristolIcon type={option.value} size={48} />
+              <BristolIcon type={option.value} size={48} active={bristolType === option.value} />
             </View>
           ))}
         </View>

@@ -1,8 +1,10 @@
 import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import { COLORS } from "../../constants/colors";
 import { EXAM_TYPES } from "../../constants/exam";
-import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
-import AmountIcon from "../AmountIcon";
+import { SEVERITY_OPTIONS } from "../../constants/symptom";
+import MealAmountIcon from "../MealAmountIcon";
+import FeelingIcon from "../FeelingIcon";
 import { STOOL_AMOUNTS } from "../../constants/stool";
 import { normalizeIndicators } from "../../services/labtest-standards";
 import { getSymptomItems } from "../../utils/symptom";
@@ -42,12 +44,8 @@ const RECORD_TYPE_MAP = Object.fromEntries(
 
 const UNKNOWN = "❓";
 
-const getFeelingEmoji = (value: number): string => {
-  return FEELING_OPTIONS.find((f) => f.value === value)?.emoji ?? UNKNOWN;
-};
-
 const getSeverityColor = (severity: 1 | 2 | 3): string => {
-  return SEVERITY_OPTIONS.find((s) => s.value === severity)?.color ?? "#FFD230";
+  return SEVERITY_OPTIONS.find((s) => s.value === severity)?.color ?? COLORS.yellow;
 };
 
 const getStoolAmountLabel = (amount: number): string => {
@@ -82,7 +80,9 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
         return (
           <>
             {record.overallFeeling && (
-              <View className="record-feeling">{getFeelingEmoji(record.overallFeeling)}</View>
+              <View className="record-feeling">
+                <FeelingIcon level={record.overallFeeling} size={18} active />
+              </View>
             )}
             {items.length > 0 && (
               <View className="record-symptoms-list">
@@ -93,7 +93,6 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
                       key={item.name}
                       className="record-symptom-tag"
                       style={{
-                        borderColor: color,
                         backgroundColor: `${color}15`,
                         color: color,
                       }}
@@ -114,7 +113,7 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
         return (
           <>
             <View className="record-feeling">
-              <AmountIcon level={record.amount as 0 | 1 | 2 | 3 | 4} size={24} />
+              <MealAmountIcon level={record.amount as 0 | 1 | 2 | 3 | 4} size={24} />
             </View>
             <Text className="record-desc">{record.foods.join("、")}</Text>
           </>

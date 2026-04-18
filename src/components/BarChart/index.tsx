@@ -1,6 +1,7 @@
 import { Canvas } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useRef, useCallback } from "react";
+import { COLORS } from "../../constants/colors";
 import type { ChartEvent } from "../../types";
 import "./index.css";
 
@@ -118,7 +119,7 @@ function drawChart(
   const maxValue = propMaxValue ?? Math.max(maxDataValue, 5);
 
   // Draw horizontal grid lines with labels
-  ctx.strokeStyle = "#e8e8e8";
+  ctx.strokeStyle = COLORS.border;
   ctx.lineWidth = 1;
   ctx.fillStyle = "#999";
   ctx.font = "10px sans-serif";
@@ -241,7 +242,7 @@ function drawChart(
     const x = startX + index * (barWidth + barGap);
     const y = height - padding.bottom - barHeight;
 
-    ctx.fillStyle = getBarColor ? getBarColor(item.value) : "#5fcf9a";
+    ctx.fillStyle = getBarColor ? getBarColor(item.value) : COLORS.primary;
     ctx.fillRect(x, y, barWidth, barHeight);
   });
 

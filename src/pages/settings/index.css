@@ -1,18 +1,18 @@
 .settings-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--color-bg);
 }
 
 /* 关于 */
 .about-section {
-  background-color: #fff;
+  background-color: var(--color-white);
   padding: 28px 32px 8px;
   margin-top: 20px;
 }
 
 .section-title {
   font-size: 28px;
-  color: #999;
+  color: var(--color-text-tertiary);
   margin-bottom: 20px;
   display: block;
 }
@@ -21,7 +21,7 @@
   display: flex;
   justify-content: space-between;
   padding: 20px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .about-item:last-child {
@@ -30,22 +30,22 @@
 
 .about-label {
   font-size: 30px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .about-value {
   font-size: 30px;
-  color: #999;
+  color: var(--color-text-tertiary);
 }
 
 .about-arrow {
   font-size: 36px;
-  color: #ccc;
+  color: var(--color-text-disabled);
 }
 
 /* 数据管理 */
 .data-section {
-  background-color: #fff;
+  background-color: var(--color-white);
   padding: 28px 32px;
   margin-top: 20px;
 }
@@ -59,23 +59,23 @@
 
 .data-label {
   font-size: 30px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .data-arrow {
   font-size: 40px;
-  color: #ccc;
+  color: var(--color-text-disabled);
 }
 
 .data-hint {
   font-size: 24px;
-  color: #999;
+  color: var(--color-text-tertiary);
   margin-top: 12px;
   margin-bottom: 20px;
 }
 
 .data-label-danger {
-  color: #ff4d4f;
+  color: var(--color-red);
 }
 
 
@@ -101,7 +101,7 @@
   display: block;
   margin-bottom: 16px;
   font-size: 24px;
-  color: #999;
+  color: var(--color-text-tertiary);
   line-height: 1.6;
   text-align: center;
 }

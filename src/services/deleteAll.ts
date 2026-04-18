@@ -1,4 +1,5 @@
 import Taro from "@tarojs/taro";
+import { COLORS } from "../constants/colors";
 import { getDatabase, getOpenId } from "../utils/cloud";
 
 const COLLECTIONS = [
@@ -40,7 +41,7 @@ export async function confirmAndDeleteAllData(): Promise<void> {
       title: "删除前请先导出",
       content: "建议先导出数据备份，删除后将无法恢复",
       confirmText: "继续删除",
-      confirmColor: "#ff4d4f",
+      confirmColor: COLORS.red,
       success: (res) => {
         if (res.confirm) {
           // Second confirmation
@@ -48,7 +49,7 @@ export async function confirmAndDeleteAllData(): Promise<void> {
             title: "确认删除",
             content: "将从服务器上删除所有健康记录，此操作无法撤销",
             confirmText: "继续",
-            confirmColor: "#ff4d4f",
+            confirmColor: COLORS.red,
             success: (res2) => {
               if (res2.confirm) {
                 // Third confirmation
@@ -56,7 +57,7 @@ export async function confirmAndDeleteAllData(): Promise<void> {
                   title: "最后确认",
                   content: "确定要删除全部数据吗？",
                   confirmText: "删除",
-                  confirmColor: "#ff4d4f",
+                  confirmColor: COLORS.red,
                   success: async (res3) => {
                     if (res3.confirm) {
                       Taro.showLoading({ title: "正在删除...", mask: true });

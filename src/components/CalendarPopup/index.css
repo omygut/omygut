@@ -10,7 +10,7 @@
 
 .calendar-popup {
   width: 100%;
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 24px 24px 0 0;
   padding: 24px;
   padding-top: 48px;
@@ -27,17 +27,17 @@
 
 .calendar-nav {
   font-size: 32px;
-  color: #5fcf9a;
+  color: var(--color-primary);
   padding: 16px;
 }
 
 .calendar-nav.disabled {
-  color: #ccc;
+  color: var(--color-text-disabled);
 }
 
 .calendar-title {
   font-size: 32px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .calendar-weekdays {
@@ -49,7 +49,7 @@
   flex: 1;
   text-align: center;
   font-size: 24px;
-  color: #999;
+  color: var(--color-text-tertiary);
 }
 
 .calendar-days {
@@ -71,23 +71,23 @@
   line-height: 56px;
   text-align: center;
   font-size: 28px;
-  color: #333;
+  color: var(--color-text);
   border-radius: 50%;
 }
 
 .calendar-day.other-month .day-text,
 .calendar-day.future .day-text {
-  color: #ccc;
+  color: var(--color-text-disabled);
 }
 
 .calendar-day.today .day-text {
-  color: #5fcf9a;
+  color: var(--color-primary);
   font-weight: 600;
 }
 
 .calendar-day.selected .day-text {
-  background-color: #5fcf9a;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 /* Swipe animations */

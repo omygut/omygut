@@ -1,6 +1,6 @@
 .index-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--color-bg);
   padding-bottom: 40px;
 }
 
@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   padding: 0 24px;
-  background-color: #fff;
+  background-color: var(--color-white);
   box-sizing: content-box;
   z-index: 100;
 }
@@ -28,7 +28,7 @@
 .app-title {
   font-size: 32px;
   font-weight: 500;
-  color: #333;
+  color: var(--color-text);
 }
 
 /* 日期选择器 */
@@ -37,24 +37,24 @@
   justify-content: center;
   align-items: center;
   padding: 24px 32px;
-  background-color: #fff;
+  background-color: var(--color-white);
   gap: 24px;
 }
 
 .date-arrow {
   font-size: 36px;
-  color: #5fcf9a;
+  color: var(--color-primary);
   padding: 16px;
 }
 
 .date-arrow.disabled {
-  color: #ccc;
+  color: var(--color-text-disabled);
 }
 
 .date-text {
   font-size: 30px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text);
 }
 
 /* 加载状态 */
@@ -63,7 +63,7 @@
   justify-content: center;
   align-items: center;
   padding: 80px;
-  color: #999;
+  color: var(--color-text-tertiary);
   font-size: 28px;
 }
 
@@ -74,7 +74,7 @@
 
 /* 记录卡片 */
 .record-card {
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 16px;
   margin-bottom: 20px;
   overflow: hidden;
@@ -85,7 +85,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 24px 28px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .card-title-row {
@@ -96,7 +96,7 @@
 
 .card-arrow {
   font-size: 24px;
-  color: #999;
+  color: var(--color-text-tertiary);
   transition: transform 0.2s;
 }
 
@@ -111,17 +111,17 @@
 .card-title {
   font-size: 30px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text);
 }
 
 .card-count {
   font-size: 24px;
-  color: #999;
+  color: var(--color-text-tertiary);
 }
 
 .card-add-btn {
   font-size: 40px;
-  color: #5fcf9a;
+  color: var(--color-primary);
   padding: 8px 16px;
 }
 
@@ -132,7 +132,7 @@
 
 .empty-hint {
   font-size: 26px;
-  color: #ccc;
+  color: var(--color-text-disabled);
   text-align: center;
   display: block;
   padding: 20px 0;

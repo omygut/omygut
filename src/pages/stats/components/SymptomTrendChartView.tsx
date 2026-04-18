@@ -2,13 +2,14 @@ import { View, Text } from "@tarojs/components";
 import { useCallback } from "react";
 import BarChart from "../../../components/BarChart";
 import SymptomPicker from "../../../components/SymptomPicker";
+import { COLORS } from "../../../constants/colors";
 import type { ChartEvent } from "../../../types";
 
 // 1: yellow (轻度), 2: orange (中度), 3: red (重度)
 const getSeverityColor = (value: number): string => {
-  if (value <= 1) return "#FFD230"; // yellow
-  if (value <= 2) return "#FF692A"; // orange
-  return "#f5222d"; // red
+  if (value <= 1) return COLORS.yellow;
+  if (value <= 2) return COLORS.orange;
+  return COLORS.red;
 };
 
 interface SymptomTrendChartViewProps {

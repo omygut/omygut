@@ -22,11 +22,13 @@ export const SYMPTOM_SHORTCUTS = [
   "结节性红斑",
 ] as const;
 
+import { COLORS } from "./colors";
+
 // 严重程度
 export const SEVERITY_OPTIONS = [
-  { value: 1, label: "轻度", color: "#FFD230" },
-  { value: 2, label: "中度", color: "#FF692A" },
-  { value: 3, label: "重度", color: "#f5222d" },
+  { value: 1, label: "轻度", color: COLORS.yellow },
+  { value: 2, label: "中度", color: COLORS.orange },
+  { value: 3, label: "重度", color: COLORS.red },
 ] as const;
 
 // 整体感受

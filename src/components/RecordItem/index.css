@@ -3,7 +3,7 @@
   align-items: center;
   padding: 20px 24px;
   gap: 16px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--color-bg);
 }
 
 .record-item:last-child {
@@ -17,7 +17,7 @@
 
 .record-time {
   font-size: 26px;
-  color: #999;
+  color: var(--color-text-tertiary);
   min-width: 90px;
 }
 
@@ -38,12 +38,11 @@
   font-size: 24px;
   padding: 4px 12px;
   border-radius: 8px;
-  border: 2px solid;
 }
 
 .record-desc {
   font-size: 28px;
-  color: #333;
+  color: var(--color-text);
   flex: 1;
   overflow: hidden;
   display: -webkit-box;

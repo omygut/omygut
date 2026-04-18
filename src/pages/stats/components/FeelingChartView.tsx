@@ -1,13 +1,14 @@
 import { View, Text } from "@tarojs/components";
 import { useCallback } from "react";
 import BarChart from "../../../components/BarChart";
+import { COLORS } from "../../../constants/colors";
 import type { ChartEvent } from "../../../types";
 
 // 1-2: red, 3-4: yellow, 5: green
 const getFeelingColor = (value: number): string => {
-  if (value <= 2) return "#fa5151"; // red
-  if (value <= 4) return "#ffc300"; // yellow
-  return "#5fcf9a"; // green
+  if (value <= 2) return COLORS.red;
+  if (value <= 4) return COLORS.yellow;
+  return COLORS.primary;
 };
 
 interface FeelingChartViewProps {

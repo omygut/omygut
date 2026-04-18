@@ -14,14 +14,10 @@
   width: 72px;
   height: 72px;
   border-radius: 12px;
-  border: 2px solid #f0f0f0;
+  border: 2px solid var(--color-border-light);
   transition: all 0.2s;
 }
 
-.bristol-item.active {
-  background-color: #e6f7ff;
-  border-color: #1890ff;
-}
 
 .bristol-emoji {
   font-size: 36px;
@@ -34,13 +30,13 @@
 
 .bristol-selected-label {
   font-size: 28px;
-  color: #333;
+  color: var(--color-text);
   margin-right: 16px;
 }
 
 .bristol-selected-desc {
   font-size: 24px;
-  color: #999;
+  color: var(--color-text-tertiary);
 }
 
 /* 量选择 */
@@ -53,23 +49,23 @@
   flex: 1;
   padding: 16px;
   border-radius: 8px;
-  border: 2px solid #f0f0f0;
+  border: 2px solid var(--color-border-light);
   text-align: center;
   transition: all 0.2s;
 }
 
 .amount-item.active {
-  background-color: #e6f7ff;
-  border-color: #1890ff;
+  background-color: var(--color-selected-bg);
+  border-color: var(--color-selected);
 }
 
 .amount-label {
-  font-size: 28px;
-  color: #333;
+  font-size: 24px;
+  color: var(--color-text);
 }
 
 .amount-item.active .amount-label {
-  color: #1890ff;
+  color: var(--color-selected);
 }
 
 /* 备注快捷输入 */
@@ -83,8 +79,8 @@
 .note-shortcut {
   padding: 10px 18px;
   border-radius: 8px;
-  border: 2px solid #f0f0f0;
+  border: 2px solid var(--color-border-light);
   font-size: 22px;
-  color: #666;
-  background-color: #fafafa;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-light);
 }

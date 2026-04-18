@@ -9,6 +9,7 @@ import { validateSymptom } from "../../../utils/validation";
 import { getSymptomItems } from "../../../utils/symptom";
 import CalendarPopup from "../../../components/CalendarPopup";
 import TimePicker from "../../../components/TimePicker";
+import FeelingIcon from "../../../components/FeelingIcon";
 import type { SymptomItem } from "../../../types";
 import "./index.css";
 
@@ -236,7 +237,13 @@ export default function SymptomAdd() {
               className={`feeling-item ${overallFeeling === option.value ? "active" : ""}`}
               onClick={() => setOverallFeeling(option.value as 1 | 2 | 3 | 4 | 5)}
             >
-              <Text className="feeling-emoji">{option.emoji}</Text>
+              <View className="feeling-emoji">
+                <FeelingIcon
+                  level={option.value as 1 | 2 | 3 | 4 | 5}
+                  size={24}
+                  active={overallFeeling === option.value}
+                />
+              </View>
               <Text className="feeling-label">{option.label}</Text>
             </View>
           ))}

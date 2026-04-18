@@ -1,8 +1,15 @@
 import { Image } from "@tarojs/components";
+import { COLORS } from "../../constants/colors";
 
-function generateAmountSvg(level: 0 | 1 | 2 | 3 | 4): string {
-  const bucketColor = "#999";
-  const filledColor = "#5FCF9A";
+function generateAmountSvg(level: 0 | 1 | 2 | 3 | 4, active: boolean): string {
+  const bucketColor = active ? "#999" : "#ccc";
+  const filledColor = active
+    ? level <= 2
+      ? COLORS.primary
+      : level === 3
+        ? COLORS.yellow
+        : COLORS.orange
+    : "#e0e0e0";
 
   // Bucket shape: top width 20 (x: 2-22), bottom width 16 (x: 4-20)
   // Height from y=4 to y=18 (14 units)
@@ -38,13 +45,14 @@ function svgToDataUri(svg: string): string {
 interface AmountIconProps {
   level: 0 | 1 | 2 | 3 | 4;
   size?: number;
+  active?: boolean;
 }
 
-export default function AmountIcon({ level, size = 24 }: AmountIconProps) {
+export default function MealAmountIcon({ level, size = 24, active = true }: AmountIconProps) {
   const height = (size / 24) * 20;
   return (
     <Image
-      src={svgToDataUri(generateAmountSvg(level))}
+      src={svgToDataUri(generateAmountSvg(level, active))}
       style={{ width: size, height }}
       mode="aspectFit"
     />

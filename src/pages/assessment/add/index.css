@@ -9,27 +9,27 @@
 
 .type-item {
   padding: 32px;
-  background-color: #f5f5f5;
+  background-color: var(--color-bg);
   border-radius: 16px;
   border: 2px solid transparent;
 }
 
 .type-item:active {
-  background-color: #e6f7ff;
-  border-color: #1890ff;
+  background-color: var(--color-selected-bg);
+  border-color: var(--color-selected);
 }
 
 .type-label {
   font-size: 36px;
   font-weight: bold;
-  color: #333;
+  color: var(--color-text);
   display: block;
   margin-bottom: 12px;
 }
 
 .type-desc {
   font-size: 28px;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 /* section header with change button */
@@ -41,12 +41,12 @@
 
 .change-type {
   font-size: 28px;
-  color: #1890ff;
+  color: var(--color-primary);
 }
 
 .section-desc {
   font-size: 24px;
-  color: #999;
+  color: var(--color-text-tertiary);
   margin-bottom: 16px;
 }
 
@@ -59,17 +59,17 @@
 
 .option-item {
   padding: 16px 24px;
-  background-color: #f5f5f5;
+  background-color: var(--color-bg);
   border-radius: 12px;
   border: 2px solid transparent;
   font-size: 28px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .option-item.active {
-  background-color: #e6f7ff;
-  border-color: #1890ff;
-  color: #1890ff;
+  background-color: var(--color-selected-bg);
+  border-color: var(--color-selected);
+  color: var(--color-selected);
 }
 
 /* 数字输入 */
@@ -81,23 +81,23 @@
 
 .number-input {
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: var(--color-bg);
   border-radius: 12px;
   font-size: 28px;
 }
 
 .field-hint {
   font-size: 24px;
-  color: #999;
+  color: var(--color-text-tertiary);
   margin-top: 12px;
 }
 
 .field-hint.has-data {
-  color: #52c41a;
+  color: var(--color-primary);
 }
 
 .field-hint.no-data {
-  color: #999;
+  color: var(--color-text-tertiary);
 }
 
 /* 多选列表 */
@@ -109,24 +109,24 @@
 
 .multi-select-item {
   padding: 12px 20px;
-  background-color: #f5f5f5;
+  background-color: var(--color-bg);
   border-radius: 8px;
   border: 2px solid transparent;
   font-size: 26px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .multi-select-item.active {
-  background-color: #fff1f0;
-  border-color: #ff4d4f;
-  color: #ff4d4f;
+  background-color: var(--color-selected-bg);
+  border-color: var(--color-selected);
+  color: var(--color-selected);
 }
 
 /* 计算按钮 */
 .calculate-btn {
   padding: 24px;
-  background-color: #1890ff;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-white);
   font-size: 32px;
   text-align: center;
   border-radius: 16px;
@@ -134,7 +134,7 @@
 
 /* 结果展示 */
 .result-section {
-  background-color: #fafafa;
+  background-color: var(--color-bg-light);
 }
 
 .result-card {
@@ -142,7 +142,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 32px;
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 16px;
   border: 2px solid;
   margin-bottom: 24px;
@@ -157,24 +157,24 @@
 .score-value {
   font-size: 64px;
   font-weight: bold;
-  color: #333;
+  color: var(--color-text);
 }
 
 .score-unit {
   font-size: 28px;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .result-level {
   padding: 12px 24px;
   border-radius: 24px;
   font-size: 28px;
-  color: #fff;
+  color: var(--color-white);
 }
 
 /* 明细 */
 .result-details {
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
@@ -186,7 +186,7 @@
 
 .details-title {
   font-size: 26px;
-  color: #999;
+  color: var(--color-text-tertiary);
   margin-bottom: 12px;
   display: block;
 }
@@ -195,7 +195,7 @@
   display: flex;
   justify-content: space-between;
   padding: 16px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .detail-row:last-child {
@@ -204,17 +204,17 @@
 
 .detail-label {
   font-size: 28px;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .detail-value {
   font-size: 28px;
-  color: #333;
+  color: var(--color-text);
   font-weight: 500;
 }
 
 .detail-row.total-row {
-  border-top: 2px solid #f0f0f0;
+  border-top: 2px solid var(--color-border-light);
   margin-top: 8px;
   padding-top: 16px;
 }
@@ -224,9 +224,3 @@
   font-weight: bold;
 }
 
-.detail-row.highlight {
-  background-color: #f6ffed;
-  margin: 0 -16px;
-  padding: 16px;
-  border-radius: 8px;
-}

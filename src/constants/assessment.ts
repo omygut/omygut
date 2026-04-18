@@ -1,4 +1,5 @@
 import type { AssessmentType, AssessmentLevel } from "../types";
+import { COLORS } from "./colors";
 
 // 评估类型选项
 export const ASSESSMENT_TYPES: { value: AssessmentType; label: string; description: string }[] = [
@@ -8,10 +9,10 @@ export const ASSESSMENT_TYPES: { value: AssessmentType; label: string; descripti
 
 // 病情分级
 export const ASSESSMENT_LEVELS: Record<AssessmentLevel, { label: string; color: string }> = {
-  remission: { label: "缓解期", color: "#52c41a" },
-  mild: { label: "轻度活动", color: "#faad14" },
-  moderate: { label: "中度活动", color: "#fa8c16" },
-  severe: { label: "重度活动", color: "#f5222d" },
+  remission: { label: "缓解期", color: COLORS.primary },
+  mild: { label: "轻度活动", color: COLORS.yellow },
+  moderate: { label: "中度活动", color: COLORS.orange },
+  severe: { label: "重度活动", color: COLORS.red },
 };
 
 // HBI 问卷配置
