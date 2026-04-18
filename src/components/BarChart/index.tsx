@@ -14,6 +14,7 @@ interface BarChartProps {
   maxValue?: number;
   events?: ChartEvent[];
   onEventTap?: (event: ChartEvent) => void;
+  getBarColor?: (value: number) => string;
 }
 
 export default function BarChart({
@@ -21,6 +22,7 @@ export default function BarChart({
   maxValue: propMaxValue,
   events = [],
   onEventTap,
+  getBarColor,
 }: BarChartProps) {
   const canvasId = useRef(`bar-chart-${Date.now()}`).current;
   const eventPositionsRef = useRef<{ event: ChartEvent; x: number }[]>([]);
@@ -62,10 +64,10 @@ export default function BarChart({
         canvas.height = height * dpr;
         ctx.scale(dpr, dpr);
 
-        const positions = drawChart(ctx, width, height, data, propMaxValue, events);
+        const positions = drawChart(ctx, width, height, data, propMaxValue, events, getBarColor);
         eventPositionsRef.current = positions;
       });
-  }, [data, propMaxValue, canvasId, events]);
+  }, [data, propMaxValue, canvasId, events, getBarColor]);
 
   return (
     <Canvas type="2d" id={canvasId} className="bar-chart-canvas" onTouchEnd={handleTouchEnd} />
@@ -97,6 +99,7 @@ function drawChart(
   rawData: BarChartData[],
   propMaxValue?: number,
   events: ChartEvent[] = [],
+  getBarColor?: (value: number) => string,
 ): { event: ChartEvent; x: number }[] {
   const padding = { top: 30, right: 8, bottom: 40, left: 16 };
   const chartWidth = width - padding.left - padding.right;
@@ -238,7 +241,7 @@ function drawChart(
     const x = startX + index * (barWidth + barGap);
     const y = height - padding.bottom - barHeight;
 
-    ctx.fillStyle = "#5fcf9a";
+    ctx.fillStyle = getBarColor ? getBarColor(item.value) : "#5fcf9a";
     ctx.fillRect(x, y, barWidth, barHeight);
   });
 

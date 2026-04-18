@@ -1,0 +1,69 @@
+.symptom-picker-mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.symptom-picker {
+  width: 100%;
+  max-height: 60vh;
+  background-color: #fff;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.symptom-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.symptom-picker-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+}
+
+.symptom-picker-close {
+  font-size: 28px;
+  color: #999;
+  padding: 8px;
+}
+
+.symptom-picker-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+}
+
+.symptom-item {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.symptom-item:active {
+  background-color: #f5f5f5;
+}
+
+.symptom-name {
+  font-size: 28px;
+  color: #333;
+}
+
+.symptom-picker-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px;
+  color: #999;
+  font-size: 28px;
+}
