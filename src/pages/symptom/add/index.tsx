@@ -45,6 +45,7 @@ export default function SymptomAdd() {
   const [savedCustomSymptoms, setSavedCustomSymptoms] = useState<string[]>([]);
   const [severity, setSeverity] = useState<SymptomRecord["severity"]>(undefined);
   const [overallFeeling, setOverallFeeling] = useState<1 | 2 | 3 | 4 | 5>(3);
+  const [weight, setWeight] = useState("");
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(isEdit);
@@ -65,6 +66,7 @@ export default function SymptomAdd() {
         setSymptoms(record.symptoms);
         setSeverity(record.severity);
         setOverallFeeling(record.overallFeeling);
+        setWeight(record.weight !== undefined ? String(record.weight) : "");
         setNote(record.note || "");
       }
     } catch (error) {
@@ -148,12 +150,14 @@ export default function SymptomAdd() {
 
     setSubmitting(true);
     try {
+      const parsedWeight = weight.trim() ? parseFloat(weight) : undefined;
       const data = {
         date,
         time,
         symptoms,
         severity: symptoms.length > 0 ? severity : undefined,
         overallFeeling,
+        weight: parsedWeight && !isNaN(parsedWeight) ? parsedWeight : undefined,
         note: note.trim() || undefined,
       };
 
@@ -280,6 +284,21 @@ export default function SymptomAdd() {
           </View>
         </View>
       )}
+
+      {/* 体重 */}
+      <View className="section">
+        <Text className="section-title">体重（可选）</Text>
+        <View className="weight-row">
+          <Input
+            className="weight-input"
+            type="digit"
+            placeholder="输入体重"
+            value={weight}
+            onInput={(e) => setWeight(e.detail.value)}
+          />
+          <Text className="weight-unit">kg</Text>
+        </View>
+      </View>
 
       {/* 备注 */}
       <View className="section">

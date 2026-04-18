@@ -122,3 +122,25 @@
   font-size: 28px;
   color: #333;
 }
+
+/* 体重输入 */
+.weight-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.weight-input {
+  flex: 1;
+  height: 80px;
+  padding: 0 20px;
+  border: 2px solid #f0f0f0;
+  border-radius: 8px;
+  font-size: 32px;
+  box-sizing: border-box;
+}
+
+.weight-unit {
+  font-size: 28px;
+  color: #666;
+}

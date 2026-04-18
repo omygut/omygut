@@ -10,7 +10,7 @@ export interface RecordTypeOption {
 }
 
 export const RECORD_TYPE_OPTIONS: RecordTypeOption[] = [
-  { value: "symptom", label: "体感", icon: "🌱", addPath: "/pages/symptom/add/index" },
+  { value: "symptom", label: "身体状态", icon: "🌱", addPath: "/pages/symptom/add/index" },
   { value: "medication", label: "用药", icon: "💊", addPath: "/pages/medication/add/index" },
   { value: "meal", label: "饮食", icon: "🍱", addPath: "/pages/meal/add/index" },
   { value: "stool", label: "排便", icon: "💩", addPath: "/pages/stool/add/index" },
@@ -36,11 +36,12 @@ export interface BaseRecord {
   deletedAt?: Date;
 }
 
-// 症状记录
+// 状态记录（原症状记录）
 export interface SymptomRecord extends BaseRecord {
   symptoms: string[]; // 症状列表
   severity?: 1 | 2 | 3; // 整体严重程度：轻度、中度、重度
   overallFeeling: 1 | 2 | 3 | 4 | 5; // 整体感受 1很差 - 5很好
+  weight?: number; // 体重（kg），支持一位小数
   note?: string;
 }
 
