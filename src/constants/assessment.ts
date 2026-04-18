@@ -110,6 +110,7 @@ export const CDAI_QUESTIONS = {
   },
   antidiarrheal: {
     label: "使用止泻药",
+    autoFill: true,
     options: [
       { value: 0, label: "否" },
       { value: 1, label: "是" },

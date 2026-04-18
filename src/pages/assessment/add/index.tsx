@@ -5,6 +5,7 @@ import { assessmentService } from "../../../services/assessment";
 import { stoolService } from "../../../services/stool";
 import { labTestService } from "../../../services/labtest";
 import { symptomService } from "../../../services/symptom";
+import { medicationService } from "../../../services/medication";
 import { getSymptomItems } from "../../../utils/symptom";
 import {
   ASSESSMENT_TYPES,
@@ -240,8 +241,38 @@ export default function AssessmentAdd() {
         hints.hematocrit = "获取化验记录失败";
       }
 
-      // 止泻药 - 无法从现有数据获取
-      hints.antidiarrheal = "需手动填写";
+      // 止泻药 - 从用药记录获取
+      try {
+        const medicationRecords = await medicationService.getByDateRange(fromDate, toDate);
+        // 常见止泻药列表
+        const antidiarrhealDrugs = [
+          "洛哌丁胺",
+          "蒙脱石散",
+          "思密达",
+          "地芬诺酯",
+          "易蒙停",
+          "复方地芬诺酯",
+          "鞣酸蛋白",
+          "药用炭",
+        ];
+        let foundAntidiarrheal = false;
+        for (const record of medicationRecords) {
+          if (antidiarrhealDrugs.some((drug) => record.name.includes(drug))) {
+            foundAntidiarrheal = true;
+            break;
+          }
+        }
+        if (foundAntidiarrheal) {
+          newAnswers.antidiarrheal = 1;
+          hints.antidiarrheal = `从用药记录获取 (${dateRangeHint}，有止泻药)`;
+        } else {
+          newAnswers.antidiarrheal = 0;
+          hints.antidiarrheal = `从用药记录获取 (${dateRangeHint}，未使用止泻药)`;
+        }
+      } catch {
+        hints.antidiarrheal = "获取用药记录失败，需手动填写";
+      }
+
       // 体重变化 - 无法从现有数据获取
       hints.weightChange = "需手动填写";
     }
