@@ -257,7 +257,7 @@ export default function AssessmentAdd() {
         ];
         let foundAntidiarrheal = false;
         for (const record of medicationRecords) {
-          if (antidiarrhealDrugs.some((drug) => record.name.includes(drug))) {
+          if (record.name && antidiarrhealDrugs.some((drug) => record.name.includes(drug))) {
             foundAntidiarrheal = true;
             break;
           }
