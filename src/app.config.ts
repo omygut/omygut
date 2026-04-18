@@ -2,7 +2,7 @@ export default defineAppConfig({
   lazyCodeLoading: "requiredComponents",
   pages: [
     "pages/index/index",
-    "pages/history/index",
+    "pages/stats/index",
     "pages/settings/index",
     "pages/symptom/add/index",
     "pages/meal/add/index",
@@ -32,7 +32,7 @@ export default defineAppConfig({
         selectedIconPath: "assets/tabbar/home-active.png",
       },
       {
-        pagePath: "pages/history/index",
+        pagePath: "pages/stats/index",
         text: "数据",
         iconPath: "assets/tabbar/data.png",
         selectedIconPath: "assets/tabbar/data-active.png",

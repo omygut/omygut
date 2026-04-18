@@ -64,7 +64,7 @@ function getTypeLabel(type: RecordType): string {
   return RECORD_TYPE_OPTIONS.find((opt) => opt.value === type)?.label || "";
 }
 
-export default function History() {
+export default function Stats() {
   const [selectedType, setSelectedType] = useState<RecordType>(() => {
     return Taro.getStorageSync("history_selected_type") || "meal";
   });
@@ -441,7 +441,7 @@ export default function History() {
   );
 
   return (
-    <View className="history-page">
+    <View className="stats-page">
       <CalendarPopup
         visible={startCalendarVisible}
         value={customStartDate}
