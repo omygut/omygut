@@ -81,13 +81,13 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
             {record.overallFeeling && (
               <Text className="record-feeling">{getFeelingEmoji(record.overallFeeling)}</Text>
             )}
-            {severity && (
-              <Text className="record-severity" style={{ backgroundColor: severity.color }}>
-                {severity.label}
-              </Text>
-            )}
             {record.symptoms.length > 0 && (
-              <Text className="record-desc">{record.symptoms.join("、")}</Text>
+              <Text
+                className="record-symptoms"
+                style={severity ? { backgroundColor: `${severity.color}20` } : undefined}
+              >
+                {record.symptoms.join("、")}
+              </Text>
             )}
             {record.weight && <Text className="record-desc">{record.weight}kg</Text>}
           </>

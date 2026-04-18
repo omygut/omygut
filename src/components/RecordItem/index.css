@@ -26,11 +26,11 @@
   margin-right: 8px;
 }
 
-.record-severity {
-  font-size: 22px;
-  color: #fff;
+.record-symptoms {
+  font-size: 28px;
+  color: #333;
   padding: 4px 12px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .record-desc {
