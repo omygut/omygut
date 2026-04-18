@@ -38,16 +38,21 @@ exports.main = async (event) => {
     hasMore = data.length === MAX_LIMIT;
   }
 
-  // 按日期聚合，取当天最大严重程度
+  // 按日期聚合，取平均值
   const dailyData = {};
   allData.forEach((record) => {
-    if (!dailyData[record.date] || record.severity > dailyData[record.date]) {
-      dailyData[record.date] = record.severity;
+    if (!dailyData[record.date]) {
+      dailyData[record.date] = { sum: 0, count: 0 };
     }
+    dailyData[record.date].sum += record.severity;
+    dailyData[record.date].count += 1;
   });
 
   const result = Object.entries(dailyData)
-    .map(([date, severity]) => ({ date, value: severity }))
+    .map(([date, data]) => ({
+      date,
+      value: Math.round((data.sum / data.count) * 10) / 10,
+    }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
   return { data: result };
