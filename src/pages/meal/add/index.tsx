@@ -53,7 +53,7 @@ export default function MealAdd() {
   const [selectedCategory, setSelectedCategory] = useState(-1); // -1 = 我的常用
   const [selectedFoods, setSelectedFoods] = useState<string[]>([]);
   const [manualInput, setManualInput] = useState("");
-  const [amount, setAmount] = useState<1 | 2 | 3>(2);
+  const [amount, setAmount] = useState<0 | 1 | 2 | 3 | 4>(2);
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [customFoods, setCustomFoods] = useState<string[]>([]);

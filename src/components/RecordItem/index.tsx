@@ -114,7 +114,7 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
         return (
           <>
             <View className="record-feeling">
-              <AmountIcon level={record.amount as 1 | 2 | 3} size={24} />
+              <AmountIcon level={record.amount as 0 | 1 | 2 | 3 | 4} size={24} />
             </View>
             <Text className="record-desc">{record.foods.join("、")}</Text>
           </>

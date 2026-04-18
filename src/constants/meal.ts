@@ -99,7 +99,9 @@ export const FOOD_CATEGORIES = [
 
 // 进食量选项
 export const AMOUNT_OPTIONS = [
-  { value: 1, label: "少量" },
+  { value: 0, label: "少量" },
+  { value: 1, label: "较少" },
   { value: 2, label: "适中" },
-  { value: 3, label: "大量" },
+  { value: 3, label: "较多" },
+  { value: 4, label: "大量" },
 ] as const;
