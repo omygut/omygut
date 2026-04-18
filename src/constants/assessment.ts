@@ -18,6 +18,7 @@ export const ASSESSMENT_LEVELS: Record<AssessmentLevel, { label: string; color: 
 export const HBI_QUESTIONS = {
   generalWellbeing: {
     label: "一般状况",
+    description: "计分：选项对应分值直接计入总分",
     options: [
       { value: 0, label: "良好" },
       { value: 1, label: "略低于正常" },
@@ -28,6 +29,7 @@ export const HBI_QUESTIONS = {
   },
   abdominalPain: {
     label: "腹痛",
+    description: "计分：选项对应分值直接计入总分",
     options: [
       { value: 0, label: "无" },
       { value: 1, label: "轻度" },
@@ -37,12 +39,14 @@ export const HBI_QUESTIONS = {
   },
   liquidStools: {
     label: "每日腹泻次数",
+    description: "计分：次数直接计入总分（取7天平均）",
     type: "number" as const,
     autoFill: true,
     placeholder: "过去一天的稀便次数",
   },
   abdominalMass: {
     label: "腹部包块",
+    description: "计分：选项对应分值直接计入总分",
     options: [
       { value: 0, label: "无" },
       { value: 1, label: "可疑" },
@@ -52,6 +56,7 @@ export const HBI_QUESTIONS = {
   },
   complications: {
     label: "并发症",
+    description: "计分：每项并发症计1分",
     type: "multiSelect" as const,
     options: [
       { value: "arthralgia", label: "关节痛" },
