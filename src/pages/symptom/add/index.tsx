@@ -63,7 +63,18 @@ export default function SymptomAdd() {
       if (record) {
         setDate(record.date);
         setTime(record.time || formatTime());
-        setSymptomItems(getSymptomItems(record));
+        const items = getSymptomItems(record);
+        setSymptomItems(items);
+        // Save any symptoms not in preset/custom lists to custom list
+        for (const item of items) {
+          if (
+            !SYMPTOM_SHORTCUTS.includes(item.name as (typeof SYMPTOM_SHORTCUTS)[number]) &&
+            !getStoredCustomSymptoms().includes(item.name)
+          ) {
+            saveCustomSymptom(item.name);
+          }
+        }
+        setSavedCustomSymptoms(getStoredCustomSymptoms());
         setOverallFeeling(record.overallFeeling ?? undefined);
         setWeight(record.weight !== undefined ? String(record.weight) : "");
         setNote(record.note || "");
@@ -285,30 +296,6 @@ export default function SymptomAdd() {
               </View>
             );
           })}
-          {/* 显示记录中存在但不在预设/自定义列表里的症状 */}
-          {symptomItems
-            .filter(
-              (item) =>
-                !SYMPTOM_SHORTCUTS.includes(item.name as (typeof SYMPTOM_SHORTCUTS)[number]) &&
-                !savedCustomSymptoms.includes(item.name),
-            )
-            .map((item) => {
-              const severityInfo = SEVERITY_OPTIONS.find((s) => s.value === item.severity)!;
-              return (
-                <View
-                  key={item.name}
-                  className="symptom-tag custom"
-                  style={{
-                    borderColor: severityInfo.color,
-                    backgroundColor: `${severityInfo.color}15`,
-                    color: severityInfo.color,
-                  }}
-                  onClick={() => handleSymptomClick(item.name)}
-                >
-                  {item.name}
-                </View>
-              );
-            })}
         </View>
         <View className="custom-symptom-row">
           <Input
