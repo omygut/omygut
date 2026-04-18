@@ -104,9 +104,11 @@ export default function AssessmentAdd() {
         // 找到第一条有 overallFeeling 的记录
         const recordWithFeeling = symptomRecords.find((r) => r.overallFeeling !== undefined);
 
-        // 一般状况：从 overallFeeling (1-5) 映射到 (4-0)
+        // 一般状况：从 overallFeeling (1-5) 映射到 generalWellbeing (0-3)
+        // 5/4(良好/很好) → 0, 3(一般) → 1, 2(较差) → 2, 1(很差) → 3
         if (recordWithFeeling?.overallFeeling) {
-          newAnswers.generalWellbeing = 5 - recordWithFeeling.overallFeeling;
+          const feelingMap: Record<number, number> = { 5: 0, 4: 0, 3: 1, 2: 2, 1: 3 };
+          newAnswers.generalWellbeing = feelingMap[recordWithFeeling.overallFeeling] ?? 0;
           hints.generalWellbeing = `从身体状态记录获取 (${recordWithFeeling.date})`;
         } else {
           hints.generalWellbeing = "近一周记录无整体感受数据";
