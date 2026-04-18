@@ -13,7 +13,7 @@
 /* 类型标签页 */
 .type-tabs {
   display: flex;
-  background-color: #fff;
+  background-color: var(--color-white);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -78,7 +78,7 @@
 }
 
 .date-records {
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 16px;
   overflow: hidden;
 }
@@ -96,7 +96,7 @@
 /* 视图模式切换 */
 .view-mode-tabs {
   display: flex;
-  background-color: #fff;
+  background-color: var(--color-white);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -211,7 +211,7 @@
 }
 
 .stats-help-btn:active {
-  background-color: #ddd;
+  background-color: var(--color-hover);
 }
 
 .add-event-btn {
@@ -235,7 +235,7 @@
 /* 图表容器 */
 .stats-chart-container {
   flex: 1;
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 16px;
   padding: 24px;
   min-height: 400px;
@@ -256,7 +256,7 @@
 /* 数据列表 */
 .stats-data-list {
   margin-top: 24px;
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 16px;
   padding: 8px 24px;
 }
@@ -314,7 +314,7 @@
 .help-popup {
   width: 80%;
   max-width: 560px;
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 16px;
   padding: 32px;
 }
@@ -354,5 +354,5 @@
   border-radius: 8px;
   text-align: center;
   font-size: 28px;
-  color: #fff;
+  color: var(--color-white);
 }

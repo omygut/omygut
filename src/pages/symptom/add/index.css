@@ -77,7 +77,7 @@
   height: 72px;
   line-height: 72px;
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   font-size: 28px;
   border-radius: 8px;
 }

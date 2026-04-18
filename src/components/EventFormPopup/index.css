@@ -11,7 +11,7 @@
 .event-form-popup {
   width: 80%;
   max-width: 600px;
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 16px;
   padding: 32px;
 }
@@ -79,7 +79,7 @@
 
 .event-form-btn.confirm {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
 }
 
 .event-form-btn.confirm.disabled {

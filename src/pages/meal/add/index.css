@@ -23,7 +23,7 @@
 .category-tab.active {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
 }
 
 /* 食物网格 */
@@ -89,7 +89,7 @@
 .manual-add-btn {
   padding: 20px 32px;
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   font-size: 28px;
   border-radius: 12px;
   white-space: nowrap;

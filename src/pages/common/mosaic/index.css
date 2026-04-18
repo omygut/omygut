@@ -1,6 +1,6 @@
 .mosaic-page {
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-dark);
   display: flex;
   flex-direction: column;
 }
@@ -48,7 +48,7 @@
 
 .select-hint-text {
   font-size: 28px;
-  color: #fff;
+  color: var(--color-white);
 }
 
 .action-bar {
@@ -68,14 +68,14 @@
 }
 
 .secondary-btn {
-  background-color: #555;
-  color: #fff;
+  background-color: var(--color-bg-darkest);
+  color: var(--color-white);
   flex: 0.6;
 }
 
 .save-btn {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   flex: 1;
 }
 

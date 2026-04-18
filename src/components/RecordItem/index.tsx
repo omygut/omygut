@@ -1,5 +1,6 @@
 import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import { COLORS } from "../../constants/colors";
 import { EXAM_TYPES } from "../../constants/exam";
 import { SEVERITY_OPTIONS, FEELING_OPTIONS } from "../../constants/symptom";
 import MealAmountIcon from "../MealAmountIcon";
@@ -47,7 +48,7 @@ const getFeelingEmoji = (value: number): string => {
 };
 
 const getSeverityColor = (severity: 1 | 2 | 3): string => {
-  return SEVERITY_OPTIONS.find((s) => s.value === severity)?.color ?? "#FFD230";
+  return SEVERITY_OPTIONS.find((s) => s.value === severity)?.color ?? COLORS.yellow;
 };
 
 const getStoolAmountLabel = (amount: number): string => {
@@ -93,7 +94,6 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
                       key={item.name}
                       className="record-symptom-tag"
                       style={{
-                        borderColor: color,
                         backgroundColor: `${color}15`,
                         color: color,
                       }}
