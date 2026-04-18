@@ -79,23 +79,22 @@ export default function SymptomAdd() {
     setSavedCustomSymptoms(getStoredCustomSymptoms());
   });
 
-  const handleToggleSymptom = (name: string) => {
+  const handleSymptomClick = (name: string) => {
     const existing = symptomItems.find((s) => s.name === name);
-    if (existing) {
-      // Remove symptom
-      setSymptomItems(symptomItems.filter((s) => s.name !== name));
-    } else {
-      // Add symptom with default severity 1
+    if (!existing) {
+      // Not selected -> add with severity 1
       setSymptomItems([...symptomItems, { name, severity: 1 }]);
+    } else if (existing.severity < 3) {
+      // Cycle severity: 1 -> 2 -> 3
+      setSymptomItems(
+        symptomItems.map((s) =>
+          s.name === name ? { ...s, severity: (s.severity + 1) as 1 | 2 | 3 } : s,
+        ),
+      );
+    } else {
+      // Severity 3 -> remove (back to unselected)
+      setSymptomItems(symptomItems.filter((s) => s.name !== name));
     }
-  };
-
-  const handleCycleSeverity = (name: string) => {
-    setSymptomItems(
-      symptomItems.map((s) =>
-        s.name === name ? { ...s, severity: ((s.severity % 3) + 1) as 1 | 2 | 3 } : s,
-      ),
-    );
   };
 
   const handleAddCustomSymptom = () => {
@@ -255,10 +254,7 @@ export default function SymptomAdd() {
                       }
                     : undefined
                 }
-                onClick={() =>
-                  selected ? handleCycleSeverity(symptom) : handleToggleSymptom(symptom)
-                }
-                onLongPress={() => selected && handleToggleSymptom(symptom)}
+                onClick={() => handleSymptomClick(symptom)}
               >
                 {symptom}
               </View>
@@ -282,12 +278,8 @@ export default function SymptomAdd() {
                       }
                     : undefined
                 }
-                onClick={() =>
-                  selected ? handleCycleSeverity(symptom) : handleToggleSymptom(symptom)
-                }
-                onLongPress={() =>
-                  selected ? handleToggleSymptom(symptom) : handleDeleteCustomSymptom(symptom)
-                }
+                onClick={() => handleSymptomClick(symptom)}
+                onLongPress={() => !selected && handleDeleteCustomSymptom(symptom)}
               >
                 {symptom}
               </View>
@@ -311,8 +303,7 @@ export default function SymptomAdd() {
                     backgroundColor: `${severityInfo.color}15`,
                     color: severityInfo.color,
                   }}
-                  onClick={() => handleCycleSeverity(item.name)}
-                  onLongPress={() => handleToggleSymptom(item.name)}
+                  onClick={() => handleSymptomClick(item.name)}
                 >
                   {item.name}
                 </View>
