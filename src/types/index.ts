@@ -4,6 +4,7 @@ export const RECORD_TYPES = [
   "medication",
   "meal",
   "stool",
+  "exercise",
   "labtest",
   "exam",
   "assessment",
@@ -21,6 +22,7 @@ export const RECORD_TYPE_OPTIONS: RecordTypeOption[] = [
   { value: "symptom", label: "身体状态", icon: "🌱", addPath: "/pages/symptom/add/index" },
   { value: "meal", label: "饮食", icon: "🍱", addPath: "/pages/meal/add/index" },
   { value: "stool", label: "排便", icon: "💩", addPath: "/pages/stool/add/index" },
+  { value: "exercise", label: "运动", icon: "🏃", addPath: "/pages/exercise/add/index" },
   { value: "medication", label: "用药", icon: "💊", addPath: "/pages/medication/add/index" },
   { value: "labtest", label: "化验", icon: "🧪", addPath: "/pages/labtest/add/index" },
   { value: "exam", label: "检查", icon: "🩺", addPath: "/pages/exam/add/index" },
@@ -85,6 +87,14 @@ export interface MedicationRecord extends BaseRecord {
   note?: string;
 }
 
+// 运动记录
+export interface ExerciseRecord extends BaseRecord {
+  type: string; // 运动类型（如"跑步"）
+  duration: 15 | 30 | 45 | 60 | 90 | 120; // 时长（分钟）
+  intensity: 1 | 2 | 3; // 强度：1轻松/2适中/3剧烈
+  note?: string;
+}
+
 // 化验指标
 export interface LabTestIndicator {
   name: string; // 指标名称
@@ -116,6 +126,7 @@ export interface ExportData {
   symptom_records: SymptomRecord[];
   meal_records: MealRecord[];
   medication_records: MedicationRecord[];
+  exercise_records: ExerciseRecord[];
   labtest_records: LabTestRecord[];
   exam_records: ExamRecord[];
   assessment_records: AssessmentRecord[];
