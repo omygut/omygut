@@ -128,20 +128,19 @@
   padding: 40px;
 }
 
-/* 时长选择 */
+/* 时长/强度选择 */
 .amount-options {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
 .amount-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 16px;
+  flex: 1;
+  padding: 16px;
   border-radius: 8px;
   border: 2px solid var(--color-border-light);
+  text-align: center;
+  transition: all 0.2s;
 }
 
 .amount-item.active {
@@ -150,8 +149,8 @@
 }
 
 .amount-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
 }
 
 .amount-item.active .amount-label {
