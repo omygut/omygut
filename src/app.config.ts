@@ -7,6 +7,7 @@ export default defineAppConfig({
     "pages/symptom/add/index",
     "pages/meal/add/index",
     "pages/stool/add/index",
+    "pages/exercise/add/index",
     "pages/medication/add/index",
     "pages/labtest/add/index",
     "pages/common/mosaic/index",
