@@ -10,7 +10,7 @@ Always use `pnpm` instead of `npm` or `yarn`.
 
 ## Build Verification
 
-Always run `pnpm build` after making code edits to verify compilation succeeds.
+Always run `pnpm build` in the background after making code edits to verify compilation succeeds.
 
 ## Git Workflow
 
