@@ -200,8 +200,8 @@ export default function MealAdd() {
     }
   };
 
-  // 「我的常用」的食物列表：自定义食物 + 预设高频食物
-  const myFavoriteFoods = [...customFoods, ...topFoods.filter((f) => !customFoods.includes(f))];
+  // 「我的常用」的食物列表：高频食物优先，然后是未出现的自定义食物
+  const myFavoriteFoods = [...topFoods, ...customFoods.filter((f) => !topFoods.includes(f))];
 
   // 当前分类的食物列表（统一为 { name, emoji } 格式）
   const currentFoods =
