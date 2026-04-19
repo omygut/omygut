@@ -13,6 +13,7 @@ import type {
   SymptomRecord,
   MealRecord,
   StoolRecord,
+  ExerciseRecord,
   MedicationRecord,
   LabTestRecord,
   LabTestIndicator,
@@ -20,6 +21,8 @@ import type {
   AssessmentRecord,
   RecordType,
 } from "../../types";
+import { DURATION_OPTIONS, INTENSITY_OPTIONS } from "../../constants/exercise";
+import ExerciseIntensityIcon from "../ExerciseIntensityIcon";
 import { ASSESSMENT_LEVELS } from "../../constants/assessment";
 import { RECORD_TYPE_OPTIONS } from "../../types";
 import "./index.css";
@@ -28,6 +31,7 @@ export type AnyRecord =
   | (SymptomRecord & { _type: "symptom" })
   | (MealRecord & { _type: "meal" })
   | (StoolRecord & { _type: "stool" })
+  | (ExerciseRecord & { _type: "exercise" })
   | (MedicationRecord & { _type: "medication" })
   | (LabTestRecord & { _type: "labtest" })
   | (ExamRecord & { _type: "exam" })
@@ -130,6 +134,23 @@ export default function RecordItem({ record, showTypeIcon = false }: RecordItemP
             </Text>
           </>
         );
+      case "exercise": {
+        const durationLabel =
+          DURATION_OPTIONS.find((d) => d.value === record.duration)?.label ??
+          `${record.duration}分钟`;
+        const intensityLabel =
+          INTENSITY_OPTIONS.find((i) => i.value === record.intensity)?.label ?? "";
+        return (
+          <>
+            <View className="record-feeling">
+              <ExerciseIntensityIcon level={record.intensity} size={18} />
+            </View>
+            <Text className="record-desc">
+              {record.type} · {durationLabel} · {intensityLabel}
+            </Text>
+          </>
+        );
+      }
       case "labtest": {
         const categoryText = getLabTestCategories(record.indicators);
         const specimenText = record.specimen || "血液";

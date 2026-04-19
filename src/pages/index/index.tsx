@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { symptomService } from "../../services/symptom";
 import { mealService } from "../../services/meal";
 import { stoolService } from "../../services/stool";
+import { exerciseService } from "../../services/exercise";
 import { medicationService } from "../../services/medication";
 import { labTestService } from "../../services/labtest";
 import { examService } from "../../services/exam";
@@ -55,12 +56,13 @@ export default function Index() {
   const loadData = useCallback(async (date: string) => {
     setLoading(true);
     try {
-      const [symptoms, medications, meals, stools, labTests, exams, assessments] =
+      const [symptoms, medications, meals, stools, exercises, labTests, exams, assessments] =
         await Promise.all([
           symptomService.getByDate(date),
           medicationService.getByDate(date),
           mealService.getByDate(date),
           stoolService.getByDate(date),
+          exerciseService.getByDate(date),
           labTestService.getByDate(date),
           examService.getByDate(date),
           assessmentService.getByDate(date),
@@ -71,6 +73,7 @@ export default function Index() {
         medication: medications.map((r) => ({ ...r, _type: "medication" as const })),
         meal: meals.map((r) => ({ ...r, _type: "meal" as const })),
         stool: stools.map((r) => ({ ...r, _type: "stool" as const })),
+        exercise: exercises.map((r) => ({ ...r, _type: "exercise" as const })),
         labtest: labTests.map((r) => ({ ...r, _type: "labtest" as const })),
         exam: exams.map((r) => ({ ...r, _type: "exam" as const })),
         assessment: assessments.map((r) => ({ ...r, _type: "assessment" as const })),
