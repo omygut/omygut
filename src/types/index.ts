@@ -69,6 +69,7 @@ export interface SymptomRecord extends BaseRecord {
 export interface MealRecord extends BaseRecord {
   foods: string[];
   amount: 0 | 1 | 2 | 3 | 4; // 0-少量 1-较少 2-适中 3-较多 4-大量
+  imageFileIds?: string[]; // 食物照片云存储 ID 列表
   note?: string;
 }
 

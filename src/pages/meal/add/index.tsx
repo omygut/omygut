@@ -1,7 +1,9 @@
-import { View, Text, Input, Textarea } from "@tarojs/components";
+import { View, Text, Input, Textarea, Image } from "@tarojs/components";
 import Taro, { useDidShow, useRouter } from "@tarojs/taro";
 import { useState, useEffect } from "react";
 import { mealService } from "../../../services/meal";
+import { recognizeFoodImage } from "../../../services/ai";
+import { chooseImage, uploadImage, deleteCloudFile } from "../../../utils/upload";
 import { FOOD_CATEGORIES, AMOUNT_OPTIONS } from "../../../constants/meal";
 import { formatDate, formatTime } from "../../../utils/date";
 import { showError } from "../../../utils/error";
@@ -60,6 +62,9 @@ export default function MealAdd() {
   const [topFoods, setTopFoods] = useState<string[]>([]);
   const [loading, setLoading] = useState(isEdit);
   const [calendarVisible, setCalendarVisible] = useState(false);
+  const [recognizing, setRecognizing] = useState(false);
+  const [localImages, setLocalImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (editId) {
@@ -76,6 +81,7 @@ export default function MealAdd() {
         setSelectedFoods(record.foods);
         setAmount(record.amount);
         setNote(record.note || "");
+        setUploadedImages(record.imageFileIds || []);
       }
     } catch (error) {
       showError("加载失败", error);
@@ -141,6 +147,115 @@ export default function MealAdd() {
     setSelectedFoods(selectedFoods.filter((f) => f !== food));
   };
 
+  const handleChooseImage = async () => {
+    const totalImages = localImages.length + uploadedImages.length;
+    const remaining = 9 - totalImages;
+    if (remaining <= 0) {
+      Taro.showToast({ title: "最多添加9张图片", icon: "none" });
+      return;
+    }
+
+    try {
+      const tempPaths = await chooseImage(remaining);
+      if (tempPaths.length === 0) return;
+
+      setLocalImages([...localImages, ...tempPaths]);
+
+      // 询问是否识别第一张新添加的图片
+      const res = await Taro.showModal({
+        title: "识别食物",
+        content: "是否使用 AI 识别图片中的食物？",
+        confirmText: "识别",
+        cancelText: "跳过",
+      });
+
+      if (res.confirm) {
+        await handleRecognize(tempPaths[0]);
+      }
+    } catch (error) {
+      showError("选择图片失败", error);
+    }
+  };
+
+  const handleRecognize = async (imagePath: string) => {
+    if (recognizing) return;
+
+    setRecognizing(true);
+    Taro.showLoading({ title: "识别中..." });
+
+    try {
+      const foods = await recognizeFoodImage(imagePath);
+      Taro.hideLoading();
+
+      if (foods.length === 0) {
+        Taro.showToast({ title: "未识别到食物", icon: "none" });
+        return;
+      }
+
+      // 显示识别结果，让用户选择
+      const res = await Taro.showModal({
+        title: "识别结果",
+        content: `识别到以下食物：\n${foods.join("、")}\n\n是否添加到已选列表？`,
+        confirmText: "添加",
+      });
+
+      if (res.confirm) {
+        const newFoods: string[] = [];
+        for (const food of foods) {
+          if (!selectedFoods.includes(food)) {
+            newFoods.push(food);
+            // 如果不在预设中，保存到自定义列表
+            if (!ALL_PRESET_FOODS.has(food)) {
+              saveCustomFood(food);
+            }
+          }
+        }
+        if (newFoods.length > 0) {
+          setSelectedFoods([...selectedFoods, ...newFoods]);
+          setCustomFoods(getStoredCustomFoods());
+          Taro.showToast({ title: `已添加${newFoods.length}种食物`, icon: "success" });
+        } else {
+          Taro.showToast({ title: "食物已在列表中", icon: "none" });
+        }
+      }
+    } catch (error) {
+      Taro.hideLoading();
+      showError("识别失败", error);
+    } finally {
+      setRecognizing(false);
+    }
+  };
+
+  const handlePreviewImage = (imagePath: string) => {
+    const allImages = [...uploadedImages, ...localImages];
+    Taro.previewImage({
+      current: imagePath,
+      urls: allImages,
+    });
+  };
+
+  const handleDeleteLocalImage = (index: number) => {
+    setLocalImages(localImages.filter((_, i) => i !== index));
+  };
+
+  const handleDeleteUploadedImage = async (index: number) => {
+    const fileId = uploadedImages[index];
+
+    const res = await Taro.showModal({
+      title: "删除图片",
+      content: "确定要删除这张图片吗？",
+    });
+
+    if (res.confirm) {
+      try {
+        await deleteCloudFile(fileId);
+        setUploadedImages(uploadedImages.filter((_, i) => i !== index));
+      } catch (error) {
+        showError("删除失败", error);
+      }
+    }
+  };
+
   const handleDelete = async () => {
     if (!editId) return;
 
@@ -151,6 +266,10 @@ export default function MealAdd() {
 
     if (res.confirm) {
       try {
+        // 删除云存储中的图片
+        for (const fileId of uploadedImages) {
+          await deleteCloudFile(fileId);
+        }
         await mealService.delete(editId);
         Taro.showToast({ title: "已删除", icon: "success" });
         Taro.eventCenter.trigger("recordChange");
@@ -173,11 +292,23 @@ export default function MealAdd() {
 
     setSubmitting(true);
     try {
+      // 上传本地图片
+      let newFileIds: string[] = [];
+      if (localImages.length > 0) {
+        Taro.showLoading({ title: "上传图片..." });
+        const uploadPromises = localImages.map((path) => uploadImage(path));
+        newFileIds = await Promise.all(uploadPromises);
+        Taro.hideLoading();
+      }
+
+      const imageFileIds = [...uploadedImages, ...newFileIds];
+
       const data = {
         date,
         time,
         foods: selectedFoods,
         amount,
+        imageFileIds: imageFileIds.length > 0 ? imageFileIds : undefined,
         note: note.trim() || undefined,
       };
 
@@ -296,6 +427,45 @@ export default function MealAdd() {
             </View>
           </View>
         )}
+      </View>
+
+      {/* 食物照片 */}
+      <View className="section">
+        <Text className="section-title">食物照片（可选）</Text>
+        <View className="image-grid">
+          {uploadedImages.map((fileId, index) => (
+            <View key={fileId} className="image-item">
+              <Image
+                className="image-preview"
+                src={fileId}
+                mode="aspectFill"
+                onClick={() => handlePreviewImage(fileId)}
+              />
+              <View className="image-delete" onClick={() => handleDeleteUploadedImage(index)}>
+                ×
+              </View>
+            </View>
+          ))}
+          {localImages.map((path, index) => (
+            <View key={path} className="image-item image-item-local">
+              <Image
+                className="image-preview"
+                src={path}
+                mode="aspectFill"
+                onClick={() => handlePreviewImage(path)}
+              />
+              <View className="image-delete" onClick={() => handleDeleteLocalImage(index)}>
+                ×
+              </View>
+            </View>
+          ))}
+          {localImages.length + uploadedImages.length < 9 && (
+            <View className="image-add" onClick={handleChooseImage}>
+              <Text className="image-add-icon">📷</Text>
+              <Text className="image-add-text">拍照识别</Text>
+            </View>
+          )}
+        </View>
       </View>
 
       {/* 已选食物 */}
